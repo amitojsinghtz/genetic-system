@@ -1,0 +1,346 @@
+﻿@model Data.Helpers.PagedData<GeneticSystem.Areas.Admin.Models.MetabolismAddViewModel>
+@{
+    ViewData["Title"] = "Metabolism Template List";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<div class="prtm-content">
+
+    <div class="prtm-page-bar">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item text-capitalize"><h2>@ViewData["Title"]</h2></li>
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="#">Ui elements</a></li>
+            <li class="breadcrumb-item"><a href="#" class="active">Metabolism Template List</a></li>
+        </ul>
+    </div>
+    <div class="table-style">
+        <div class="row mrgn-b-sm">
+            <div class="col-lg-6">
+                <a href="/admin/template/addmetabolismtemplate" class="btn btn-xs btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> Add</a>
+            </div>
+            <div class="col-md-6 text-right search-block">
+                <div class="input-group pull-right" id="adv-search">
+                    <input type="text" name="search" id="searchmeta" class="form-control" placeholder="Search..." onkeyup="getmetabolismtemplate(1);" />
+                </div>
+            </div>
+        </div>
+        <div class="prtm-block pos-relative">
+            <div class="prtm-block-content">
+                <div class="table-responsive">
+                    <div id="userList" class="unseen">
+                        @{
+                            Html.RenderPartial("GetMetabolismList");
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*@section scripts{
+    <script type="text/javascript">
+        function addepilypsytemplate() {
+        $.ajax({
+            url: '/admin/template/AddEpilepsyTemplate',
+            contentType: 'application/json; charse=utf-8',
+            type: 'get',
+            success: function (result) {
+                $('#modalDiv').html(result);
+                $('#modalDiv').modal('show');
+            },
+            error: function (xhr, status) {
+                alert(status)
+            }
+        });
+        }
+        function SaveEpilepsy() {
+
+                var data = new FormData();
+
+        data.append("GeneID", $("#GeneID").val());
+        data.append("GeneticMutation", $("#GeneticMutation").val());
+        data.append("PersonalRiskFactor", $("#PersonalRiskFactor").val());
+        data.append("Hereditary", $("#Hereditary").val());
+        data.append("Recommendations", $("#Recommendations").val());
+           if (document.getElementById('HaveMutation').checked) {
+                data.append('HaveMutation', "true");
+            }
+
+             $.ajax({
+            url: '/admin/template/AddEpilepsyTemplates',
+            data: data,
+            type: 'Post',
+            processData: false, contentType: false,
+            success: function (result) {
+                if (result) {
+                    alert('Data Saved !')
+                    $('#modalDiv').modal('hide');
+                    window.location.reload();
+                }
+            },
+            error: function (xhr, status) {
+                alert(status)
+            }
+        });
+
+
+
+        }
+        function RefreshPage() {
+            var page = parseInt($('.page-number').html());
+            debugger
+            $.ajax({
+                url: '/admin/user/_index',
+                data: { "page": page },
+                success: function (data) {
+                    debugger
+                    $("#userList").html(data);
+                    debugger
+                }
+            });
+        }
+
+        function editEpilepsy(id) {
+                             $.ajax({
+            url: '/admin/template/UpdateEpilepsyTemplate/' + id,
+            success: function (result) {
+                debugger
+                $('#modalDiv').html(result);
+                $('#modalDiv').modal('show');
+            },
+            error: function (xhr, status) {
+                alert(status)
+            }
+        });
+
+        }
+         function UpdateEpilepsyTemplate() {
+                var data = new FormData();
+
+             data.append("GeneID", $("#GeneID").val());
+             data.append("ID", $("#ID").val());
+        data.append("GeneticMutation", $("#GeneticMutation").val());
+        data.append("PersonalRiskFactor", $("#PersonalRiskFactor").val());
+        data.append("Hereditary", $("#Hereditary").val());
+        data.append("Recommendations", $("#Recommendations").val());
+           if (document.getElementById('HaveMutation').checked) {
+                data.append('HaveMutation', "true");
+            }
+
+             $.ajax({
+            url: '/admin/template/UpdateEpilepsyTemplates',
+            data: data,
+            type: 'Post',
+            processData: false, contentType: false,
+            success: function (result) {
+                if (result) {
+                    alert('Data Saved !')
+                    $('#modalDiv').modal('hide');
+                    window.location.reload();
+                }
+            },
+            error: function (xhr, status) {
+                alert(status)
+            }
+        });
+
+
+
+
+
+
+            }
+
+
+
+
+        function Detele(id) {
+            $('#DeletedID').val(id);
+            swal({
+                title: "Are you sure?",
+                text: "Are you sure you want to delete this record!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-warning",
+                confirmButtonText: "Yes, delete it!",
+                closeOnConfirm: false
+            },
+                function () {
+                    debugger
+                    var id = $("#DeletedID").val();
+                    $.ajax({
+                        url: '/admin/template/delete?id=' + id,
+                        type: 'GET',
+                        success: function (data) {
+                            debugger
+                            swal("Deleted!", "Your imaginary file has been deleted.", "success");
+                            location.reload();
+                        },
+                        error: function () {
+                            debugger
+                            swal("Cancelled", "Something went wrong :)", "error");
+                        }
+                    });
+                });
+        }
+
+        function getepilepsysearch(i) {
+            debugger
+            var Page = i;
+            var searchstring = $("#search1").val();
+            $.ajax({
+                        url: '/admin/template/Getepilepsy?page=' +Page+'&searchstring='+searchstring,
+                        type: 'GET',
+                    success: function (result) {
+                        debugger
+                         $(".unseen").html(result)
+                          },
+                        error: function (xhr, status) {
+                            toastr.error('Something went wrong');
+                        }
+                       });
+
+
+
+        }
+
+        function GetLogTable(id) {
+            debugger
+            $.ajax({
+                url: '/admin/user/History?id=' + id+'&tableName=user',
+                type: 'GET',
+                success: function (data) {
+                    $(".modal-content").html(data);
+                    $("#exampleModalCenter").modal().toggle();
+                },
+                error: function () {
+                    toastr.error('Something went wrong');
+                }
+            });
+        }
+
+        function GetAttachment(id) {
+             $.ajax({
+                url: '/admin/user/Attachment?id='+id+'&tableName=user',
+                type: 'GET',
+                success: function (data) {
+                    $(".modal-content").html(data);
+                    $("#exampleModalCenter").modal().toggle();
+                },
+                error: function () {
+                    toastr.error('Something went wrong');
+                }
+            });
+        }
+        $("body").on("click", "#pdfExport", function () {
+            html2canvas($('#userTbl')[0], {
+                onrendered: function (canvas) {
+                    var data = canvas.toDataURL();
+                    var docDefinition = {
+                        content: [{
+                            image: data,
+                            width: 500
+                        }]
+                    };
+                    pdfMake.createPdf(docDefinition).download("Table.pdf");
+                }
+            });
+        });
+    </script>
+}*@
+<script>
+
+    function Delete(id) {
+        debugger
+        alert("check")
+        $.ajax({
+            url: '/admin/template/DeleteMetabolismTemplate?id=' + id,
+            type: 'GET',
+            success: function (data) {
+                debugger
+                location.reload();
+            },
+            error: function () {
+                debugger
+                swal("Cancelled", "Something went wrong :)", "error");
+            }
+        });
+    };
+
+
+
+
+    function Edit(id) {
+        debugger
+
+        $.ajax({
+            url: '/admin/template/EditMetabolismTemplate?id=' + id,
+            type: 'GET',
+            success: function (data) {
+                debugger
+                location.reload();
+            },
+            error: function () {
+                debugger
+                swal("Cancelled", "Something went wrong :)", "error");
+            }
+        });
+    };
+
+    function UpdateMetabolismTemplate() {
+        var data = new FormData();
+
+        data.append("GeneID", $("#GeneID").val());
+        data.append("ID", $("#ID").val());
+        data.append("GeneticMutation", $("#GeneticMutation").val());
+        data.append("PersonalRiskFactor", $("#PersonalRiskFactor").val());
+        data.append("Hereditary", $("#Hereditary").val());
+        data.append("Recommendations", $("#Recommendations").val());
+        if (document.getElementById('HaveMutation').checked) {
+            data.append('HaveMutation', "true");
+        }
+
+        $.ajax({
+            url: '/admin/template/EditMetabolismTemplate',
+            data: data,
+            type: 'Post',
+            processData: false, contentType: false,
+            success: function (result) {
+                if (result) {
+                    alert('Data Saved !')
+                    $('#modalDiv').modal('hide');
+                    window.location.reload();
+                }
+            },
+            error: function (xhr, status) {
+                alert(status)
+            }
+        });
+
+
+
+    }
+
+
+
+    function getmetabolismtemplate(i) {
+            debugger
+            var Page = i;
+            var searchstring = $("#searchmeta").val();
+            $.ajax({
+                        url: '/admin/template/GetMetabolismList?page=' +Page+'&searchstring='+searchstring,
+                        type: 'GET',
+                    success: function (result) {
+                        debugger
+                         $(".unseen").html(result)
+                          },
+                        error: function (xhr, status) {
+                            toastr.error('Something went wrong');
+                        }
+                       });
+
+
+
+        }
+</script>

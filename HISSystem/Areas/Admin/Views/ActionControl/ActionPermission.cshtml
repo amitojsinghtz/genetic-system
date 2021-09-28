@@ -1,0 +1,102 @@
+﻿@model IEnumerable<Data.Models.ActionPermission>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<div class="prtm-content">
+    <div class="prtm-page-bar">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item text-capitalize"><h2>Role Based Permissions</h2></li>
+            <li class="breadcrumb-item"><a href="#">Access permission</a></li>
+            <li class="breadcrumb-item"><a href="#">Dashoboard</a></li>
+            <li class="breadcrumb-item"><a href="#" class="active">Admin</a></li>
+        </ul>
+    </div>
+    <div class="table-style">
+        <div class="row mrgn-b-sm">
+            <div class="col-md-12 col-lg-12">
+                <div class="quick-search-block">
+                    <div class="row">
+                        <div class="col-md-10 col-lg-10">
+                            <div id="searchDiv" class="row">
+                                <div class="col-md-6">
+                                    @Html.DropDownList("RoleID", new SelectList(ViewBag.Role, "ID", "Name"), "Select Role", new { @Class = "form-control dropdown", onchange = "CheckActionAccess(this)" })
+                                </div>
+                                <div id="actionDivData" class="col-md-12" style="margin-top:2%">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+@section Scripts{
+    <script>
+
+        //function RoleSelection(this) {
+
+        //}
+
+
+        $('.action-button').click(function () {
+            debugger
+            var id = this.id;
+            var val = this.dataset.value;
+            if (val) {
+                url = '/admin/ActionControl/' + id + "?id=" + val;
+            }
+            else {
+                url = '/admin/ActionControl/' + id
+            }
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (result) {
+                    debugger
+                    $(".modal-content").html(result);
+                },
+                error: function (xhr, status) {
+                    toastr.error('Something went wrong');
+                }
+            });
+        });
+
+        function EnableAction(id, event) {
+            debugger
+            var status = $("#IsEnabled").is(':checked');
+            $.ajax({
+                url: '/admin/ActionControl/UpdateActionPermission?id=' + id + '&status=' + event.checked,
+                type: 'POST',
+                success: function (result) {
+                   toastr.info('Permission updated.');
+                },
+                error: function (xhr, status) {
+                   toastr.error('Something went wrong');
+                }
+            });
+        }
+        function CheckActionAccess(data) {
+            debugger
+			if (data.value == "") {
+				return false;
+			}
+		var RoleID = data.value;
+		SelectedRoleID = RoleID;
+		$.ajax({
+			url: "/admin/ActionControl/CheckActionAccess/" + RoleID,
+			type: 'Get',
+			success: function (result) {
+				debugger;
+				$("#actionDivData").html(result);
+			},
+			error: function (xhr, status) {
+				alert(status)
+				}
+			})
+		}
+
+    </script>
+}

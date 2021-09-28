@@ -1,0 +1,914 @@
+﻿@model GeneticSystem.Areas.Admin.Models.DashboardVM
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<style>
+    .frow {
+        display: flex;
+    }
+
+    .column {
+        flex: 50%;
+    }
+    .mr-2 {
+    margin-right: 2px;
+}
+input[type="checkbox"], input[type="radio"] {
+    position: absolute;
+    right: 90px;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 20px;
+}
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 12px;
+            width: 11px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+    input:checked + .slider {
+        background-color: #f39521;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #f39521;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>
+
+<div id="markUpDiv">
+    <div class="frow" style=" padding-left: 20px; padding-top: 10px ">
+        <h2>Dashboard</h2>
+    </div>
+    <div id="dshbrdBtnDiv" class="frow mrgn-b-sm" style="padding-left:10px; padding-top:10px">
+        <div class="col-md-8 col-lg-8">
+            <a href="/admin/clientorder/index" class="btn btn-lg btn-primary sbmtBtn" id="signupform"><i class="fa fa-archive fa-lg" aria-hidden="true"></i> Order </a>
+            <a href="/admin/patient/index" class="btn btn-lg btn-success sbmtBtn" id="signupform"><i class="fa fa-users fa-lg" aria-hidden="true"></i> Client </a>
+            <a href="/admin/patient/appointment" class="btn btn-lg btn-danger sbmtBtn" id="signupform"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> Appointment </a>
+        </div>
+    </div>
+    <div id="odrBtnDiv" class="frow mrgn-b-sm" style="padding-left:10px; padding-top:10px; display:none;">
+        <div class="col-md-8 col-lg-8">
+            <button name="button" value="Save" class="btn btn-lg btn-danger sbmtBtn" id="cancelBtn"><i class="fa fa-times fa-lg" aria-hidden="true"></i> Back </button>
+            <button name="submit" id="postUpdatebtn" value="Update" class="btn btn-lg btn-warning sbmtBtn"><i class="fa fa-check fa-lg" aria-hidden="true"></i> Update </button>
+        </div>
+    </div>
+
+    <div id="mainDiv" class="frow" style="padding-left:20px; padding-top:10px">
+        <div class="column">
+            <div class="panel-group wrap" id="bs-collapse">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-info="Department" href="#one">
+                                Pending Orders
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="one" class="panel-collapse collapse in">
+                        <div class="row" style="padding-top:3px; padding-bottom: 3px;">
+                            <div class="col-md-12 text-left search-block">
+                                <div class="input-group pull-right" id="adv-search">
+                                    <input type="text" data-info="398" name="detailSearch" id="detailsearch" class="form-control detailsearch" placeholder="Search Lookup..." autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                        @if (Model.PendingOrders != null && Model.PendingOrders.Count() > 0)
+                        {
+                            <div class="panel-body" id="pendingOrderList">
+                                <table class="table table-hover table-bordered table-striped" id="relative-table">
+                                    <thead>
+                                        <tr class="">
+                                            <th>Order No</th>
+                                            <th>Order Date</th>
+                                            <th>Order DueDate</th>
+                                            <th>Client Name</th>
+                                            <th>Client Email</th>
+                                            <th>Client City</th>
+                                            <th>Gene Temp</th>
+                                            <th>Status</th>
+                                            <th colspan="2">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var order in Model.PendingOrders)
+                                        {
+                                        <tr>
+                                            <td>
+                                                @order.OrderNo
+                                            </td>
+                                            <td>
+                                                @order.OrderDate.Value.ToShortDateString()
+                                            </td>
+                                            <td>
+                                                @order.OrderDueDate.Value.ToShortDateString()
+                                            </td>
+                                            <td>
+                                                @order.User?.EnFirstName @order.User?.EnSecondName @order.User?.EnThirdName @order.User?.EnFamilyName
+                                            </td>
+                                            <td>
+                                                @order.User?.Email
+                                            </td>
+                                            <td>
+                                                @order.User?.PatientPersonalInformation?.City?.Name
+                                            </td>
+                                            <td>
+                                                <label class="label label-danger mr-2 btn-rounded">@order.Template?.TemplateType?.Name</label>
+                                            </td>
+                                            <td>
+                                                @if (order.Status != null)
+                                                {
+                                                    <span class="label label-success btn-rounded">@order.Status.Name</span>
+                                                }
+
+                                            </td>
+                                            <td colspan="2">
+                                                <button type="button" class="btn btn-xs btn-warning UpdtOrdrBtn" value="@order.ID"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update</button>
+                                                <button type="button" class="btn btn-xs btn-success AttchOrdrBtn" value="@order.UserID"><i class="fa fa-paperclip" aria-hidden="true"></i> Attachment</button>
+                                            </td>
+                                        </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-info="Admission" href="#three">
+                                All Orders
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="three" class="panel-collapse collapse in">
+                        <div class="row" style="padding-top:3px; padding-bottom: 3px;">
+                            <div class="col-md-12 text-left search-block">
+                                <div class="input-group pull-right" id="adv-search">
+                                    <input type="text" data-info="397" name="detailSearch" id="detailsearch" class="form-control detailsearch" placeholder="Search Lookup..." autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                        @if (Model.AllOrders != null && Model.AllOrders.Count() > 0)
+                        {
+                            <div class="panel-body" id="AllOrderList">
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-info="Status" href="#two">
+                                Test Orders
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="two" class="panel-collapse collapse in">
+                        <div class="row" style="padding-top:3px; padding-bottom: 3px;">
+                            <div class="col-md-12 text-left search-block">
+                                <div class="input-group pull-right" id="adv-search">
+                                    <input type="text" data-info="100" name="detailSearch" id="detailsearch" class="form-control detailsearch" placeholder="Search Lookup..." autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                        @if (Model.TestOrders != null && Model.TestOrders.Count() > 0)
+                        {
+                            <div class="panel-body" id="TestOrderList">
+                                <table class="table table-hover table-bordered table-striped" id="relative-table">
+                                    <thead>
+                                        <tr class="">
+                                            <th>Order No</th>
+                                            <th>Order Date</th>
+                                            <th>Order DueDate</th>
+                                            <th>Client Name</th>
+                                            <th>Client Email</th>
+                                            <th>Client City</th>
+                                            <th>Test Type</th>
+                                            <th>Status</th>
+                                            <th colspan="2">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var order in Model.TestOrders)
+                                        {
+                                        <tr>
+                                            <td>
+                                                @order.OrderNo
+                                            </td>
+                                            <td>
+                                                @order.OrderDate.Value.ToShortDateString()
+                                            </td>
+                                            <td>
+                                                @order.OrderDueDate.Value.ToShortDateString()
+                                            </td>
+                                            <td>
+                                                @order.User?.EnFirstName @order.User?.EnSecondName @order.User?.EnThirdName @order.User?.EnFamilyName
+                                            </td>
+                                            <td>
+                                                @order.User?.Email
+                                            </td>
+                                            <td>
+                                                @order.User?.PatientPersonalInformation?.City?.Name
+                                            </td>
+                                            <td>
+                                                @foreach (var item in order.TestArrayStrings)
+                                                {
+                                                    <label class="label label-danger mr-2 btn-rounded">@item</label>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (order.Status != null)
+                                                {
+                                                    <span class="label label-success btn-rounded">@order.Status.Name</span>
+                                                }
+                                            </td>
+                                            <td colspan="2">
+                                                <button class="btn btn-xs btn-success adddTstBtn" value="@order.ID" data-catch="@order.ID"><i class="fa fa-pencil"></i> Add Test</button>
+                                                <button class="btn btn-xs btn-info addRsltBtn" value="@order.ID" data-catch="@order.ID"><i class="fa fa-star"></i> Add Result</button>
+                                                @*<button type="button" class="btn btn-xs btn-success AttchOrdrBtn" value="@order.UserID"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Add Test</button>
+            <button type="button" class="btn btn-xs btn-success AttchOrdrBtn" value="@order.UserID"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Add Result</button>*@
+                                            </td>
+                                        </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column" style="padding-left:10px; padding-right:20px">
+            <iframe src="/admin/dashboard/schedulerexp" frameborder="0" scrolling="no" onload="resizeIframe(this)" style='width: 100%;'></iframe>
+        </div>
+        @*<div class="column" style="padding-left:10px; padding-right:20px">
+                <div id="calender"></div>
+                <div id="myModal" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title"><span id="eventTitle"></span></h4>
+                            </div>
+                            <div class="modal-body">
+                                <button id="btnDelete" class="btn btn-default btn-sm pull-right">
+                                    <span class="glyphicon glyphicon-remove"></span> Remove
+                                </button>
+                                <button id="btnEdit" class="btn btn-default btn-sm pull-right" style="margin-right:5px;">
+                                    <span class="glyphicon glyphicon-pencil"></span> Edit
+                                </button>
+                                <p id="pDetails"></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="myModalSave" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Save Event</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="col-md-12 form-horizontal">
+                                    <input type="hidden" id="hdEventID" value="0" />
+                                    <div class="form-row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Client Name</label>
+                                                <select id="ddThemeColor" class="form-control">
+                                                    <option value="">Type</option>
+                                                    <option value="red">Appointment</option>
+                                                    <option value="red">Reminder</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Test Name</label>
+                                                <select id="ddThemeColor" class="form-control">
+                                                    <option value="">Type</option>
+                                                    <option value="red">Appointment</option>
+                                                    <option value="red">Reminder</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Subject</label>
+                                                <input type="text" id="txtSubject" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Gene Name</label>
+                                                <select id="ddThemeColor" class="form-control">
+                                                    <option value="">Type</option>
+                                                    <option value="red">Appointment</option>
+                                                    <option value="red">Reminder</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Start</label>
+                                                <div class="input-group date" id="dtp1">
+                                                    <input type="text" id="txtStart" class="form-control" />
+                                                    <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" hidden>
+                                            <div class="checkbox">
+                                                <label><input type="checkbox" id="chkIsFullDay" checked="checked" />  Is Full Day event</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group" id="divEndDate" style="display:none">
+                                                <label>End</label>
+                                                <div class="input-group date" id="dtp2">
+                                                    <input type="text" id="txtEnd" class="form-control" />
+                                                    <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Description</label>
+                                                <textarea id="txtDescription" rows="3" class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>
+                                                    Recurrence:
+                                                    <label class="switch">
+                                                        <input type="checkbox" checked>
+                                                        <span class="slider round"></span>
+                                                    </label>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="recurrenceDiv">
+                                        <div class="form-row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Pattern</label>
+                                                    <select id="ddThemeColor" class="form-control">
+                                                        <option value="">Type</option>
+                                                        <option value="red">Daily</option>
+                                                        <option value="red">Weekly</option>
+                                                        <option value="red">Monthly</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <span><label>End After</label> <input type="number" placeholder="Ocurrences" class="form-control" /></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Theme Color</label>
+                                                    <select id="ddThemeColor" class="form-control">
+                                                        <option value="">Default</option>
+                                                        <option value="red">Red</option>
+                                                        <option value="blue">Blue</option>
+                                                        <option value="black">Black</option>
+                                                        <option value="green">Green</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group" style="padding-top:10px">
+                                                    <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>*@
+    </div>
+    <div id="orderArea"></div>
+    <div class="modal fade" id="UpdtTestModal" tabindex="-1" role="dialog" aria-labelledby="UpdtTestModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div id="mdlcntDiv" class="modal-contentTst">
+            </div>
+        </div>
+    </div>
+    @*MODAL*@
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+
+            <div id="mdlcntrsltDiv" class="modal-content">
+
+            </div>
+        </div>
+    </div>
+    @*MODAL END*@
+</div>
+<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
+<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+
+@section Scripts{
+    <script>
+        function resizeIframe(obj) {
+            obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/chosen.jquery.js" integrity="sha256-TDtzz+WOGufaQuQzqpEnnxdJQW5xrU+pzjznwBtaWs4=" crossorigin="anonymous"></script>
+
+    <script>
+            var markUp;
+            function startLoader() {
+                $('body').append('<div class="prtm-loader-wrap"><div class="showbox"><div class="loader"><svg class="circular" viewBox="25 25 50 50"><circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/></svg></div></div></div>');
+            }
+
+            $(document).on('click', '#cancelBtn', function () {
+                document.getElementById("markUpDiv").innerHTML = markUp;
+            });
+
+        $(document).on('click', '#svTstDtBtn', function () {
+            var formdata = new FormData($('#fllwTstFormData').get(0));
+            $.ajax({
+                type: 'POST',
+                url: "/admin/followup/addtestdata",
+                data: formdata,
+                dataType: "text",
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    toastr.success("Test updated!");
+                    $(".modal-content").html("");
+                     $("#exampleModalCenter").modal('hide');
+                },
+                error: function (xhr, status) {
+                    toastr.error('Something went wrong');
+                }
+            });
+        });
+
+        $(document).on("click", ".updttTstsBtn", function () {
+            var orderId = $("#clntOrdrIdHdn").val();
+        
+        var formdata = new FormData($('#updtTstFrm').get(0));
+        formdata.append("ClientOrderViewModel.ClientOrder.ID", $("#clntOrdrIdHdn").val());
+        $.ajax({
+            type: 'POST',
+            url: "/admin/followup/addtest",
+            data: formdata,
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response == true) {
+                    toastr.success("Pending tests updated!")
+                    $(".modal-contentTst").html("");
+                    $('#UpdtTestModal').modal('hide');
+
+                }
+            },
+            error: function (xhr, status) {
+                toastr.error('Something went wrong');
+            }
+        });
+    });
+
+        $(document).on('change', '.addRsltdrpdwn', function () {
+        var slctd = $(this).val();
+        var ordrId = $("#clntOrdrIdHdnRslt").val();
+     
+        if (slctd == 0 || slctd == undefined || slctd == "")
+            return false;
+
+        $.ajax({
+            url: '/admin/followup/gettesttemp',
+            type: 'GET',
+            data: { orderId: ordrId, selectedVal: slctd },
+            success: function (response) {
+                $('#selectedTestArea').html(response);
+            },
+            error: function () {
+                toastr.error('Something went wrong');
+            }
+        });
+    });
+
+         $(document).on("click", ".adddTstBtn", function () {
+             var orderId = $(this).val();
+            $.ajax({
+                url: '/admin/followup/addtest',
+                type: 'GET',
+                data: { orderId: orderId },
+                success: function (response) {
+                     $(".modal-contentTst").html("");
+                    $(".modal-contentTst").html(response);
+                    $("#mdlcntDiv").append('<input id="clntOrdrIdHdn" value=' + orderId + ' type="hidden"/>');
+                    $(".tryMultiselect").chosen();
+                    $("#UpdtTestModal").modal().toggle();
+                },
+                error: function () {
+                    toastr.error('Something went wrong');
+                }
+            });
+        });
+
+   $(document).on("click", ".addRsltBtn", function () {
+            var orderId = $(this).val();
+            debugger
+            $.ajax({
+                url: '/admin/followup/addresult',
+                type: 'GET',
+                data: { orderId: orderId },
+                success: function (response) {
+                    $(".modal-content").html(response);
+                     $("#mdlcntrsltDiv").append('<input id="clntOrdrIdHdnRslt" value=' + orderId + ' type="hidden"/>');
+                    $("#exampleModalCenter").modal().toggle();
+                },
+                error: function () {
+                    toastr.error('Something went wrong');
+                }
+            });
+        });
+    
+        function updateOrderData() {
+            var formdata = new FormData($('form').get(0));
+            formdata.append("GeneTemplateId", $("#TestType").val());
+            $.ajax({
+                type: 'POST',
+                url: "/admin/clientorder/UpdateOrder",
+                data: formdata,
+                dataType: "text",
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    toastr.info('Record updated');
+                    $("#odrBtnDiv").hide();
+                    $("#dshbrdBtnDiv").show();
+                    $.ajax({
+                        url: '/admin/dashboard/index',
+                        type: 'GET',
+                        success: function (response) {
+                            document.open("text/html", "replace");
+                            document.write(response);
+                            startLoader();
+                            document.close();
+                            $('.prtm-loader-wrap').fadeOut(200);
+                        },
+                        error: function () {
+                            toastr.error('Something went wrong');
+                        }
+                    });
+                },
+                error: function (xhr, status) {
+                    toastr.error('Something went wrong');
+                }
+            });
+
+        }
+
+        $(document).on("click", ".AttchOrdrBtn", function () {
+            var userId = $(this).val();
+            debugger
+            $.ajax({
+                url: '/admin/clientOrder/Attachment',
+                type: 'GET',
+                data: { userID: userId },
+                success: function (response) {
+                    $(".modal-content").html(response);
+                    $("#exampleModalCenter").modal().toggle();
+                },
+                error: function () {
+                    toastr.error('Something went wrong');
+                }
+            });
+        });
+        function loadMultiSelect() {
+            $('.tryMultiselect').chosen();
+        }
+
+        $(document).on('keyup', '.detailsearch', function () {
+            var orderType = $(this).attr('data-info');
+            var searchKey = $(this).val();
+            $.ajax({
+                url: '/admin/dashboard/SearchOrders',
+                type: 'get',
+                data: {
+                    orderType: orderType,
+                    searchKey: searchKey
+                },
+                success: function (result) {
+                    if (orderType == 398)
+                        $("#pendingOrderList").html(result);
+                    else if (orderType == 397)
+                        $("#AllOrderList").html(result);
+                    else
+                        $("TestOrderList").html(result);
+                },
+                error: function () {
+
+                }
+            })
+        });
+
+            $(document).on('click', '.UpdtOrdrBtn', function () {
+                debugger
+            markUp = document.getElementById("markUpDiv").innerHTML;
+            var orderId = $(this).val();
+            $.ajax({
+                url: '/admin/clientOrder/updateOrder',
+                type: 'GET',
+                data: {
+                    orderId: orderId
+                },
+                success: function (result) {
+                    $("#mainDiv").hide();
+                    $('#orderArea').html(result);
+                    loadMultiSelect();
+                    $("#odrBtnDiv").show();
+                    $("#dshbrdBtnDiv").hide();
+                    document.getElementById("postUpdatebtn").addEventListener("click", function () {
+                        updateOrderData();
+                    });
+                },
+                error: function () {
+                    toastr.error("Something went wrong!");
+                }
+            });
+
+        });
+
+
+        //$(document).ready(function () {
+        //    var events = [];
+        //    var selectedEvent = null;
+        //    FetchEventAndRenderCalendar();
+        //    function FetchEventAndRenderCalendar() {
+        //        events = [];
+        //        $.ajax({
+        //            type: "GET",
+        //            url: "/Admin/Dashboard/GetEvents",
+        //            success: function (data) {
+        //                $.each(data.data, function (i, v) {
+        //                    console.log(v);
+        //                    debugger
+        //                    events.push({
+        //                        eventID: v.id,
+        //                        title: v.subject,
+        //                        description: v.description,
+        //                        start: moment(v.start),
+        //                        end: v.end != null ? moment(v.end) : null,
+        //                        color: v.themeColor,
+        //                        allDay: v.isFullDay
+        //                    });
+        //                    console.log(events);
+        //                })
+
+        //                GenerateCalender(events);
+        //            },
+        //            error: function (error) {
+        //                alert('failed');
+        //            }
+        //        })
+        //    }
+
+        //    function GenerateCalender(events) {
+        //        $('#calender').fullCalendar('destroy');
+        //        $('#calender').fullCalendar({
+        //            contentHeight: 400,
+        //            defaultDate: new Date(),
+        //            timeFormat: 'h(:mm)a',
+        //            header: {
+        //                left: 'prev,next today',
+        //                center: 'title',
+        //                right: 'month,basicWeek,basicDay,agenda'
+        //            },
+        //            eventLimit: true,
+        //            eventColor: '#378006',
+        //            events: events,
+        //            eventClick: function (calEvent, jsEvent, view) {
+        //                selectedEvent = calEvent;
+        //                $('#myModal #eventTitle').text(calEvent.title);
+        //                var $description = $('<div/>');
+        //                $description.append($('<p/>').html('<b>Start:</b>' + calEvent.start.format("DD-MMM-YYYY HH:mm a")));
+        //                if (calEvent.end != null) {
+        //                    $description.append($('<p/>').html('<b>End:</b>' + calEvent.end.format("DD-MMM-YYYY HH:mm a")));
+        //                }
+        //                $description.append($('<p/>').html('<b>Description:</b>' + calEvent.description));
+        //                $('#myModal #pDetails').empty().html($description);
+
+        //                $('#myModal').modal();
+        //            },
+        //            selectable: true,
+        //            select: function (start, end) {
+        //                selectedEvent = {
+        //                    eventID: 0,
+        //                    title: '',
+        //                    description: '',
+        //                    start: start,
+        //                    end: end,
+        //                    allDay: false,
+        //                    color: ''
+        //                };
+        //                openAddEditForm();
+        //                $('#calendar').fullCalendar('unselect');
+        //            },
+        //            editable: true,
+        //            eventDrop: function (event) {
+        //                var data = {
+        //                    EventID: event.eventID,
+        //                    Subject: event.title,
+        //                    Start: event.start.format('DD/MM/YYYY HH:mm A'),
+        //                    End: event.end != null ? event.end.format('DD/MM/YYYY HH:mm A') : null,
+        //                    Description: event.description,
+        //                    ThemeColor: event.color,
+        //                    IsFullDay: event.allDay
+        //                };
+        //                SaveEvent(data);
+        //            }
+        //        })
+        //    }
+
+        //    $('#btnEdit').click(function () {
+        //        //Open modal dialog for edit event
+        //        openAddEditForm();
+        //    })
+        //    $('#btnDelete').click(function () {
+        //        if (selectedEvent != null && confirm('Are you sure?')) {
+        //            $.ajax({
+        //                type: "POST",
+        //                url: '/Admin/Dashboard/DeleteEvent',
+        //                data: { 'eventID': selectedEvent.eventID },
+        //                success: function (data) {
+        //                    if (data.status) {
+        //                        //Refresh the calender
+        //                        FetchEventAndRenderCalendar();
+        //                        $('#myModal').modal('hide');
+        //                    }
+        //                },
+        //                error: function () {
+        //                    alert('Failed');
+        //                }
+        //            })
+        //        }
+        //    })
+
+        //    $('#dtp1,#dtp2').datetimepicker({
+        //        format: 'DD/MM/YYYY HH:mm A'
+        //    });
+
+        //    $('#chkIsFullDay').change(function () {
+        //        if ($(this).is(':checked')) {
+        //            $('#divEndDate').hide();
+        //        }
+        //        else {
+        //            $('#divEndDate').show();
+        //        }
+        //    });
+
+        //    function openAddEditForm() {
+        //        if (selectedEvent != null) {
+        //            $('#hdEventID').val(selectedEvent.eventID);
+        //            $('#txtSubject').val(selectedEvent.title);
+        //            $('#txtStart').val(selectedEvent.start.format('DD/MM/YYYY HH:mm A'));
+        //            $('#chkIsFullDay').prop("checked", selectedEvent.allDay || false);
+        //            $('#chkIsFullDay').change();
+        //            $('#txtEnd').val(selectedEvent.end != null ? selectedEvent.end.format('DD/MM/YYYY HH:mm A') : '');
+        //            $('#txtDescription').val(selectedEvent.description);
+        //            $('#ddThemeColor').val(selectedEvent.color);
+        //        }
+        //        $('#myModal').modal('hide');
+        //        $('#myModalSave').modal();
+        //    }
+
+        //    $('#btnSave').click(function () {
+        //        //Validation/
+        //        if ($('#txtSubject').val().trim() == "") {
+        //            alert('Subject required');
+        //            return;
+        //        }
+        //        if ($('#txtStart').val().trim() == "") {
+        //            alert('Start date required');
+        //            return;
+        //        }
+        //        if ($('#chkIsFullDay').is(':checked') == false && $('#txtEnd').val().trim() == "") {
+        //            alert('End date required');
+        //            return;
+        //        }
+        //        else {
+        //            var startDate = moment($('#txtStart').val(), "DD/MM/YYYY HH:mm A").toDate();
+        //            var endDate = moment($('#txtEnd').val(), "DD/MM/YYYY HH:mm A").toDate();
+        //            if (startDate > endDate) {
+        //                alert('Invalid end date');
+        //                return;
+        //            }
+        //        }
+
+        //        var data = {
+        //            ID: $('#hdEventID').val(),
+        //            Subject: $('#txtSubject').val().trim(),
+        //            Start: $('#txtStart').val().trim(),
+        //            End: $('#chkIsFullDay').is(':checked') ? null : $('#txtEnd').val().trim(),
+        //            Description: $('#txtDescription').val(),
+        //            ThemeColor: $('#ddThemeColor').val(),
+        //            IsFullDay: $('#chkIsFullDay').is(':checked')
+        //            }
+        //            SaveEvent(data);
+        //            // call function for submit data to the server
+        //        })
+
+        //        function SaveEvent(data) {
+        //            $.ajax({
+        //                type: "POST",
+        //                url: '/Admin/Dashboard/SaveEvent',
+        //                data: data,
+        //                success: function (data) {
+        //                    if (data.status) {
+        //                        //Refresh the calender
+        //                        FetchEventAndRenderCalendar();
+        //                        $('#myModalSave').modal('hide');
+        //                    }
+        //                },
+        //                error: function () {
+        //                    alert('Failed');
+        //                }
+        //            })
+        //        }
+        //    })
+        </script>
+}

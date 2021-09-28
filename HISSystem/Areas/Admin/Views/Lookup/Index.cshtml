@@ -1,0 +1,505 @@
+﻿@model List<Data.Models.Lookup>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<style>
+    .modal-dialog {
+        width: 520px;
+        margin: 30px auto;
+    }
+
+    .modal-body {
+        position: relative;
+        padding: 10px;
+        font-size: 14px;
+        max-height: 450px;
+        overflow: auto;
+        overflow-x: hidden;
+    }
+
+    .col-md-6 {
+        width: 50%;
+        padding-top: 10px;
+    }
+</style>
+<div class="prtm-content">
+    <div class="prtm-page-bar">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item text-capitalize"><h2>Lookup</h2></li>
+            <li class="breadcrumb-item"><a href="#">Settings</a></li>
+            <li class="breadcrumb-item"><a href="#">Lookup</a></li>
+            <li class="breadcrumb-item"><a href="#" class="active">Lookup List</a></li>
+        </ul>
+        <div class="row">
+            <div class="col-md-7 text-left search-block">
+                <div class="input-group pull-right" id="adv-search">
+                    <label for="search">Search Master Lookup:</label>
+                    <input type="text" name="search" id="search" class="form-control" placeholder="Search Master Lookup..." />
+                </div>
+            </div>
+            <div class="col-md-5"> <label for="search">&nbsp;</label> <br /><a href="#" data-info="addMasterLookup" class="btn btn-xs btn-warning addMasterLookup sbmtBtn"><i class="fa fa-plus" aria-hidden="true"></i> Add Master Lookup</a></div>
+        </div>
+    </div>
+
+    <div class="">
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-xs-12">
+                <div class="prtm-full-block p-10">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="row left-row-pad">
+                                <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+                                    <h5>All Lookups</h5>
+                                </div>
+                                <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+                                    <div id="lookupList" class="scroll_text">
+                                        @foreach (var item in ViewBag.Lookups)
+                                        {
+                                            <h4><a href="#" class="list-group-item " onclick="GetLookupForm(this,'@item')">@item</a></h4>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <input type="hidden" id="LKPType" name="Type" />
+                                <div id="DataLookup">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal" tabindex="-1" role="dialog" id="addModal">
+    <div class="modal-dialog" role="document">
+        <div id="addModalContent" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Lookup</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="addModalBody" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="addMasterModal">
+    <div class="modal-dialog" role="document">
+        <div id="masterModalContent" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Master Lookup</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="masterModalBody" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+
+        var globalGetType;
+        var globalCurrentType;
+
+        $(document).ajaxStart(function () {
+            $(".sbmtBtn").attr("disabled", true);
+        });
+
+        $(document).ajaxComplete(function () {
+            $(".sbmtBtn").attr("disabled", false);
+        });
+
+        function GetLookupForm(current, type) {
+            debugger
+		$(".list-group-item").removeClass('active')
+		$(current).addClass('active')
+            $("#LKPType").val(type);
+            globalGetType = undefined;
+            globalCurrentType = undefined;
+            debugger
+            globalGetType = type;
+            globalCurrentType = current;
+		$.ajax({
+			url: '/admin/lookup/GetLookupIndex?lookupName=' + type,
+			contentType: 'application/json; charse=utf-8',
+			type: 'get',
+			success: function (result) {
+				debugger
+                $("#DataLookup").empty();
+                $("#DataLookup").append(result);
+			},
+			error: function (xhr, status) {
+				alert(status)
+			}
+		});
+	}
+
+        $(document).on("click", ".addMasterLookup", function () {
+            debugger
+                var options = {
+                    "backdrop": "static",
+                    keyboard: true
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '/admin/lookup/AddMaster',
+                    success: function (data) {
+                        $('#masterModalBody').html(data);
+                        $('#addMasterModal').modal(options);
+                        $('#addMasterModal').modal('show');
+                    },
+                    error: function () {
+                        alert("Content load failed.");
+                    }
+                });
+        });
+
+
+        function getListAfterAdd(type) {
+            debugger
+		//$(".list-group-item").removeClass('active')
+		//$(current).addClass('active')
+            $("#LKPType").val(type);
+            debugger
+            //globalGetType = type;
+            //globalCurrentType = current;
+		$.ajax({
+			url: '/admin/lookup/GetLookupIndex?lookupName=' + type,
+			contentType: 'application/json; charse=utf-8',
+			type: 'get',
+			success: function (result) {
+				debugger
+                $("#DataLookup").empty();
+                $("#DataLookup").append(result);
+			},
+			error: function (xhr, status) {
+				alert(status)
+			}
+		});
+	}
+
+
+        //$(function () {
+        //    debugger
+        //    $("#addLookUp").on('submit', function (e) {
+        //        debugger
+        //        e.preventDefault()
+        //        var dataToPost = $(this).serialize()
+        //        $.post("/admin/lookup/add", dataToPost)
+        //            .done(function (response, status, jqxhr) {
+        //                debugger
+        //                getListAfterAdd(globalGetType);
+        //                debugger
+        //            })
+        //            .fail(function (jqxhr, status, error) {
+        //            })
+        //    })
+        //})
+
+        $(function () {
+            debugger
+            $("#editLookUp").on('submit', function (e) {
+                e.preventDefault()
+                var dataToPost = $(this).serialize()
+                console.log(dataToPost)
+                $.post("/admin/lookup/GetPatients", dataToPost)
+                    .done(function (response, status, jqxhr) {
+                    })
+                    .fail(function (jqxhr, status, error) {
+                    })
+            })
+        })
+
+        $(document).ready(function () {
+            debugger
+            $("body").on("click", '.page-number', function () {
+
+                var page = parseInt($(this).html());
+                  //alert(page);
+                var lookupName = $(this).closest('td').attr('id');
+                $.ajax({
+                    url: '/admin/lookup/_getlookupindex',
+                    context: $(this),
+                    data: { "lookupName": lookupName, "page": page },
+                    success: function (data) {
+                        debugger
+                         $("#DataLookup").empty();
+                         $("#DataLookup").append(data);
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            debugger
+            $('.collapse.in').prev('.panel-heading').addClass('active');
+            $('#accordion, #bs-collapse')
+                .on('show.bs.collapse', function (a) {
+                    var info = $(event.target).data('info');
+                    var str = $(event.target).data('info').toLowerCase();
+                    debugger
+                    $('#'+ str + 'List').load('/admin/lookup/getlookupindex?lookupName=' + info);
+                    $(a.target).closest('.panel-heading').addClass('active');
+                    $(a.target).prev('.panel-heading').addClass('active');
+                })
+                .on('hide.bs.collapse', function (a) {
+                    $(a.target).prev('.panel-heading').removeClass('active');
+                });
+        });
+
+
+        $(document).on("click", ".addLookup", function () {
+            debugger
+                var $buttonClicked = $(this);
+                var lookupName = $(this).data('info');
+                var options = {
+                    "backdrop": "static",
+                    keyboard: true
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '/admin/lookup/Add',
+                    data: { lookupName: lookupName },
+                    success: function (data) {
+                        $('#addModalBody').html(data);
+                        $('#addModal').modal(options);
+                        $('#addModal').modal('show');
+                    },
+                    error: function () {
+                        alert("Content load failed.");
+                    }
+                });
+        });
+
+        function SaveMasterLookup() {
+            debugger
+            var type = $("#Type").val();
+            var typeid = $("#TypeID").val();
+            var name = $("#Name").val();
+            var Lookup = {};
+            Lookup.Type = type;
+            Lookup.TypeID = typeid;
+            Lookup.Name = name;
+            $.ajax({
+                type: "POST",
+                url: '/admin/lookup/AddNewMaster',
+                data: { lookup: Lookup },
+                success: function (data) {
+                    $('#addMasterModal').modal('hide');
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+
+            });
+            $.ajax({
+                type: "GET",
+                url: '/admin/lookup/SearchMasterLookup',
+                data: { searchQuery: null },
+                success: function (data) {
+                    $("#lookupList").empty();
+                    $("#lookupList").append(data);
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+
+
+
+
+        function AddNewLookUp() {
+            debugger
+            var type = $("#Type").val();
+            var typeid = $("#TypeID").val();
+            var name = $("#Name").val();
+            var Lookup = {};
+            Lookup.Type = type;
+            Lookup.TypeID = typeid;
+            Lookup.Name = name;
+            $.ajax({
+                type: "POST",
+                url: '/admin/lookup/Add',
+                data: { lookup: Lookup },
+                success: function (data) {
+				debugger
+
+                    if (data == true) {
+                        closeModalAfterSave();
+                        debugger
+                        GetLookupForm(globalCurrentType, globalGetType);
+                    }
+			},
+			error: function (xhr, status) {
+				alert(status)
+			}
+
+            });
+
+        }
+
+
+
+        function EditLookUp() {
+            debugger
+            var ID = $("#ID").val();
+            var type = $("#Type").val();
+            var typeid = $("#TypeID").val();
+            var name = $("#Name").val();
+            var Lookup = {};
+            Lookup.ID = ID;
+            Lookup.Type = type;
+            Lookup.TypeID = typeid;
+            Lookup.Name = name;
+            $.ajax({
+                type: "POST",
+                url: '/admin/lookup/GetLookup',
+                data: { lookup: Lookup },
+                success: function (data) {
+				debugger
+
+                    if (data == true) {
+                        closeModalAfterSave();
+                        debugger
+                        GetLookupForm(globalCurrentType, globalGetType);
+                    }
+			},
+			error: function (xhr, status) {
+				alert(status)
+			}
+
+            });
+
+        }
+
+
+       function closeModalAfterSave() {
+            debugger
+             $('#addMasterModal').modal('hide');
+             $('#addModal').modal('hide');
+        };
+
+
+
+        $(document).ready(function () {
+            debugger
+            $('body').on('click', '.editLookup', function () {
+                var $buttonClicked = $(this);
+                var lookupID = $(this).attr('id');
+                var options = {
+                    "backdrop": "static",
+                    keyboard: true
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '/admin/lookup/GetLookup',
+                    data: { lookupID: lookupID },
+                    success: function (data) {
+                        $('#addModalBody').html(data);
+                        $('#addModal').modal(options);
+                        $('#addModal').modal('show');
+                    },
+                    error: function () {
+                        alert("Content load failed.");
+                    }
+                });
+            });
+        });
+        $("#search").on("keyup", function () {
+            debugger
+            var search = $(this).val();
+            $.ajax({
+                type: "GET",
+                url: '/admin/lookup/SearchMasterLookup',
+                data: { searchQuery: search },
+                success: function (data) {
+                    $("#lookupList").empty();
+                    $("#lookupList").append(data);
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        });
+
+
+        function getFloors() {
+            debugger
+            var url = '@Url.Content("~/")' + "Admin/Lookup/GetFloor";
+            var ddlsource = "#BuildingsList";
+            console.log($(ddlsource).children("option:selected").val());
+            debugger
+            $.getJSON(url, { BuildingID: $(ddlsource).children("option:selected").val() }, function (data) {
+                debugger
+                $("#ParentId").prop("disabled", false);
+                var items = '';
+                debugger
+                $('#ParentId').empty();
+                debugger
+                $.each(data, function (i, floor) {
+                    items += "<option value='" + floor.value + "'>" + floor.text + "</option>";
+                });
+                $('#ParentId').html(items);
+            });
+        }
+
+        $(document).on("keyup", ".detailsearch", function(){
+            debugger
+            var searchString = $(this).val();
+            //var lookupName = $(this).closest('div').find('a').attr('data-info');
+            var lookupName = $(this).attr('data-info');
+            var element = $(this);
+            debugger
+            $.ajax({
+                type: "GET",
+                url: '/admin/lookup/SearchLookupDetails',
+                data: { searchString: searchString, lookupName: lookupName },
+                success: function (data) {
+                $("#lookupDetailList").empty();
+                $("#lookupDetailList").append(data);
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        });
+
+        $(document).on("click", "#closeModal", function () {
+            debugger
+             $('#addMasterModal').modal('hide');
+             $('#addModal').modal('hide');
+        });
+        function CustomRemoteValidations() {
+            var Type = $("#Type").val();
+            $.ajax({
+                type: "GET",
+                url: '/admin/lookup/customvalidation',
+                data: { type: type },
+                success: function (data) {
+
+
+                }
+
+
+
+            });
+
+
+
+
+        }
+    </script>
+}

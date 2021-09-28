@@ -1,0 +1,241 @@
+﻿
+@model GeneticSystem.Areas.Admin.Models.EmailViewModel
+@{
+    ViewBag.Title = "SendEmail";
+}
+
+
+    <style>
+        .file-upload input[type='file'] {
+            display: none;
+        }
+
+        .rounded-lg {
+            border-radius: 1rem;
+        }
+
+        .custom-file-label.rounded-pill {
+            border-radius: 50rem;
+        }
+
+            .custom-file-label.rounded-pill::after {
+                border-radius: 0 50rem 50rem 0;
+            }
+    </style>
+<div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    @using (Html.BeginForm("Send", "Email", FormMethod.Post, new { enctype = "multipart/form-data", id = "createForm" }))
+    {
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <button type="button" onclick="SendEmail()" class="btn btn-primary add-btn">
+                <i class="fa fa-envelope" aria-hidden="true"></i>
+                Send
+            </button>
+            <button type="button" class="btn btn-info add-btn" onclick="NewEmail()">New</button>
+            <button type="button" class="btn btn-secondary add-btn" onclick="Refresh()">
+                <i class="fa fa-refresh" aria-hidden="true"></i>
+                Refresh
+            </button>
+            @*<input type="file" name="attachments" id="attachments" AllowMultiple="true">*@
+            <div class="col-md-4 col-lg-4">
+                <div id="ImgDiv" class="btn-group btn-group-justified mrgn-b-xs">
+                    <label for="fileUpload" class="file-upload btn btn-primary btn-block rounded-pill shadow">
+                        <i class="fa fa-upload mr-2"></i>Attachment
+                        <input id="fileUpload" name="file" type="file" multiple>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6">
+                    @Html.HiddenFor(model => model.TriggerType)
+                    @Html.HiddenFor(model => model.TargetID)
+
+
+                    <h4>To</h4>
+                    <div class="form-group">
+                        @Html.TextBoxFor(model => model.ToEmail, new { @class = "form-control", placeholder = "To email. . . " })
+                        @Html.ValidationMessageFor(model => model.ToEmail, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h4>From</h4>
+                    <div class="form-group">
+                        @Html.TextBoxFor(model => model.FromEmail, new { @class = "form-control", placeholder = "From email. . . ", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.FromEmail, "", new { @class = "text-danger" })
+                    </div>
+                    <h4>Alter Email</h4>
+                    <div class="form-group">
+                        @Html.TextBoxFor(model => model.AlterEmail, new { @class = "form-control", placeholder = "Alter email. . . " })
+                        @Html.ValidationMessageFor(model => model.AlterEmail, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <h4>Subject</h4>
+                    <div class="form-group">
+                        @Html.TextBoxFor(model => model.Subject, new { @class = "form-control", placeholder = "Subject . . ." })
+                        @Html.ValidationMessageFor(model => model.Subject, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <h4>Body</h4>
+                    <div class="form-group">
+                        @Html.TextAreaFor(model => model.Body, new { @class = "form-control", @rows = "20" })
+                        @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <ul id="attachment-list" datainfo='0'>
+
+            </ul>
+            @*<div class="row py-4">
+                <div class="col-lg-6 mx-auto">
+                    <p class="font-italic text-white text-center" id="test">The  uploaded file will be rendered below.</p>
+                    <div class="image-area mt-1"><p id="imageResult"  alt="" class="img-fluid rounded shadow-sm mx-auto d-block"></p></div>
+                </div>
+            </div>*@
+        </div>
+        <div class="modal-footer">
+            @*<button type="button" data-dismiss="modal" class="btn btn-outline-inverse">Cancel</button>
+            <button type="submit" class="btn btn-success popup-savebtn">Save</button>*@
+        </div>
+      
+    </div>
+    }
+</div>
+
+<script>
+     var files = [];
+    function SendEmail() {
+        var data = new FormData();
+       
+        data.append("TriggerType", $("#TriggerType").val());
+        data.append("TargetID", $("#TargetID").val());
+        data.append("FromEmail", $("#FromEmail").val());
+        data.append("ToEmail", $("#ToEmail").val());
+        data.append("AlterEmail", $("#AlterEmail").val());
+        data.append("Subject", $("#Subject").val());
+        data.append("Body", $("#Body").val());
+     //   alert(files)
+        $.each(files, function (i, val) {
+            data.append('File[' + i + ']', val);
+
+});
+       // formData.append('File[]', myFileInput.files[0], 'chris1.jpg');
+        //data.append("File",files));
+         for (var pair of data.entries()) {
+                console.log(pair[0] + ', ' + pair[1]);
+        }
+        $.ajax({
+            url: '/admin/email/send',
+            data: data,
+            type: 'Post',
+            processData: false, contentType: false,
+            success: function (result) {
+                if (result) {
+                    alert('Mail sent successfully !')
+                    $('#modalDiv').modal('hide');
+                    window.location.reload();
+                }
+            },
+            error: function (xhr, status) {
+                alert(status)
+            }
+        });
+    }
+
+    
+
+    $(document).ready(function () {
+        var url = window.location.href;
+        var value = url.substring(url.lastIndexOf('/') + 1);
+        if (value == "SendEmail") {
+            return false;
+        }
+        value = value.split('?')
+        if (value[1] == "Send=True") {
+            alert('Mail sent successfully !');
+            window.location.href = '/admin/email/SendEmail';
+        }
+    })
+
+    var subject = "";
+    var body = "";
+    function NewEmail() {
+        subject = $("#Subject").val();
+        body = $("#Body").val();
+
+        $("#Subject").val("");
+        $("#Body").val("");
+    }
+
+    function Refresh() {
+        $("#Subject").val(subject);
+        $("#Body").val(body);
+    }
+
+</script>
+<script>
+   
+    document.getElementById("fileUpload").addEventListener("change", function () {
+        debugger
+        //alert(event.target.files[0])
+        files.push(event.target.files[0]);
+        var index=$("#attachment-list").attr("datainfo");
+        $("#attachment-list").append("<li id='li_"+index+"'>" + event.target.files[0].name +"<button type='button' class='close' datainfo='li_"+index+"' dataindex='"+index+"' id='close-div' onclick='closediv1(this);'>×</button>"+ "</li>");
+        debugger
+       $("#attachment-list").attr("datainfo",parseInt(index)+1);
+       // readURL(fileUpload);
+    });
+    console.log(files);
+    function closediv1(i) {
+        debugger
+        var test = $(i).attr("datainfo");
+       // alert(test);
+        document.getElementById(test).remove();
+        var index = $(i).attr("dataindex");
+      //  alert(index);
+        files.splice(index, 1);
+         console.log(files);
+    }
+    //document.getElementById("ImgDiv").addEventListener("click", function () {
+    //    var ImageType = document.getElementById("ImageType");
+
+    //});
+
+    //document.getElementById("ImageType").addEventListener("change", function () {
+    //    var Input = document.getElementById("fileUpload");
+    //    var ImgId = this.options[this.selectedIndex].value;
+    //    if (ImgId == null || ImgId == 0) {
+    //        Input.disabled = true;
+    //        return false;
+    //    } else {
+    //        Input.disabled = false;
+    //    }
+    //});
+
+    ////function readURL(input) {
+    ////    debugger
+    ////    if (input.files && input.files[0]) {
+    ////        var reader = new FileReader();
+
+    ////        reader.onload = function (e) {
+                
+    ////            $('#imageResult').val(e.target.result);
+    ////              //  .attr('src', e.target.result);
+    ////        };
+    ////        reader.readAsDataURL(input.files[0]);
+    ////    }
+    ////}
+</script>
+
+
+<style>
+    textarea.form-control {
+        height: 250px;
+    }
+</style>

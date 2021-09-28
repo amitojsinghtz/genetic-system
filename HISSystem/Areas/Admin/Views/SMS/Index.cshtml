@@ -1,0 +1,176 @@
+﻿
+@model Data.Helpers.PagedData<Data.Models.SMS>
+@{
+    ViewData["Title"] = "SMS List";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<div class="prtm-content">
+
+    <div class="prtm-page-bar">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item text-capitalize"><h2>@ViewData["Title"]</h2></li>
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="#">Ui elements</a></li>
+            <li class="breadcrumb-item"><a href="#" class="active">SMS Template List</a></li>
+        </ul>
+    </div>
+    <div class="table-style">
+        <div class="row mrgn-b-sm">
+            <div class="col-md-5 col-lg-5">
+                <button onclick="addsms()" class="btn btn-xs btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> Add</button>
+                @*<div class="btn-group">
+                        <button data-toggle="dropdown" class="btn btn-xs btn-info dropdown-toggle" type="button"><i class="fa fa-share-square-o" aria-hidden="true"></i> Export <i class="fa fa-sort-desc" aria-hidden="true"></i> </button>
+                        <ul role="menu" class="dropdown-menu">
+                            <li onclick="fnExcelReport()"> <a href="javascript:;"> Xls Format </a> </li>
+                            <li id="pdfExport"> <a href="javascript:;"> PDF Format </a> </li>
+                        </ul>
+                    </div>*@
+            </div>
+
+            <div class="col-md-7 text-right search-block">
+                <div class="input-group pull-right" id="adv-search">
+                    <input type="text" name="search" id="search1" class="form-control" placeholder="Search..." onkeyup="getsmssearch(1);" />
+
+                </div>
+            </div>
+
+        </div>
+        <div class="prtm-block pos-relative">
+            <div class="prtm-block-content">
+                <div class="table-responsive">
+                    <div id="emailList" class="unseen">
+                        @{
+                            Html.RenderPartial("GetSMS");
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+
+    <div class="add-modal">
+        <div id="modalDiv" class="modal fade" role="dialog">
+
+        </div>
+    </div>
+
+
+    <!---End Model--->
+
+</div>
+
+<script>
+
+    function addsms() {
+        $.ajax({
+            url: '/admin/sms/add',
+            contentType: 'application/json; charse=utf-8',
+            type: 'get',
+            success: function (result) {
+                $('#modalDiv').html(result);
+                $('#modalDiv').modal('show');
+            },
+            error: function (xhr, status) {
+                alert(status)
+            }
+        });
+    }
+
+    function GetLogs(id, type) {
+        debugger
+        $.ajax({
+            url: '/admin/Log/Logs?id=' + id + "&type=" + type,
+            success: function (result) {
+                debugger
+                $('#modalDiv').html(result);
+                $('#modalDiv').modal('show');
+            },
+            error: function (xhr, status) {
+                alert(status)
+            }
+        });
+    }
+
+    function TriggerEmail() {
+        $.ajax({
+            url: '/admin/Email/TriggerEmail',
+            contentType: 'application/json; charse=utf-8',
+            type: 'get',
+            success: function (result) {
+                $('#modalDiv').html(result);
+                $('#modalDiv').modal('show');
+            },
+            error: function (xhr, status) {
+                alert(status)
+            }
+        });
+    }
+
+    function editSMS(id) {
+        $.ajax({
+            url: '/admin/sms/Update/' + id,
+            success: function (result) {
+                debugger
+                $('#modalDiv').html(result);
+                $('#modalDiv').modal('show');
+            },
+            error: function (xhr, status) {
+                alert(status)
+            }
+        });
+    }
+
+
+
+     function DeleteSMS(id) {
+
+            swal({
+                title: "Are you sure?",
+                text: "Are you sure you want to delete this record!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-warning",
+                confirmButtonText: "Yes, delete it!",
+                closeOnConfirm: false
+            },
+                function () {
+                    debugger
+                    //var id = $("#DeletedID").val();
+                    $.ajax({
+                        url: '/admin/SMS/delete?id=' + id,
+                        type: 'GET',
+                        success: function (data) {
+                            debugger
+                            swal("Deleted!", "Your imaginary file has been deleted.", "success");
+                            location.reload();
+                        },
+                        error: function () {
+                            debugger
+                            swal("Cancelled", "Something went wrong :)", "error");
+                        }
+                    });
+                });
+    }
+    function getsmssearch(i) {
+
+        var Page = i;
+        var searchstring = $("#search1").val();
+         $.ajax({
+                        url: '/admin/SMS/Getsms?page=' +Page+'&searchstring='+searchstring,
+                        type: 'GET',
+                        success: function (result) {
+                    $(".unseen").html(result)
+                },
+                error: function (xhr, status) {
+                    toastr.error('Something went wrong');
+                }
+               });
+
+
+
+
+    }
+</script>
+

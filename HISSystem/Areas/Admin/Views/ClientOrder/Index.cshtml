@@ -1,0 +1,746 @@
+﻿@model Data.Helpers.PagedData<Data.Models.ClientOrder>
+
+
+@{
+    ViewData["Title"] = "Order List";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+
+<style>
+    .file-upload input[type='file'] {
+        display: none;
+    }
+
+
+    .popup-result {
+        position: absolute;
+        width: 600px;
+        z-index: 1000;
+        top: 54px;
+    }
+
+
+    .quick-search-block {
+        border: 1px solid #eaebed;
+        background: #f4f5f7;
+        padding: 5px;
+    }
+</style>
+<div class="prtm-content">
+    <div class="prtm-page-bar">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item text-capitalize"><h2>@ViewData["Title"]</h2></li>
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="#">Ui elements</a></li>
+            <li class="breadcrumb-item"><a href="#" class="active">Order List</a></li>
+        </ul>
+    </div>
+    <div class="table-style">
+        <div class="row mrgn-b-sm">
+            <div class="col-md-8 col-lg-8">
+                <button class="btn btn-danger btn-xs cancelEvent" id="cancelOrderBtn" type="button"><i class="fa fa-times" aria-hidden="true"></i> Back </button>
+                <button class="btn btn-warning btn-xs sbmtBtn" id="addClientOrderBtn" type="button"><i class="fa fa-plus" aria-hidden="true"></i> New Order </button>
+                <button class="btn btn-success btn-xs" id="getPndOrdrBtn" type="button"><i class="fa fa-list" aria-hidden="true"></i> Pending Orders </button>
+                <button class="btn btn-success btn-xs" id="getAllOrdrBtn" type="button"> All Orders </button>
+                @*<button data-toggle="dropdown" class="btn btn-xs btn-info dropdown-toggle" type="button"><i class="fa fa-share-square-o" aria-hidden="true"></i> Export <i class="fa fa-sort-desc" aria-hidden="true"></i> </button>*@
+
+
+                <button name="button" value="Save" onclick="saveOrderFunction();" class="btn btn-xs btn-primary sbmtBtn" id="signupform"><i class="fa fa-check" aria-hidden="true"></i> Save </button>
+                <button name="submit" id="postUpdatebtn" value="Update" class="btn btn-xs btn-warning sbmtBtn"><i class="fa fa-check" aria-hidden="true"></i> Update </button>
+                <button name="submit" value="History" class="btn btn-xs btn-info" disabled id="postHistorybtn"><i class="fa fa-check" aria-hidden="true"></i> Update </button>
+                <label for="fileUpload" class="file-upload btn btn-xs btn-success sbmtBtn" id="fileUpldlbl">
+                    <i class="fa fa-upload mr-1"></i>Attachment
+                    <input id="fileUpload" name="file" type="file">
+                </label>
+            </div>
+        </div>
+        <div id="quickSearchBlock" class="row mrgn-b-sm">
+            <div class="col-md-12 col-lg-12">
+                <h5>Quick Search</h5>
+                <div class="quick-search-block">
+                    <div class="row">
+                        <div class="col-md-10 col-lg-10">
+                            <div class="row">
+                                <div class="col-md-2 col-lg-2">
+                                    Order No:
+                                    <input type="text" id="orderNo" name="order-no" class="form-control" onkeyup="patientSearch()" />
+                                </div>
+                                <div class="col-md-2 col-lg-2">
+                                    Order ID No:
+                                    <input type="text" id="id-no" name="id-no" class="form-control" autocomplete="off" onkeyup="patientSearch()" />
+                                </div>
+                                <div class="col-md-2 col-lg-2">
+                                    Client Name:
+                                    <input type="text" id="patientName" name="patient-name" class="form-control" autocomplete="off" onkeyup="patientSearch()" />
+                                </div>
+                                <div class="col-md-2 col-lg-2">
+                                    Client Mobile:
+                                    <input type="text" id="patientMobile" name="patient-mobile" class="form-control" autocomplete="off" onkeyup="patientSearch()" />
+                                </div>
+                                <div class="col-md-2 col-lg-2">
+                                    Client City:
+                                    <input type="text" id="patientCity" name="patient-city" class="form-control" autocomplete="off" onkeyup="patientSearch()" />
+                                </div>
+                                <div class="col-md-2 col-lg-2">
+                                    Birth Date:
+                                    <input type="text" name="birth-date" class="form-control datepicker" autocomplete="off" onchange="patientSearch()" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="prtm-block pos-relative">
+            <div class="prtm-block-content">
+                <div class="table-responsive">
+                    <div id="orderArea" class="unseen">
+                        @{
+                            await Html.RenderPartialAsync("_Index");
+                        }
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="orderPdf" hidden>
+</div>
+
+@*MODAL*@
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+@*MODAL END*@
+
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/chosen.jquery.js" integrity="sha256-TDtzz+WOGufaQuQzqpEnnxdJQW5xrU+pzjznwBtaWs4=" crossorigin="anonymous"></script>
+
+    <script>
+        $(document).on("click", ".OrderPrntOut", function () {
+            var orderId = $(this).val();
+            $.ajax({
+                url: '/admin/clientOrder/OrderPDF',
+                type: 'GET',
+                data: {
+                    orderId: orderId
+                },
+                success: function (result) {
+                    $("#orderPdf").html(result);
+                    printDiv();
+                },
+                error: function () {
+                    toastr.error("Something went wrong!");
+                }
+            });
+        });
+
+        function printDiv() {
+            var divToPrint = document.getElementById('orderPdf');
+            var newWin = window.open('', 'Print-Window');
+            newWin.document.open();
+            newWin.document.write('<html><body onload="window.print()">' + divToPrint.innerHTML + '</body></html>');
+            newWin.document.close();
+            setTimeout(function () { newWin.close(); }, 10);
+        }
+
+        $(document).on('change', '.rsltDrp', function () {
+            var chkID = $(this).attr("data-extid");
+            parentRow = event.target.closest('tr');
+            var selectedVal = $(this).val();
+            //data - drpOn
+            $(parentRow).find('textarea[data-drp="' + chkID + '"]').each(function (index, value) {
+                if ($(value).attr("data-drpOn") == selectedVal) {
+                    $(value).val($(value).attr("data-info"));
+                } else {
+                    $(value).val("");
+                }
+                //var tempAttr = $(value).attr("data-drp");
+                //var tempVal = $(value).attr("data-drpOn ");
+                //if (chkName == tempAttr) {
+                //    var depOn = $(value).attr("data-on");
+                //    if (depOn == "yes") {
+                //        if (chkBool)
+                //            $(value).val(tempVal);
+                //        else
+                //            $(value).val('');
+                //    }
+                //    if (depOn == "no") {
+                //        if (chkBool)
+                //            $(value).val('');
+                //        else
+                //            $(value).val(tempVal);
+                //    }
+                //}
+                //});
+            });
+
+        });
+
+        $(document).on('change', '.toUpdt', function () {
+
+            var chkName = $(this).attr("data-chk");
+            parentRow = event.target.closest('tr');
+            var chkBool = $(this).prop("checked");
+
+            if (chkBool) {
+                $(this).val('True');
+            } else {
+                $(this).val('False');
+            }
+
+        });
+
+        $(document).on('change', '.chkBx', function () {
+
+            var chkName = $(this).attr("data-chk");
+            parentRow = event.target.closest('tr');
+            var chkBool = $(this).prop("checked");
+
+            if (chkBool) {
+                $(this).val('True');
+            } else {
+                $(this).val('False');
+            }
+
+            $(parentRow).find('textarea').each(function (index, value) {
+                var tempAttr = $(value).attr("data-chk");
+                var tempVal = $(value).attr("data-info");
+                if (chkName == tempAttr) {
+                    var depOn = $(value).attr("data-on");
+                    if (depOn == "True") {
+                        if (chkBool)
+                            $(value).val(tempVal);
+                        else
+                            $(value).val('');
+                    }
+                    if (depOn == "False") {
+                        if (chkBool)
+                            $(value).val('');
+                        else
+                            $(value).val(tempVal);
+                    }
+                }
+            });
+        });
+
+        $(document).ajaxStart(function () {
+            $(".sbmtBtn").attr("disabled", true);
+        });
+
+        $(document).ajaxComplete(function () {
+            $(".sbmtBtn").attr("disabled", false);
+        });
+
+
+        $(document).on("keyup", "#searchPatient", function () {
+            var id = $(this).val();
+            $.ajax({
+                url: '/admin/patient/SearchForOrder',
+                type: 'get',
+                data: {
+                    ID: id
+                },
+                success: function (result) {
+                    $("#searchwithid").show();
+                    $("#searchwithid").empty();
+                    $("#searchwithid").append(result);
+                    var rowCount = $('#myTable >tbody >tr').length;
+                    if (rowCount == 0) {
+                        $("#searchwithid").hide();
+                    }
+                    $('body').find('#ID').focus();
+                }
+            });
+            $('#ID').focus();
+        })
+
+        $(document).ready(function () {
+            $("#getPndOrdrBtn").show();
+            $("#getAllOrdrBtn").hide();
+            $("#postUpdatebtn").hide();
+            $("#signupform").hide();
+            $("#postHistorybtn").hide();
+            $("#fileUpldlbl").hide();
+            $("#cancelOrderBtn").hide();
+        });
+
+        $(document).on("click", "#getPndOrdrBtn", function () {
+            $.ajax({
+                url: '/admin/clientOrder/GetPendingOrders',
+                type: 'get',
+                success: function (result) {
+                    $("#orderArea").empty();
+                    $("#orderArea").append(result);
+                    $("#getAllOrdrBtn").show();
+                    $("#getPndOrdrBtn").hide();
+                }
+            });
+        })
+
+        $(document).on("click", "#getAllOrdrBtn", function () {
+            $.ajax({
+                url: '/admin/clientOrder/GetAllOrders',
+                type: 'get',
+                success: function (result) {
+                    $("#orderArea").empty();
+                    $("#orderArea").append(result);
+                    $("#getAllOrdrBtn").hide();
+                    $("#getPndOrdrBtn").show();
+                }
+            });
+        })
+
+        $(document).on('click', '.selectPtntOrder', function () {
+            var user = $(this).val();
+            $("#searchwithid").hide();
+            $.ajax({
+                url: "/admin/patientorder/getpatientDetails",
+                type: "get",
+                data: { 'Id': user },
+                success: function (data) {
+                    $("#clientOrder_ClientOrder_UserID").val(data.id);
+                    if (data.registerationNo != null)
+                        $("#clientOrder_ClientOrder_User_RegisterationNo").val(data.registerationNo);
+                    else
+                        $("#clientOrder_ClientOrder_User_RegisterationNo").val("");
+                    if (data.address != null)
+                        $("#clientOrder_ClientOrder_User_Address").val(data.address);
+                    else
+                        $("#clientOrder_ClientOrder_User_Address").val("");
+                    if (data.mobile != null)
+                        $("#clientOrder_ClientOrder_User_Mobile").val(data.mobile);
+                    else
+                        $("#clientOrder_ClientOrder_User_Mobile").val("");
+                    if (data.patientPersonalInformation != null) {
+                        $("#clientOrder_ClientOrder_User_PatientPersonalInformation_IdentificationTypeID").val(data.patientPersonalInformation.identificationTypeID);
+                        $("#clientOrder_ClientOrder_User_PatientPersonalInformation_DateOfBirth").val(data.patientPersonalInformation.dateOfBirth);
+                        $("#clientOrder_ClientOrder_User_PatientPersonalInformation_BloodGroup_Name").val(data.patientPersonalInformation.bloodGroup.name);
+                        $("#clientOrder_ClientOrder_User_PatientPersonalInformation_City_Name").val(data.patientPersonalInformation.city.name);
+                    } else {
+                        $("#clientOrder_ClientOrder_User_PatientPersonalInformation_IdentificationTypeID").val("");
+                        $("#clientOrder_ClientOrder_User_PatientPersonalInformation_DateOfBirth").val("");
+                        $("#clientOrder_ClientOrder_User_PatientPersonalInformation_BloodGroup_Name").val("");
+                        $("#clientOrder_ClientOrder_User_PatientPersonalInformation_City_Name").val("");
+                    }
+                },
+                error: function () {
+
+                }
+            });
+        });
+
+        var ListHtml;
+
+
+        $(document).on("click", ".DltOrdrBtn", function () {
+            var orderId = $(this).val();
+            var target = event.target.parentElement.parentElement.style.display = 'none';
+            $.ajax({
+                url: '/admin/clientOrder/deleteOrder',
+                type: 'GET',
+                data: { orderId: orderId },
+                success: function (result) {
+                    toastr.success('Record deleted!');
+                    $('#orderArea').html(result);
+                }
+            });
+        });
+
+        $(document).on("click", ".AttchOrdrBtn", function () {
+            var userId = $(this).val();
+            debugger
+            $.ajax({
+                url: '/admin/clientOrder/Attachment',
+                type: 'GET',
+                data: { userID: userId },
+                success: function (response) {
+                    $(".modal-content").html(response);
+                    $("#exampleModalCenter").modal().toggle();
+                },
+                error: function () {
+                    toastr.error('Something went wrong');
+                }
+            });
+        });
+
+        function GetAttachment(id) {
+            $.ajax({
+                url: '/admin/user/Attachment?id=' + id + '&tableName=user',
+                type: 'GET',
+                success: function (data) {
+                    $(".modal-content").html(data);
+                    $("#exampleModalCenter").modal().toggle();
+                },
+                error: function () {
+                    toastr.error('Something went wrong');
+                }
+            });
+        }
+
+
+        $(document).on("click", ".UpdtOrdrBtn", function () {
+            ListHtml = document.getElementById('orderArea').innerHTML;
+            var orderId = $(this).val();
+            $.ajax({
+                url: '/admin/clientOrder/updateOrder',
+                type: 'GET',
+                data: {
+                    orderId: orderId
+                },
+                success: function (result) {
+                    $('#orderArea').html(result);
+                    loadMultiSelect();
+                    $("#postUpdatebtn").show();
+                    $("#getPndOrdrBtn").hide();
+                    $("#signupform").hide();
+                    $("#addClientOrderBtn").hide();
+                    $("#cancelOrderBtn").show();
+                    document.getElementById("quickSearchBlock").hidden = true;
+                    document.getElementById("postUpdatebtn").addEventListener("click", function () {
+                        updateOrderData();
+                    });
+                },
+                error: function () {
+                    toastr.error("Something went wrong!");
+                }
+            });
+        });
+
+
+        $(document).on("click", ".cancelEvent", function () {
+            document.getElementById('orderArea').innerHTML = ListHtml;
+            $("#cancelOrderBtn").hide();
+            $("#addClientOrderBtn").show();
+            $("#postUpdatebtn").hide();
+            $("#signupform").hide();
+            $("#getPndOrdrBtn").show();
+            $("#fileUpldlbl").hide();
+            document.getElementById("quickSearchBlock").hidden = false;
+            showHide();
+        });
+
+        document.getElementById("addClientOrderBtn").addEventListener("click", function () {
+            orderAreaData = document.getElementById("orderArea").innerHTML;
+            addOrderData();
+        });
+
+
+
+        function updateOrderData() {
+            var formdata = new FormData($('#encounterForm').get(0));
+            formdata.append("GeneTemplateId", $("#clientOrder_ClientOrder_TemplateID").val());
+            for (var pair of formdata.entries()) {
+                var el = document.getElementsByName(pair[0])[0];
+                var elVal = $(el).val();
+
+                if (elVal == "" || elVal == null) {
+                    if ($(el).attr("data-info")) {
+                        var infoVal = $(el).attr("data-info");
+                        formdata.set(pair[0], infoVal);
+                    }
+                }
+
+            }
+            
+            $.ajax({
+                type: 'POST',
+                url: "/admin/clientorder/UpdateOrder",
+                data: formdata,
+                dataType: "text",
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    toastr.info('Record saved');
+                    document.getElementById('orderArea').innerHTML = response;
+                    $("#postUpdatebtn").hide();
+                },
+                error: function (xhr, status) {
+                    toastr.error('Something went wrong');
+                }
+            });
+        }
+
+        function resetOrderArea() {
+            document.getElementById("orderArea").innerHTML = orderAreaData;
+        }
+
+        function addOrderData() {
+            ListHtml = document.getElementById('orderArea').innerHTML;
+            $.ajax({
+                type: "GET",
+                url: '/admin/clientorder/addOrder',
+                success: function (result) {
+                    $('#orderArea').html(result);
+                    loadMultiSelect();
+                    document.getElementById("quickSearchBlock").hidden = true;
+                    $("#addClientOrderBtn").hide();
+                    $("#getAllOrdrBtn").hide();
+                    $("#getPndOrdrBtn").hide();
+                    $(".dropdown-toggle").hide();
+                    $("#cancelOrderBtn").show();
+                    $("#signupform").show();
+                    $("#postHistorybtn").hide();
+                    $("#fileUpldlbl").show();
+
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+        function loadMultiSelect() {
+            $('.tryMultiselect').chosen();
+        }
+
+        function GetTemplate() {
+            var testtype = $("#clientOrder_ClientOrder_TemplateID").val();
+            $.ajax({
+                url: '/admin/clientOrder/GetTemplateData',
+                type: 'get',
+                data: {
+                    type: testtype
+                },
+                success: function (result) {
+                    $("#setTemplate").html(result);
+                    $('.tryMultiselect').chosen();
+                }
+            });
+        }
+
+        function test() {
+            var user = $("#clientOrder_ClientOrder_UserID").val();
+            $.ajax({
+                url: "/admin/patientorder/getpatientDetails",
+                type: "get",
+                dataType: "json",
+                data: { 'Id': user },
+                success: function (data) {
+                    if (data.RegisterationNo != null)
+                        $("#clientOrder_ClientOrder_User_RegisterationNo").val(data.RegisterationNo);
+                    else
+                        $("#clientOrder_ClientOrder_User_RegisterationNo").val("");
+                    if (data.Address != null)
+                        $("#clientOrder_ClientOrder_User_Address").val(data.Address);
+                    else
+                        $("#clientOrder_ClientOrder_User_Address").val("");
+                    if (data.Mobile != null)
+                        $("#clientOrder_ClientOrder_User_Mobile").val(data.Mobile);
+                    else
+                        $("#clientOrder_ClientOrder_User_Mobile").val("");
+                    if (data.PatientPersonalInformation != null) {
+                        $("#clientOrder_ClientOrder_User_PatientPersonalInformation_IdentificationTypeID").val(data.PatientPersonalInformation.IdentificationTypeID);
+                        $("#clientOrder_ClientOrder_User_PatientPersonalInformation_DateOfBirth").val(data.PatientPersonalInformation.DateOfBirth);
+                        if (data.PatientPersonalInformation.BloodGroup != null) {
+                            $("#clientOrder_ClientOrder_User_PatientPersonalInformation_BloodGroup_Name").val(data.PatientPersonalInformation.BloodGroup.Name);
+                        }
+                        if (data.PatientPersonalInformation.City != null) {
+                            $("#clientOrder_ClientOrder_User_PatientPersonalInformation_City_Name").val(data.PatientPersonalInformation.City.Name);
+                        }
+                    } else {
+                        $("#clientOrder_ClientOrder_User_PatientPersonalInformation_IdentificationTypeID").val("");
+                        $("#clientOrder_ClientOrder_User_PatientPersonalInformation_DateOfBirth").val("");
+                        $("#clientOrder_ClientOrder_User_PatientPersonalInformation_BloodGroup_Name").val("");
+                        $("#clientOrder_ClientOrder_User_PatientPersonalInformation_City_Name").val("");
+                    }
+                },
+                error: function (jqxhr, status, error) {
+                    debugger
+                    alert()
+                }
+            });
+        }
+
+        function saveOrderFunction() {
+            var formdata = new FormData($('form').get(0));
+            formdata.append("GeneTemplateId", $("#TestType").val());
+            $("#signupform").prop("disabled", true);
+
+            for (var pair of formdata.entries()) {
+                var el = document.getElementsByName(pair[0])[0];
+                var elVal = $(el).val();
+
+                if (elVal == "" || elVal == null) {
+                    if ($(el).attr("data-info")) {
+                        var infoVal = $(el).attr("data-info"); 
+                        formdata.set(pair[0], infoVal);
+                    }
+                }
+                
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "/admin/clientorder/AddOrder",
+                data: formdata,
+                dataType: "text",
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    toastr.info('Record saved');
+                    $("#orderArea").html(response);
+                    document.getElementById("quickSearchBlock").hidden = false;
+                    $("#addClientOrderBtn").show();
+                    $("#cancelOrderBtn").hide();
+                    $("#signupform").hide();
+                    $("#signupform").prop("disabled", false);
+                },
+                error: function (xhr, status) {
+                    $("#signupform").prop("disabled", false);
+                    toastr.error('Something went wrong');
+                }
+            });
+        }
+
+
+
+        $('.datepicker').datepicker({
+            format: "mm-dd-yyyy",
+            autoclose: true,
+        }).on('changeDate', function (ev) {
+            $(this).datepicker('hide');
+
+        }).keydown(function (event) {
+            if (event.which == 9)
+                $('.datepicker').datepicker("hide");
+
+        });
+
+
+        $(document).ready(function () {
+            $("body").on("click", '.page-number', function () {
+                var page = parseInt($(this).html());
+                debugger
+                $.ajax({
+                    url: '/admin/clientorder/getOrders',
+                    data: { "page": page },
+                    success: function (data) {
+                        $("#orderArea").html(data);
+                    },
+                    error: function (xhr, status) {
+                        toastr.error('Something went wrong');
+                    }
+                });
+            });
+        });
+
+
+        function patientSearch() {
+
+            var model = {
+                RegistrationNo: 0,
+                OrderNo: $('input[name="order-no"]').val(),
+                ID: $('input[name="id-no"]').val(),
+                PatientName: $('input[name="patient-name"]').val(),
+                PatientMobile: $('#patientMobile').val(),
+                PatientCity: $('#patientCity').val(),
+                BirthDate: $('input[name="birth-date"]').val(),
+            }
+
+            $.ajax({
+                url: '/admin/clientorder/searchorder',
+                type: 'POST',
+                data: model,
+                success: function (result) {
+                    $(".unseen").html(result)
+                },
+                error: function (xhr, status) {
+                    toastr.error('Something went wrong');
+                }
+            });
+
+        };
+
+
+        $("body").on("click", "#pdfExport", function () {
+            html2canvas($('#patientTbl')[0], {
+                onrendered: function (canvas) {
+                    var data = canvas.toDataURL();
+                    var docDefinition = {
+                        content: [{
+                            image: data,
+                            width: 500
+                        }]
+                    };
+                    pdfMake.createPdf(docDefinition).download("Table.pdf");
+                }
+            });
+        });
+
+        function fnExcelReport() {
+            var tab_text = "<table border='2px'><tr bgcolor='#87AFC6'>";
+            var textRange; var j = 0;
+            tab = document.getElementById('patientTbl'); // id of table
+            $("#hiddenTable").html(tab);
+            console.log($("#hiddenTable").html());
+            debugger
+
+            for (j = 0; j < tab.rows.length; j++) {
+                tab_text = tab_text + tab.rows[j].innerHTML + "</tr>";
+            }
+
+            tab_text = tab_text + "</table>";
+            tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+            tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
+            tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf("MSIE ");
+
+            if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+            {
+                txtArea1.document.open("txt/html", "replace");
+                txtArea1.document.write(tab_text);
+                txtArea1.document.close();
+                txtArea1.focus();
+                sa = txtArea1.document.execCommand("SaveAs", true, "Patients.xls");
+            }
+            else {
+                sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+            }
+            return (sa);
+        }
+
+
+
+
+                //function showHide() {
+
+
+                //        $("#addClientOrderBtn").show();
+                //            $("#cancelOrderBtn").hide();
+                //    var signupform = document.getElementById("signupform");
+                //    if (signupform.style.display === "none") {
+                //        signupform.style.display = "block";
+                //    } else {
+                //        signupform.style.display = "none";
+                //    }
+
+                //    var postUpdatebtn = document.getElementById("postUpdatebtn");
+                //    if (postUpdatebtn.style.display === "none") {
+                //        postUpdatebtn.style.display = "block";
+                //    } else {
+                //        postUpdatebtn.style.display = "none";
+                //    }
+
+                //    var postHistorybtn = document.getElementById("postHistorybtn");
+                //    if (postHistorybtn.style.display === "none") {
+                //        postHistorybtn.style.display = "block";
+                //    } else {
+                //        postHistorybtn.style.display = "none";
+                //    }
+
+                //}
+
+    </script>
+}
+

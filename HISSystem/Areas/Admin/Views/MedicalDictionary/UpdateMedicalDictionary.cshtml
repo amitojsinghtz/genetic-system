@@ -1,0 +1,294 @@
+﻿@model Data.Models.MedicalDictionary
+@{
+    ViewData["Title"] = "Update Medical Dictionary";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+
+<style>
+    .location {
+        width: 400px;
+        height: 200px;
+        padding: 50px;
+        border: 1px solid silver;
+    }
+
+    #map-canvas {
+        height: 300px;
+        width: 600px;
+        background-color: #CCC;
+    }
+</style>
+
+<form>
+    <div class="prtm-content">
+        <div class="prtm-page-bar">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item text-capitalize"><h2>@ViewData["Title"]</h2></li>
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="#">Ui elements</a></li>
+                <li class="breadcrumb-item"><a href="#" class="active"> New Patient</a></li>
+            </ul>
+        </div>
+        <div class="row mrgn-b-sm">
+            <div class="col-md-5 col-lg-5">
+                <input type="button" name="submit" value="Save" class="btn btn-xs btn-primary sbmtBtn" onclick="saveOrderFunction();" />
+                <input type="button" name="Update" value="Update" class="btn btn-xs btn-warning sbmtBtn" disabled />
+                <input type="button" name="History" value="History" class="btn btn-xs btn-info" />
+            </div>
+        </div>
+
+        <div class="row mrgn-b-sm">
+            <div class="col-md-12 col-lg-12">
+                <div class="row">
+                    <div class="col-md-10 col-lg-10">
+                        <div class="row">
+                            <div class="col-md-2 col-lg-2">
+                                Type:
+                                @Html.DropDownListFor(m => m.TypeID, new SelectList(ViewBag.Types, "ID", "Name"), "Select Types", new { @class = "form-control dropdown" })
+                            </div>
+                            <div class="col-md-2 col-lg-2">
+                                En Name:
+                                @Html.TextBoxFor(m => m.EnName, null, new { @Class = "form-control", autocomplete = "true", required = "required" })
+                            </div>
+                            <div class="col-md-2 col-lg-2">
+                                Ar Name:
+                                @Html.TextBoxFor(m => m.ArName, null, new { @Class = "form-control", autocomplete = "true", required = "required" })
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8 col-lg-2">
+                                    <input type="file" name="file" multiple onchange="show(this,1)" style="display:none;" id="fileimage" />
+                                    <div id="display-img" class="img-div">
+                                        @*@Html.HiddenFor(m=>m.ImageString)
+                                        @Html.HiddenFor(m=>m.ImagePath)*@
+                                        @if (Model.ImageString != null)
+                                        {
+                                            <img src="@Model.ImageString" alt="Image" id="user_img" />
+                                        }
+                                        else
+                                        {
+                                            <img src="~/assets/img/avatar.png" alt="Image" id="user_img" />
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="prtm-page-bar">
+            <div class="form-style">
+                <div class="row mrgn-b-sm">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
+                            <div>
+                                <div class="line-slide-tab">
+                                    <ul class="nav nav-tabs">
+                                        <li class="active"> <a data-toggle="tab" href="#tab-26" aria-expanded="false"><i class="fa fa-address-card" aria-hidden="true"></i> Info</a> </li>
+                                    </ul>
+                                    <div class="tab-content pad-all-lg">
+                                        <div id="tab-26" class=" row tab-pane fade in active">
+                                            <div class="col-md-12 col-lg-12">
+                                                <div class="row">
+                                                    <div class="row mrgn-b-xs">
+                                                        <div class="col-md-4">
+                                                            <div class="col-md-10">
+                                                                <div class="form-group">
+                                                                    @Html.HiddenFor(m => m.ID)
+                                                                    @Html.HiddenFor(m=> m.ImagePath)
+                                                                    <label for="Type">Telephone</label>
+                                                                    @Html.TextBoxFor(m => m.Telephone, null, new { @Class = "form-control" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-10">
+                                                                <div class="form-group">
+                                                                    <label for="Type">Telephone 2</label>
+                                                                    @Html.TextBoxFor(m => m.Telephone2, null, new { @Class = "form-control" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-10">
+                                                                <div class="form-group">
+                                                                    <label for="Type">Mobile</label>
+                                                                    @Html.TextBoxFor(m => m.Mobile, null, new { @Class = "form-control" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-10">
+                                                                <div class="form-group">
+                                                                    <label for="Type">Mobile 2</label>
+                                                                    @Html.TextBoxFor(m => m.Mobile2, null, new { @Class = "form-control" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-10">
+                                                                <div class="form-group">
+                                                                    <label for="Type">Email</label>
+                                                                    @Html.TextBoxFor(m => m.Email, null, new { @Class = "form-control" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-10">
+                                                                <div class="form-group">
+                                                                    <label for="Type">City</label>
+                                                                    @Html.DropDownListFor(m => m.CityID, new SelectList(ViewBag.City, "ID", "Name"), "Select Types", new { @class = "form-control dropdown" })
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-10">
+                                                                <div class="form-group">
+                                                                    <label for="Type">Address</label>
+                                                                    @Html.TextBoxFor(m => m.Address, null, new { @Class = "form-control" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-10">
+                                                                <div class="form-group">
+                                                                    <label for="Type">Specialty</label>
+                                                                    <div>
+                                                                        @Html.ListBoxFor(m => m.Specialty, new MultiSelectList(ViewBag.Specialty, "ID", "Name"), htmlAttributes: new { @class = "selectpicker tryMultiselect form-control", multiple = "multiple" })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-10">
+                                                                <div class="form-group">
+                                                                    <label for="Type">Class</label>
+                                                                    @Html.DropDownListFor(m => m.ClassID, new SelectList(ViewBag.Class, "ID", "Name"), "Select Class", new { @class = "form-control dropdown" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <h5>Location</h5>
+                                                            <div class="col-md-6">
+                                                                <label for="Type">Latitude</label>
+                                                                @Html.TextBoxFor(m => m.Latitude, null, new { @Class = "form-control", @id = "mapLat", @onchange = "onchangelocation();" })
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label for="Type">Longitude</label>
+                                                                @Html.TextBoxFor(m => m.Longitude, null, new { @Class = "form-control", id = "mapLng", @onchange = "onchangelocation();" })
+                                                            </div>
+                                                        </div>
+                                                        &nbsp;
+                                                        <div class="col-md-7">
+                                                            &nbsp;
+                                                            <div id="map-canvas">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>*@
+
+@section scripts{
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUakSTaXSqDmWWAhpmhqKFuKtYKkIcvWw"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.js" integrity="sha256-TDtzz+WOGufaQuQzqpEnnxdJQW5xrU+pzjznwBtaWs4=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+                   $(document).ajaxStart(function () {
+            $(".sbmtBtn").attr("disabled", true);
+          });
+
+        $(document).ajaxComplete(function () {
+            $(".sbmtBtn").attr("disabled", false);
+        });
+
+        $("#display-img").click(function () {
+            $("#fileimage").click();
+        });
+
+        function show(input, id) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    if (id == 1) {
+                        $('#user_img').attr('src', e.target.result);
+                    }
+                    else {
+                        $('#user_sign').attr('src', e.target.result);
+                    }
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+
+
+    <script>
+        function loadChosen() {
+            $('.tryMultiselect').chosen();
+        }
+
+
+        $(document).ready(function () {
+            loadChosen();
+        });
+
+
+        initialize();
+        function initialize() {
+            var mlat = document.getElementById("mapLat").value;
+            var mlng = document.getElementById("mapLng").value;
+
+            var myLatLng = new google.maps.LatLng(mlat, mlng),
+                myOptions = {
+                    zoom: 5,
+                    center: myLatLng,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                },
+                map = new google.maps.Map(document.getElementById('map-canvas'), myOptions),
+                marker = new google.maps.Marker({
+                    position: myLatLng,
+                    map: map
+                });
+
+            marker.setMap(map);
+        };
+
+
+        function saveOrderFunction() {
+            var formdata = new FormData($('form').get(0));
+            //formdata.append("GeneTemplateId", $("#TestType").val());
+            //$(".tryMultiselect option:selected").each(function () {
+            //    debugger
+            //    var $this = $(this);
+
+            //    formdata.append("Specialty", $this.val());
+            //    i++;
+            //});
+            //for (var pair of formdata.entries()) {
+            //    console.log(pair[0] + ', ' + pair[1]);
+            //}
+
+            $.ajax({
+                type: 'POST',
+                url: "/admin/medicaldictionary/UpdateMedicalDictionary",
+                data: formdata,
+                dataType: "text",
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    console.log(response);
+                    toastr.info('Record saved');
+                },
+                error: function (xhr, status) {
+                    toastr.error('Something went wrong');
+                }
+            });
+        }
+    </script>
+}

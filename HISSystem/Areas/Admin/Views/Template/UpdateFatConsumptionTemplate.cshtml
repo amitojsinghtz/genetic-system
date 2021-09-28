@@ -1,0 +1,68 @@
+﻿
+@model Data.Models.FatConsumptionTemplate
+
+<div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    @using (Html.BeginForm("AddEpilpsyTemplates", "Template", FormMethod.Post, new { enctype = "multipart/form-data", id = "createForm" }))
+    {
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <center><h4 class="modal-title">Update Fat Consumption Template </h4></center>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Consumption Type</label>
+                                @Html.HiddenFor(x=>x.ID)
+                                <div class="form-group">
+                                    @Html.DropDownListFor(model => model.ConsumptionTypeID, new SelectList(ViewBag.ConsumptionType, "ID", "Name"), "Select Consumption Type", new { @class = "form-control dropdown" })
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Effected Gene</label>
+                                <div class="form-group">
+                                    @Html.DropDownListFor(model => model.EffectedGeneID, new SelectList(ViewBag.Gene, "ID", "Name"), "Select  Effected Gene", new { @class = "form-control dropdown" })
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Recommendations</label>
+                                <div class="form-group">
+                                    @Html.TextAreaFor(model => model.Reccomendations, new { @class = "form-control", placeholder = "Recommendations. . . " })
+
+                                </div>
+                            </div>
+                            <div class="form-group pad-tb-md">
+                                <div class="form-check">
+                                    <label>
+                                        @*@Html.CheckBoxFor(m => m.PersonalInformation.HaveInsurance)*@
+                                        <input type="checkbox" name="Effected" id="Effected" @(Model.Effected == true ? "checked" : "")><span class="label-text">Is Effected</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-outline-inverse">Cancel</button>
+                    <button type="button" onclick="UpdateFatConsumption();" class="btn btn-danger popup-savebtn">Update</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+<link href="@Url.Content("https://fonts.googleapis.com/css?family=Open+Sans")" rel='stylesheet' type='text/css'>
+<script src="@Url.Content("~/assets/Themes/ckeditor/ckeditor.js")" type="text/javascript"></script>
+<script>
+	//CKEDITOR.replace("Body");
+</script>
+

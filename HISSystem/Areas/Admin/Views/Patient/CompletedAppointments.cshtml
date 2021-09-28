@@ -1,0 +1,481 @@
+﻿@model Data.Models.Appointment
+@{
+    ViewData["Title"] = "Appointment";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<style>
+    .modal-dialog {
+        width: 650px;
+        margin: 30px auto;
+    }
+</style>
+
+<div class="shadow"></div>
+<div class="hideSkipLink">
+</div>
+<div class="popup-result" id="searchwithid" style="display:none;"></div>
+@*<div class="modal fade" id="exampleModalCenter2" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content" id="search-model">
+            </div>
+        </div>
+    </div>*@
+<div class="prtm-content">
+    <div class="row">
+        <div class="col-md-4 col-lg-4">
+            <div class="btn-group btn-group-justified mrgn-b-xs">
+                <a class="btn btn-xs  btn-success" href="/admin/patient/completedAppointments/"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Completed Appointments</a>
+                <a class="btn btn-xs  btn-warning" href="/admin/patient/cancelledAppointments/"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Cancelled Appointments</a>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-4">
+            <a class="btn btn-xs btn-primary getAppointmentList"> AppointmentList Popup </a>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label>Doctor</label>
+                @Html.DropDownListFor(m => m.DoctorID, new SelectList(ViewBag.Doctor, "ID", "EnFirstName"), "Select doctor", new { @Class = "form-control", onchange = "filterDoctors(this)" })
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <label>Department</label>
+                @Html.DropDownListFor(m => m.DepartmentID, new SelectList(ViewBag.Department, "ID", "Name"), "Select department", new { @Class = "form-control", onchange = "filterDoctors(this)" })
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="dp"></div>
+        </div>
+        
+    </div>
+
+</div>
+<div class="clear">
+</div>
+
+
+@section Scripts{
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <script>
+        $('.getAppointmentList').click(function () {
+            debugger
+
+            $.ajax({
+                url: '/admin/patient/appointmentSearchList',
+                type: 'GET',
+                success: function (result) {
+                    debugger
+                    $("#searchwithid").show();
+                    $("#searchwithid").html(result);
+                },
+                error: function (xhr, status) {
+                    debugger
+                }
+            });
+        });
+    </script>
+    <script>
+        function getPatients() {
+            //  debugger
+            $("#searchwithid").show();
+
+        }
+        function patientsearch(i) {
+
+            var searchstring = $("#searchinappointment").val();
+            var page = parseInt(i);
+            var StartDate = $("#searchstartdate").val();
+            console.log(StartDate);
+            var EndDate = $("#searchenddate").val();
+            $.ajax({
+                url: '/admin/patient/SearchInCompletedAppointmentList',
+                data: {
+                    Id: searchstring,
+                    page: page,
+                    StartDate: StartDate,
+                    EndDate: EndDate
+
+                },
+                success: function (result) {
+                    debugger
+                    $('#myModal').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    }),
+                        //
+                        $("#searchwithid").empty();
+                    $("#searchwithid").append(result);
+                    $("#searchinappointment").show();
+                    $("#searchinappointment").val(searchstring);
+                    $("#searchstartdate").val(StartDate);
+                    $("#searchenddate").val(EndDate);
+                    $("#searchinappointment").focus();
+
+                }
+            });
+        }
+        function closediv1() {
+            $("#searchwithid").hide();
+        }
+
+
+        $(function () {
+            $("#Date").datepicker();
+        });
+
+
+
+        var dp = new DayPilot.Month("dp");
+        dp.init();
+        debugger
+        dp.events.load("/admin/patient/GetEvents");
+        console.log(dp.events)
+
+        function getAppointmentList() {
+            $("#searchwithid").show();
+
+        }
+
+        //var nav = new DayPilot.Navigator("nav");
+        //nav.showMonths = 3;
+        //nav.skipMonths = 3;
+        //nav.selectMode = "week";
+        //nav.onTimeRangeSelected = function (args) {
+        //    dp.startDate = args.day;
+        //    dp.update();
+        //    loadEvents();
+        //};
+        //nav.init();
+
+        //var Columndata;
+
+        //var dp = new DayPilot.Calendar("dp");
+
+        //dp.viewType = "Resources";
+        //dp.columns = [];
+        function fnExcelReport() {
+            var tab_text = "<table border='2px'><tr bgcolor='#87AFC6'>";
+            var textRange; var j = 0;
+            var tab = document.getElementById('appointmentTbl'); // id of table
+
+            for (j = 0; j < tab.rows.length; j++) {
+                tab_text = tab_text + tab.rows[j].innerHTML + "</tr>";
+            }
+
+            tab_text = tab_text + "</table>";
+            tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+            tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
+            tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf("MSIE ");
+
+            if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+            {
+                txtArea1.document.open("txt/html", "replace");
+                txtArea1.document.write(tab_text);
+                txtArea1.document.close();
+                txtArea1.focus();
+                sa = txtArea1.document.execCommand("SaveAs", true, "Patients.xls");
+            }
+            else                 //other browser not tested on IE 11
+                sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+
+            return (sa);
+        }
+        
+    </script>
+
+    @*<script type="text/javascript">
+
+            var nav = new DayPilot.Navigator("nav");
+            nav.showMonths = 3;
+            nav.skipMonths = 3;
+            nav.selectMode = "week";
+            nav.onTimeRangeSelected = function (args) {
+                dp.startDate = args.day;
+                dp.update();
+                loadEvents();
+            };
+            nav.init();
+
+            var Columndata;
+
+            var dp = new DayPilot.Calendar("dp");
+            //dp.viewType = "Resources";
+            dp.viewType = "Resources";
+            //  dp.headerLevels = 2;
+            debugger
+
+            dp.columns = [];
+
+            $.get('GetDoctorColumn', { doctorID: null, departmentID: null }, function (Columndata) {
+                debugger
+                dp.columns = Columndata.data;
+                //  console.log(Columndata.data);
+                dp.update();
+            });
+
+            // bubble, with async loading
+            dp.bubble = new DayPilot.Bubble({
+                cssClassPrefix: "bubble_default",
+                onLoad: function (args) {
+                    var ev = args.source;
+                    args.async = true;  // notify manually using .loaded()
+                    // simulating slow server-side load
+                    setTimeout(function () {
+                        args.html = "testing bubble for: <br>" + ev.text();
+                        args.loaded();
+                    }, 500);
+                }
+            });
+
+            dp.contextMenu = new DayPilot.Menu({
+                cssClassPrefix: "menu_default",
+                items: [
+                    { text: "Show event ID", onclick: function () { /*alert("Event value: " + this.source.value());*/ } },
+                    { text: "Show event text", onclick: function () { /*alert("Event text: " + this.source.text());*/ } },
+                    { text: "Show event start", onclick: function () { /*alert("Event start: " + this.source.start().toStringSortable());*/ } },
+                    { text: "Delete", onclick: function () { dp.events.remove(this.source); } }
+                ]
+            });
+
+            // event moving
+            dp.onEventMoved = function (args) {
+                dp.message("Moved: " + args.e.text());
+            };
+
+            // event resizing
+            dp.onEventResized = function (args) {
+                dp.message("Resized: " + args.e.text());
+            };
+
+            // event creating
+            dp.onTimeRangeSelected = function (args) {
+                args.async = true;
+                console.log(args);
+                localStorage.setItem("args", JSON.stringify(args));
+                debugger
+                var args = JSON.parse(localStorage.getItem("args"));
+                var fullDate = new Date(args.start);
+                var h = fullDate.getHours();
+                var m = fullDate.getMinutes();
+                var s = fullDate.getSeconds();
+                if (h < 10) h = '0' + h;
+                if (m < 10) m = '0' + m;
+                if (s < 10) s = '0' + s;
+                var time = h + ":" + m + ":" + s;
+                var test = fullDate.toLocaleDateString();
+                $('#Time').val(time);
+                $('#Date').val(test);
+                debugger
+
+                SelectedDoctorSettings();
+
+                $("#myModal").modal('show');
+            };
+
+            function SelectedDoctorSettings() {
+
+
+                $('#DoctorIDModel').val();
+                $.ajax({
+                    url: '/admin/patient/getpaitentsinAppointment',
+                    type: 'get',
+
+                    success: function (result) {
+                        debugger
+                        $('#myModal').modal({
+                            backdrop: 'static',
+                            keyboard: false
+                        }),
+                            //
+                            $("#searchwithid").empty();
+                        $("#searchwithid").append(result);
+                        $("#searchinappointment").show();
+
+                    }
+                });
+                var args = JSON.parse(localStorage.getItem("args"));
+                var id = args.resource;
+                $.ajax({
+                    url: '/admin/patient/getDoctorDetails',
+                    type: 'get',
+                    data: { id: id },
+
+                    success: function (result) {
+                        console.log(result);
+                        function test() {
+
+                        }
+
+                        $('#SpecialityID').val(result.personalInformation.specialityID);
+                        $('#DoctorIDModel').val(result.id);
+
+                    }
+                });
+            }
+
+
+
+            function AddEvent() {
+                debugger
+                var args = JSON.parse(localStorage.getItem("args"));
+                model = {
+                    DoctorID: $('#DoctorIDModel').val(),
+                    UserID: $('#UserID').val(),
+                    Date: $('#Date').val(),
+                    Time: $('#Time').val(),
+                    StartDate: args.start,
+                    EndDate: args.end,
+                    SpecialityID: $('#SpecialityID').val(),
+                    DepartmentID: $('#AppointmentDepartment').val(),
+                    RoomID: $('#RoomID').val(),
+                    PurposeID: $('#PurposeID').val(),
+                    AppointmentStatusID: $('#AppointmentStatusID').val(),
+                    AddedDate: $("#AddedDate").val(),
+                    Note: $("#Note").val(),
+                    CreatedBy: $("#CreatedBy").val()
+                }
+                $.post("AddAppointment", model, function (result) {
+                    debugger
+                    debugger
+                    dp.clearSelection();
+                    var e = new DayPilot.Event({
+                        start: result.data.Data.start,
+                        end: result.data.Data.end,
+                        id: DayPilot.guid(),
+                        resource: args.resource,
+                        text: result.data.Data.name
+                    });
+                    dp.events.add(e);
+                    dp.message(result.data.Message);
+                    $('#close-button').trigger('click');
+
+                });
+            }
+
+            dp.onTimeRangeDoubleClicked = function (args) {
+                debugger
+               // alert("DoubleClick: start: " + args.start + " end: " + args.end + " resource: " + args.resource);
+            };
+
+            dp.onEventClick = function (args) {
+                debugger
+              //  alert("clicked: " + args.e.id());
+            };
+
+            dp.headerHeightAutoFit = true;
+
+            dp.columnBubble = new DayPilot.Bubble({
+                onLoad: function (args) {
+                    var c = args.source;
+                    args.async = true; // notify manually using .loaded()
+
+                    // simulating slow server-side load
+                    setTimeout(function () {
+                        args.html = "testing bubble for: <br>" + c.id + " date: " + c.start; // resource id in resources view
+                        args.loaded();
+                    }, 500);
+                }
+            });
+
+            dp.init();
+
+            $.get('GetDoctorAppointments', function (data) {
+                debugger
+                dp.events.list = data.data;
+                dp.update();
+            });
+
+            function filterDoctors(event) {
+                debugger
+                var doctorID;
+                var departmentID;
+                if (event.id == 'DoctorID')
+                    doctorID = event.value;
+                if (event.id == 'DepartmentID')
+                    departmentID = event.value;
+
+                $.get('GetDoctorColumn', { doctorID: doctorID, departmentID: departmentID }, function (Columndata) {
+                    debugger
+                    dp.columns = Columndata.data;
+                    dp.update();
+                });
+                debugger
+            }
+
+
+        </script>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#theme").change(function (e) {
+                    dp.theme = this.value;
+                    dp.update();
+                });
+            });
+            function closediv() {
+                $("#searchwithid").hide();
+            }
+            function patientsearch(i) {
+
+                var searchstring = $("#searchinappointment").val();
+                var page = parseInt(i);
+                $.ajax({
+                    url: '/admin/patient/SearchInAppointmentList',
+                    data: {
+                        Id: searchstring,
+                        "page": page,
+                    },
+                    success: function (result) {
+                        debugger
+                        $('#myModal').modal({
+                            backdrop: 'static',
+                            keyboard: false
+                        }),
+                            //
+                            $("#searchwithid").empty();
+                        $("#searchwithid").append(result);
+                        $("#searchinappointment").show();
+                        $("#searchinappointment").val(searchstring);
+                        $("#searchinappointment").focus();
+
+                    }
+                });
+            }
+            function searchfilter(i) {
+                debugger
+                var page = parseInt(i);
+                var searchstring = $("#searchinappointment").val();
+                $.ajax({
+                    url: '/admin/patient/SearchInAppointmentList',
+                    data: {
+                        Id: searchstring,
+                        "page": page,
+                    },
+                    success: function (result) {
+                        debugger
+                        $('#myModal').modal({
+                            backdrop: 'static',
+                            keyboard: false
+                        }),
+                            //
+                            $("#searchwithid").empty();
+                        $("#searchwithid").append(result);
+                        $("#searchinappointment").show();
+                        $("#searchinappointment").val(searchstring);
+                        $("#searchinappointment").focus();
+
+                    }
+                });
+            }
+        </script>*@
+
+}

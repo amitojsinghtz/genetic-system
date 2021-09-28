@@ -1,0 +1,104 @@
+﻿@model HISSystem.Models.LoginModel
+@using Microsoft.AspNetCore.Http;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    Layout = "~/Views/Shared/_Login_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+</head>
+<body style="background-image: url(@ViewBag.img); background-size:cover;">
+
+    <div class="prtm-wrapper">
+        <div class="prtm-main" >
+
+            <div class="login-banner"></div>
+            <div class="login-form-wrapper mrgn-b-lg">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-9 col-md-8 col-lg-5 center-block">
+                            <div class="prtm-form-block prtm-full-block overflow-wrappper">
+                                <div class="login-bar"> <img src="/assets/img/login-bars.png" class="img-responsive" alt="login bar" width="743" height="7"> </div>
+                                <div class="prtm-block-title text-center">
+                                    <div class="mrgn-b-lg">
+                                        @if (HttpContextAccessor.HttpContext.Session.GetString("logo") == null)
+                                        {
+                                            <a href="javascript:;"> <img src="/assets/img/logo1.png" alt="login logo" class="img-responsive display-ib" width="218" height="23"> </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="javascript:;"> <img src="@HttpContextAccessor.HttpContext.Session.GetString("logo")" alt="login logo" class="img-responsive display-ib" width="218" height="23"> </a>
+                                        }
+
+                                    </div>
+                                    <div class="login-top mrgn-b-lg">
+                                        <div class="mrgn-b-md">
+                                            <h2 class="text-capitalize base-dark font-2x fw-normal">Login</h2>
+                                        </div>
+                                        <p>Please enter your user information</p>
+                                    </div>
+                                </div>
+                                <div class="prtm-block-content">
+
+                                    @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @Class = "login-form" }))
+                                    {
+                                        <div class="form-group has-feedback">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <span class="glyphicon glyphicon-user form-control-feedback fa-lg" aria-hidden="true"></span>
+                                                    @Html.TextBoxFor(x => x.UserName, new { @class = "form-control", placeholder = "User Name" })
+                                                </div>
+                                                <div class="col-md-12">
+                                                    @Html.ValidationMessageFor(x => x.UserName, null, new { @class = "text-danger validation" })
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="form-group has-feedback">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <span class="glyphicon glyphicon-lock form-control-feedback fa-lg" aria-hidden="true"></span>
+                                                    @Html.PasswordFor(x => x.Password, new { @class = "form-control", placeholder = "Password" })
+                                                </div>
+                                                <div class="col-md-12">
+                                                    @Html.ValidationMessageFor(x => x.Password, null, new { @class = "text-danger validation" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="login-meta mrgn-b-lg">
+                                            <div class="row">
+                                                <div class="col-xs-6 col-sm-6 col-md-6">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" name="Remember" id="Remember" checked> <span class="label-text">Remember me</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-6 col-sm-6 col-md-6 text-right"> <a href="javascript:;" class="text-primary password-style">Forgot Password?</a> </div>
+                                            </div>
+                                        </div>
+                                        <div class="mrgn-b-lg">
+                                            <button type="submit" class="btn btn-primary btn-block btn-lg">Sign In</button>
+                                        </div>
+                                        <div class="text-center">
+                                            <h5 class="base-dark">Don't have an account ? <a href="javascript:;" class="text-primary">Sign Up</a></h5>
+                                        </div>
+                                        <div class="text-center"> <a class="back-home-btn" href="/home/index"><i class="fa fa-long-arrow-left mrgn-r-xs"></i>Back To Home</a> </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

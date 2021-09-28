@@ -1,0 +1,94 @@
+﻿@model Data.Helpers.PagedData<Data.Models.PatientOrder>
+
+    <table id="patientTbl" class="table table-hover table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th>Order No</th>
+                <th class="numeric">Order Date</th>
+                <th class="numeric">Patient Name</th>
+                <th class="numeric">Genetic Test Name</th>
+                <th class="numeric">Genetic Lab Name</th>
+                <th class="numeric">Pay Type</th>
+                @*<th class="numeric">Patient Type</th>*@
+                <th class="numeric">Insurance Company</th>
+                <th class="numeric">Note</th>
+                <th class="numeric">Attach</th>
+                @*<th class="numeric">Last Visit</th>
+                <th class="numeric">Admission Type</th>
+                <th class="numeric">Pay Type</th>*@
+                <th class="numeric">Action</th>
+                <th class="numeric">Delete</th>
+                <th class="numeric">Attachment</th>
+                <th class="numeric">Log</th>
+
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model.Data)
+            {
+            <tr>
+                <td><div class="form-check"><label><input type="checkbox" id="select-id" onclick="GetID(@item.ID)"><span class="label-text"></span></label></div></td>
+                <td>
+                    @item.OrderNo
+                </td>
+                <td>
+                    @item.OrderDate
+                </td>
+                <td>
+                    @if (item.Patient != null)
+                    {
+                        @item.Patient.EnFirstName
+                    }
+
+                </td>
+                <td>
+                    @if (item.GeneTemplateID == 1)
+                    {
+                        <text>Genral Template</text>
+                    }
+                    else if (item.GeneTemplateID == 2)
+                    {
+                        <text>Epilepsy Template</text>
+                    }
+                    else if (item.GeneTemplateID == 3)
+                    {
+                        <text>Fat Consumption Template</text>
+                    }
+                    else if (item.GeneTemplateID == 4)
+                    {
+                        <text> Methyation And Autism Template</text>
+                    }
+                    else if (item.GeneTemplateID == 5)
+                    {
+                        <text> Prostate Cancer Template</text>
+                    }
+                </td>
+                <td>
+                    @item.OrderNo
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><button type="button" class="btn btn-xs btn-success">Action</button></td>
+                <td><button type="button" class="btn btn-xs btn-danger">Delete</button></td>
+                <td><button type="button" class="btn btn-xs btn-warning">Attachment</button></td>
+                <td><button type="button" class="btn btn-xs btn-primary">Log</button></td>
+            </tr>
+            
+
+        }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="17">
+                        @for (int i = 1; i <= Model.NumberOfPages; i++)
+                        {
+                            <a class="page-number" href="javascript:void();">@i</a>
+                        }
+                    </td>
+                </tr>
+            </tfoot>
+        </table>

@@ -1,0 +1,157 @@
+﻿@model Data.Helpers.PagedData<Data.Models.MedicalDictionary>
+
+
+@{
+    ViewData["Title"] = "Medical Dictionary";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+
+<div class="prtm-content">
+    @Html.Hidden("DeletedID")
+    <div class="prtm-page-bar">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item text-capitalize"><h2>@ViewData["Title"]</h2></li>
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="#">Ui elements</a></li>
+            <li class="breadcrumb-item"><a href="#" class="active">Medical Dictionary</a></li>
+        </ul>
+    </div>
+
+    <div class="table-style">
+        <div class="row mrgn-b-sm">
+            <div class="col-md-4 col-lg-4">
+                <div class="btn-group btn-group-justified mrgn-b-xs">
+                    <a class="btn btn-xs  btn-primary sbmtBtn" href="/admin/medicaldictionary/addmedicaldictionary"><i class="fa fa-plus" aria-hidden="true"></i> New </a>
+                    <a class="btn btn-xs  btn-warning sbmtBtn" href="/admin/patient/upate/" id="update-patient"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update </a>
+                    <div class="btn-group">
+                        <button data-toggle="dropdown" class="btn btn-xs btn-info dropdown-toggle" type="button"><i class="fa fa-share-square-o" aria-hidden="true"></i> Export <i class="fa fa-sort-desc" aria-hidden="true"></i> </button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-3">
+            </div>
+        </div>
+        <div class="row mrgn-b-sm">
+            <div class="col-md-12 col-lg-12">
+                <h5>Quick Search</h5>
+                <div class="quick-search-block">
+                    <div class="row">
+                        <div class="col-md-10 col-lg-10">
+                            <div class="row">
+                                <div class="col-md-2 col-lg-2">
+                                    Type:
+                                    @Html.DropDownList("TypeNames", new SelectList(ViewBag.Types, "ID", "Name"), "Select Type", new { @Class = "form-control dropdown", onchange = "getEnName(1)", @id = "typeID" })
+
+                                </div>
+                                <div class="col-md-2 col-lg-2">
+                                    En Name:
+                                    <input type="text" name="enNameID" id="search1" class="form-control" placeholder="Search..." onkeyup="getEnName(1);" />
+                                </div>
+                                <div class="col-md-2 col-lg-2">
+                                    Ar Name:
+                                    <input type="text" id="search2" name="arname" class="form-control" autocomplete="off" onkeyup="getEnName(1)" />
+                                </div>
+                                <div class="col-md-2 col-lg-2">
+                                    City:
+                                    @Html.DropDownList("CityNames", new SelectList(ViewBag.City, "ID", "Name"), "Select City", new { @Class = "form-control dropdown", onchange = "getEnName(1)", @id = "cityID" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="prtm-block pos-relative">
+            <div class="prtm-block-content">
+                <div class="table-responsive">
+                    <div id="userList" class="unseen">
+                        @{
+                            Html.RenderPartial("GetMedicalDictionary");
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="add-modal">
+        <div id="modalDiv" class="modal fade" role="dialog">
+        </div>
+    </div>
+    <!---End Model--->
+</div>
+
+@section scripts{
+<script>
+           $(document).ajaxStart(function () {
+            $(".sbmtBtn").attr("disabled", true);
+          });
+
+        $(document).ajaxComplete(function () {
+            $(".sbmtBtn").attr("disabled", false);
+        });
+
+    function Detele(id) {
+            $('#DeletedID').val(id);
+            swal({
+                title: "Are you sure?",
+                text: "Are you sure you want to delete this record!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-warning",
+                confirmButtonText: "Yes, delete it!",
+                closeOnConfirm: false
+            },
+                function () {
+                    debugger
+                    var id = $("#DeletedID").val();
+                    $.ajax({
+                        url: '/admin/medicaldictionary/DeleteMedicalDictionary?id=' + id,
+                        type: 'GET',
+                        success: function (data) {
+                            debugger
+                            swal("Deleted!", "Your imaginary file has been deleted.", "success");
+                            location.reload();
+                        },
+                        error: function () {
+                            debugger
+                            swal("Cancelled", "Something went wrong :)", "error");
+                        }
+                    });
+                });
+    }
+
+    function getEnName(i) {
+        debugger
+        var Page = i;
+        var searchstringen = $("#search1").val();
+        var searchstringar = $("#search2").val();
+        var searchstringcity = $("#cityID").val();
+        var searchstringtype = $("#typeID").val();
+
+
+        $.ajax({
+            url: '/admin/medicaldictionary/SearchEnName?page=' + Page + '&searchstringen=' + searchstringen + '&searchstringar=' + searchstringar + '&cityID=' + searchstringcity + '&typeID=' + searchstringtype,
+            type: 'GET',
+            success: function (result) {
+                debugger
+                $(".unseen").html(result)
+            },
+            error: function (xhr, status) {
+                toastr.error('Something went wrong');
+            }
+        });
+
+
+
+    }
+
+    function patientSearch() {
+        var xray = $("#CityNamesID option:selected").val();
+        debugger
+    }
+
+</script>
+}

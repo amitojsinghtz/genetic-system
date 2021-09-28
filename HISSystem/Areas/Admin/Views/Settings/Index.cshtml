@@ -1,0 +1,189 @@
+﻿@model GeneticSystem.Areas.Admin.Models.ImagesViewModel
+@{
+    ViewData["Title"] = "Login Background";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+
+<style>
+    .file-upload input[type='file'] {
+        display: none;
+    }
+
+    .item {
+        left: 0;
+        top: 0;
+        position: relative;
+        overflow: hidden;
+        margin-top: 20px;
+    }
+
+        .item img {
+            -webkit-transition: 0.6s ease;
+            transition: 0.6s ease;
+        }
+
+            .item img:hover {
+                -webkit-transform: scale(1.2);
+                transform: scale(1.2);
+            }
+
+    .img-thumbnail {
+        border: 0px;
+        border-radius: 0px;
+    }
+
+    .d-block {
+        display: block;
+    }
+</style>
+@using (Html.BeginForm("Add", "Settings", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return validateImage()" }))
+{
+    <div class="prtm-content">
+        <div class="prtm-page-bar">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item text-capitalize"><h2>Image Settings</h2></li>
+                <li class="breadcrumb-item"><a href="#" class="active">Upload Area</a></li>
+            </ul>
+        </div>
+
+        <div class="table-style">
+            <div class="col-md-4 col-lg-4">
+                <div class="btn-group btn-group-justified mrgn-b-xs">
+                </div>
+            </div>
+            <div class="row mrgn-b-sm">
+                <div class="col-md-12 col-lg-12">
+                    <h5>ADD Image</h5>
+                    <div class="quick-search-block">
+                        <div class="row">
+                            <div class="col-md-10 col-lg-10">
+                                <div id="searchDiv" class="row">
+                                    <div class="col-md-3 col-lg-3">
+                                        <label for="Type">
+                                            Image For
+                                        </label>
+                                        @Html.DropDownListFor(m => m.ImageType, new SelectList(ViewBag.ImagesForList, "ID", "Name"), "-Select-", new { @Class = "form-control" })
+                                    </div>
+                                    <div class="col-md-3 col-lg-3">
+                                        <label>
+                                            &nbsp;
+                                        </label>
+                                        <div id="ImgDiv" class="btn-group btn-group-justified mrgn-b-xs">
+                                            <label for="fileUpload" class="file-upload btn btn-primary btn-block btn-xs rounded-pill shadow sbmtBtn">
+                                                <i class="fa fa-upload mr-2"></i> Click to browse...
+                                                <input id="fileUpload" name="file" type="file" disabled required>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="d-block">
+                                            &nbsp;
+                                        </label>
+                                        <button class="btn btn-xs btn-warning sbmtBtn " id="postImage" type="submit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>  Save </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="item"><img style="width:366px; height:239px" id="previousImg" src="https://www.rabata.org/wp-content/uploads/2018/05/dummy.png" class="img-thumbnail"></div>
+                    <p>Current images goes here.</p>
+                </div>
+                <div class="col-sm-4">
+                    <div class="item"><img style="width:366px; height:239px" id="imageResult" src="https://www.rabata.org/wp-content/uploads/2018/05/dummy.png" class="img-thumbnail"></div>
+                    <p>Uploaded image goes here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts{
+    <script>
+        $(document).ajaxStart(function () {
+            $(".sbmtBtn").attr("disabled", true);
+        });
+
+        $(document).ajaxComplete(function () {
+            $(".sbmtBtn").attr("disabled", false);
+        });
+
+        function validateImage() {
+            var imageval = $('#fileUpload').val();
+            if ($('#fileUpload').val() == null || $('#fileUpload').val() == undefined || $('#fileUpload').val() == "") {
+                toastr.error('You must upload an Image before posting!')
+                return false;
+            } else {
+                return true;
+            }
+        };
+
+
+        document.getElementById("fileUpload").addEventListener("change", function () {
+            readURL(fileUpload);
+        });
+
+        function getImage() {
+            var ImageType = document.getElementById("ImageType");
+            var ImgId = ImageType.options[ImageType.selectedIndex].value;
+            if (ImgId == null || ImgId == 0) {
+                toastr.error('Select an image first!');
+                return false;
+            }
+            $.ajax({
+                url: '/admin/settings/getimage',
+                data: { 'typeId': ImgId },
+                type: 'GET',
+                success: function (result) {
+                    $('#previousImg')
+                        .attr('src', result);
+                },
+                error: function (xhr, status) {
+                    toastr.error('Something went wrong');
+                }
+            });
+        }
+
+        document.getElementById("ImgDiv").addEventListener("click", function () {
+            getImage();
+            var ImageType = document.getElementById("ImageType");
+            var ImgId = ImageType.options[ImageType.selectedIndex].value;
+            if (ImgId == null || ImgId == 0) {
+                return false;
+            }
+        });
+
+        document.getElementById("ImageType").addEventListener("change", function () {
+            var Input = document.getElementById("fileUpload");
+            var ImgId = this.options[this.selectedIndex].value;
+            getImage();
+            if (ImgId == null || ImgId == 0) {
+                Input.disabled = true;
+                return false;
+            } else {
+                Input.disabled = false;
+            }
+        });
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#imageResult')
+                        .attr('src', e.target.result);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}
+
+
+

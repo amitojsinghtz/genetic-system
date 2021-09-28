@@ -1,0 +1,118 @@
+﻿@model Data.Helpers.PagedData<Data.Models.User>
+    <table id="patientTbl" class="table table-hover table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th>Reg No</th>
+                <th class="numeric">En Name</th>
+                <th class="numeric">Ar Name</th>
+                <th class="numeric">Email</th>
+                <th class="numeric">Birth Date</th>
+                <th class="numeric">Mobile No</th>
+                <th class="numeric">Full Address</th>
+                @*<th class="numeric">Patient Type</th>*@
+                <th class="numeric">City</th>
+                <th class="numeric">Blood Group</th>
+                <th class="numeric">Employee Type</th>
+                <th class="numeric">Active</th>
+                <th class="numeric">Actions</th>
+                @*<th class="numeric">Time Line</th>*@
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Data)
+            {
+            <tr>
+                <td><div class="form-check"><label><input type="checkbox" id="select-id" onclick="GetID(@item.ID)"><span class="label-text"></span></label></div></td>
+                <td>@item.RegisterationNo</td>
+                <td>
+                    @item.EnFirstName &nbsp;@item.EnSecondName&nbsp;@item.EnThirdName&nbsp;@item.EnFamilyName
+                </td>
+                <td>
+                    @item.ArFirstName&nbsp;@item.ArSecondName&nbsp;@item.ArThirdName&nbsp;@item.ArFamilyName
+                </td>
+                <td>
+                    @item.Email
+                </td>
+                <td>
+                    @if (item.PatientPersonalInformation != null && item.PatientPersonalInformation.DateOfBirth != null)
+                    {
+                        @item.PatientPersonalInformation.DateOfBirth.Value.ToString("dd/MM/yyyy")
+                    }
+                </td>
+                <td>
+                    @item.Mobile
+                </td>
+                <td>
+                    @item.Address
+                </td>
+                @*<td>
+            @if (item.PatientPersonalInformation.PatientType != null)
+            {
+                @item.PatientPersonalInformation.PatientType.Name
+            }
+        </td>*@
+                <td>
+                    @if (item.PatientPersonalInformation != null && item.PatientPersonalInformation.City != null)
+                    {
+                        @item.PatientPersonalInformation.City.Name
+                    }
+                </td>
+                <td>
+                    @if (item.PatientPersonalInformation != null && item.PatientPersonalInformation.BloodGroup != null)
+                    {
+                        @item.PatientPersonalInformation.BloodGroup.Name
+                    }
+                </td>
+                <td>
+                    @if (item.PatientPersonalInformation != null && item.PatientPersonalInformation.EmployeeType != null)
+                    {
+                        @item.PatientPersonalInformation.EmployeeType.Name
+                    }
+                </td>
+
+                @*<td>
+        </td>
+        <td>
+            @if (item.PatientAdmission != null && item.PatientAdmission.AdmissionType !=null)
+            {
+                @item.PatientAdmission.AdmissionType.Name
+            }
+        </td>
+        <td></td>*@
+                <td>
+                    @if (item.Status != null)
+                    {
+                        <span class="label label-success btn-rounded">@item.Status.Name</span>
+                    }
+                </td>
+                <td>
+                    @*<input type="button" name="submit" value="Add Reminder" class="btn btn-xs btn-app" />
+            <input type="button" name="submit" value="Add Test" class="btn btn-xs btn-base" />
+            <input type="button" name="submit" value="Add Appointment" class="btn btn-xs btn-warning" />
+            <input type="button" name="submit" value="Add Order" class="btn btn-xs btn-info" />*@
+                    @*<button type="button" class="btn btn-xs btn-warning UpdtOrdrBtn" value=""><i class="fa fa-plus" aria-hidden="true"></i> Reminder</button>
+            <button type="button" class="btn btn-xs btn-success DltOrdrBtn" value=""><i class="fa fa-plus" aria-hidden="true"></i> Test</button>*@
+                    <button type="button" class="btn btn-xs btn-danger" value="" onclick="addOrderData(@item.ID)"><i class="fa fa-plus" aria-hidden="true"></i> Order</button>
+                    @*<a href="/admin/clientorder/index?id=@item.ID" class="btn btn-xs btn-danger"><i class="fa fa-plus" aria-hidden="true"></i> Order </a>*@
+                    <a href="/admin/followup/index?id=@item.ID" class="btn btn-xs btn-info"><i class="fa fa-history" aria-hidden="true"></i> Timeline</a>
+
+                </td>
+                @*<td>
+            <input type="button" name="submit" value="Time Line" class="btn btn-xs btn-success"  />
+        </td>*@
+            </tr>
+        }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="17">
+                    @for (int i = 1; i <= Model.NumberOfPages; i++)
+                    {
+                        <a class="page-number" href="javascript:void();">@i</a>
+                    }
+                </td>
+            </tr>
+        </tfoot>
+    </table>

@@ -1,0 +1,131 @@
+﻿@model GeneticSystem.Areas.Admin.Models.SMSViewModel
+@{
+    ViewBag.Title = "SendSMS";
+}
+
+<div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    @using (Html.BeginForm("Send", "SMS", FormMethod.Post, new { enctype = "multipart/form-data", id = "createForm" }))
+    {
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <button type="button" onclick="SendSMS()" class="btn btn-primary add-btn">
+                <i class="fa fa-envelope" aria-hidden="true"></i>
+                Send
+            </button>
+            <button type="button" class="btn btn-info add-btn" onclick="NewSMS()">New</button>
+            <button type="button" class="btn btn-secondary add-btn" onclick="Refresh()">
+                <i class="fa fa-refresh" aria-hidden="true"></i>
+                Refresh
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6">
+                    @Html.HiddenFor(model => model.TriggerType)
+                    @Html.HiddenFor(model => model.TargetID)
+
+
+                    <h4>To</h4>
+                    <div class="form-group">
+                        @Html.TextBoxFor(model => model.ToMobile, new { @class = "form-control", placeholder = "To email. . . " })
+                        @Html.ValidationMessageFor(model => model.ToMobile, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h4>From</h4>
+                    <div class="form-group">
+                        @Html.TextBoxFor(model => model.FromMobile, new { @class = "form-control", placeholder = "From email. . . ", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.FromMobile, "", new { @class = "text-danger" })
+                    </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <h4>Body</h4>
+                        <div class="form-group">
+                            @Html.TextAreaFor(model => model.Body, new { @class = "form-control", @rows = "20" })
+                            @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" data-dismiss="modal" class="btn btn-outline-inverse">Cancel</button>
+                <button type="submit" class="btn btn-success popup-savebtn">Save</button>*@
+            </div>
+        </div>
+    
+    }
+</div>
+
+<script>
+
+    function SendSMS () {
+        var data = new FormData();
+        data.append("InvoiceNo", $("#InvoiceNo").val());
+        data.append("AttachmentName", $("#AttachmentName").val());
+        data.append("TriggerType", $("#TriggerType").val());
+        data.append("TargetID", $("#TargetID").val());
+        data.append("FromMobile", $("#FromMobile").val());
+        data.append("ToMobile", $("#ToMobile").val());
+        data.append("Body", $("#Body").val());
+        //data.append("", $("#File").val());
+
+        $.ajax({
+            url: '/admin/SMS/send',
+            data: data,
+            type: 'Post',
+            processData: false, contentType: false,
+            success: function (result) {
+                if (result) {
+                    alert('SMS sent successfully !')
+                    $('#modalDiv').modal('hide');
+                    window.location.reload();
+                }
+            },
+            error: function (xhr, status) {
+                alert(status)
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        var url = window.location.href;
+        var value = url.substring(url.lastIndexOf('/') + 1);
+        if (value == "SendEmail") {
+            return false;
+        }
+        value = value.split('?')
+        if (value[1] == "Send=True") {
+            alert('SMS sent successfully !');
+            window.location.href = '/admin/SMS/SendSMS';
+        }
+    })
+
+    var subject = "";
+    var body = "";
+    function NewSMS() {
+
+
+        body = $("#Body").val();
+
+
+
+        $("#Body").val("");
+    }
+
+    function Refresh() {
+
+
+        $("#Body").val(body);
+    }
+
+</script>
+
+<style>
+    textarea.form-control {
+        height: 250px;
+    }
+</style>

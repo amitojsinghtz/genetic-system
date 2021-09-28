@@ -1,0 +1,79 @@
+﻿@model GeneticSystem.Areas.Admin.Models.TestTempVM
+
+<form action="/admin/lookup/addmaster" method="post" id="addTemplateDetailFrm">
+    <div class="prtm-content">
+        <div class="row">
+            <div class="col-md-7 col-sm-7 col-xs-12">
+                <button type="button" class="btn btn-xs btn-outline-danger add-btn backToTemplate ">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                    &nbsp;Back @Model.TestTemp?.TestTempType?.Name >> @Model.TestTemp?.SubTestTempType?.Name List
+                </button>
+                &nbsp;
+                <button type="button" class="btn btn-xs btn-outline-warning addTemplateDetail" data-info="" data-catch="@Model.TestTemp?.TestTempType?.Name>>@Model.TestTemp?.SubTestTempType?.Name">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                    &nbsp;Save @Model.TestTemp?.TestTempType?.Name >> @Model.TestTemp?.SubTestTempType?.Name Data
+                </button>
+
+                <h3 id="lName"></h3>
+            </div>
+            <div class="col-md-12">
+                <table id="userTbl" class="table table-hover table-bordered table-striped">
+                    <thead>
+                        <tr class="">
+                            @foreach (var item in Model.TestTemp.TestTempCols)
+                            {
+                                <th> @item.TestColName </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.expData.Count(); i++)
+                        {
+                            <tr>
+                                @for (int j = 0; j < Model.expData[i].Count(); j++)
+                                {
+                                <td>
+                                    <input name="TestTempDataList[@j].ID" value="@Model.expData[i][j].ID" hidden>
+                                    <input name="TestTempDataList[@j].TestTempID" value="@Model.expData[i][j].TestTempID" hidden>
+                                    <input name="TestTempDataList[@j].TestTempColID" value="@Model.expData[i][j].TestTempColID" hidden>
+                                    <input name="TestTempDataList[@j].RowNo" value="@Model.expData[i][j].RowNo" hidden />
+                                    @if (Model.expData[i][j].TestTempCol.TempColType.ColName == "Checkbox")
+                                    {
+
+                                        <div class="form-check">
+                                            <label>
+                                                <input type="checkbox" name="TestTempDataList[@j].BoolValue" value="@Model.expData[i][j].BoolValue" class="itemDatadsbl" @(Model.expData[i][j].BoolValue == true ? "checked" : "")><span class="label-text"></span>
+                                            </label>
+                                        </div>
+
+                                    }
+                                    else if (Model.expData[i][j].TestTempCol.TempColType.ColName == "Textbox")
+                                    {
+                                        <input name="TestTempDataList[@j].StringValue" value="@Model.expData[i][j].StringValue" />
+                                    }
+                                    else if (Model.expData[i][j].TestTempCol.TempColType.ColName == "Dropdown")
+                                    {
+                                        if (Model.expData[i][j].TestTempCol.DataSource.Name == "EffectedGene")
+                                        {
+                                            @Html.ListBox("TestTempDataList[" + @j + "].multiSelect", new MultiSelectList(ViewBag.EffectedGene, "ID", "Name"), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                                        }
+                                        else if (Model.expData[i][j].TestTempCol.DataSource.Name == "FeederType")
+                                        {
+                                            @Html.ListBox("TestTempDataList[" + @j + "].multiSelect", new MultiSelectList(ViewBag.FeederType, "ID", "Name"), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                                        }
+                                        else if (Model.expData[i][j].TestTempCol.DataSource.Name == "Element")
+                                        {
+                                            @Html.ListBox("TestTempDataList[" + @j + "].multiSelect", new MultiSelectList(ViewBag.Element, "ID", "Name"), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                                        }
+                                    }
+                                </td>
+                                }
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,6 @@
+﻿@model GeneticSystem.Areas.Admin.Models.TestTempVM;
+
+@foreach (var item in Model.DropDown)
+{
+    <h4><a href="#" class="list-group-item " onclick="GetTemplateDetail(this,'@item.ID')">@item.Name</a></h4>
+}

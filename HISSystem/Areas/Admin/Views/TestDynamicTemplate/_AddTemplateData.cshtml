@@ -1,0 +1,92 @@
+﻿@model GeneticSystem.Areas.Admin.Models.AddTestDynamicTemplate
+
+<form action="/admin/lookup/addmaster" method="post" id="addTemplateDetailFrm">
+    <div class="prtm-content">
+        <div class="row">
+            <div class="col-md-7 col-sm-7 col-xs-12">
+                <button type="button" class="btn btn-xs btn-outline-danger add-btn backToTemplate ">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                    &nbsp;Back @Model.TestTemplate?.TestTemplateType?.Name >> @Model.TestTemplate?.SubTestTemplateType?.Name List
+                </button>
+                &nbsp;
+                <button type="button" class="btn btn-xs btn-outline-warning addTemplateDetail" data-info="@ViewBag.TemplateID" data-catch="@Model.TestTemplate?.TestTemplateType?.Name>>@Model.TestTemplate?.SubTestTemplateType?.Name">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                    &nbsp;Save @Model.TestTemplate?.TestTemplateType?.Name >> @Model.TestTemplate?.SubTestTemplateType?.Name Data
+                </button>
+
+                <h3 id="lName"></h3>
+            </div>
+            <div class="col-md-12">
+                <table id="userTbl" class="table table-hover table-bordered table-striped">
+                    <thead>
+                        <tr class="">
+                            @foreach (var item in Model.TestTemplate.TestTemplateColumns)
+                            {
+                                <th> @item.DisplayName </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            @foreach (var item in Model.TestTemplate.TestTemplateColumns.Select((value, i) => new { i, value }))
+                            {
+                                <td>
+                                    <input name="TestTemplateData.TestTemplateID" value="@Model.TestTemplate.ID" hidden>
+                                    @if (item.value.TestTemplateField.Name == "EffectedGene")
+                                    {
+                                        @Html.ListBox("TestTemplateData.Genes", new MultiSelectList(ViewBag.EffectedGene, "ID", "Name"), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                                    }
+                                    else if (item.value.TestTemplateField.Name == "ConsumptionType")
+                                    {
+                                        @Html.DropDownList("TestTemplateData.ConsumptionTypeID", new SelectList(ViewBag.ConsumptionType, "ID", "Name"), "Select Consumption Type", new { @class = "form-control dropdown" })
+                                    }
+                                    else if (item.value.TestTemplateField.Name == "Element")
+                                    {
+                                        @Html.DropDownList("TestTemplateData.ElementID", new SelectList(ViewBag.Element, "ID", "Name"), "Select Element Type", new { @class = "form-control dropdown" })
+                                    }
+                                    else if (item.value.TestTemplateField.Name == "Result")
+                                    {
+                                        @Html.DropDownList("TestTemplateData.Result", new SelectList(ViewBag.Result, "Value", "Text"), "Select Result Type", new { @class = "form-control dropdown" })
+
+                                    }
+                                    else if (item.value.TestTemplateField.Name == "HaveMutationEffected")
+                                    {
+                                        <input type="checkbox" name="TestTemplateData.HaveMutationEffected" value="true"><span class="label-text">Have Mutation Effected</span>
+                                    }
+                                    else if (item.value.TestTemplateField.Name == "EffectedGood")
+                                    {
+                                        <input name="TestTemplateData.EffectedGood" class="form-control" value="">
+                                    }
+                                    else if (item.value.TestTemplateField.Name == "EffectedBad")
+                                    {
+                                        <input name="TestTemplateData.EffectedBad" class="form-control" value="">
+                                    }
+                                    else if (item.value.TestTemplateField.Name == "GeneticMutation")
+                                    {
+                                        <input name="TestTemplateData.GeneticMutation" class="form-control" value="">
+                                    }
+                                    else if (item.value.TestTemplateField.Name == "PersonalRiskFactor")
+                                    {
+                                        <input name="TestTemplateData.PersonalRiskFactor" class="form-control" value="">
+                                    }
+                                    else if (item.value.TestTemplateField.Name == "Hereditary")
+                                    {
+                                        <input name="TestTemplateData.Hereditary" class="form-control" value="">
+                                    }
+                                    else if (item.value.TestTemplateField.Name == "ResultSummary")
+                                    {
+                                        <input name="TestTemplateData.ResultSummary" class="form-control" value="">
+                                    }
+                                    else if (item.value.TestTemplateField.Name == "Recommendations")
+                                    {
+                                        <input name="TestTemplateData.Recommendation" class="form-control" value="">
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>

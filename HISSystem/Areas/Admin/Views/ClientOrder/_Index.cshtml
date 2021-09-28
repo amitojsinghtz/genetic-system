@@ -1,0 +1,91 @@
+﻿@model Data.Helpers.PagedData<Data.Models.ClientOrder>
+
+
+<table class="table table-hover table-bordered table-striped" id="relative-table">
+    <thead>
+        <tr class="">
+            <th>Order ID</th>
+            <th>Order No</th>
+            <th>Order Date</th>
+            <th>Order DueDate</th>
+            <th>Doctor</th>
+            <th>Client Name</th>
+            <th>Client City</th>
+            <th>Test Type</th>
+            <th>Status</th>
+            <th colspan="2">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model.Data)
+        {
+        <tr>
+            <td>
+                @order.ID
+            </td>
+            <td>
+                @order.OrderNo
+            </td>
+            <td>
+                @order.OrderDate
+            </td>
+            <td>
+                @order.OrderDueDate
+            </td>
+            <td>
+                @order.Doctor?.EnFirstName @order.Doctor?.EnSecondName @order.Doctor?.EnThirdName
+            </td>
+            <td>
+                @order.User?.EnFirstName @order.User?.EnSecondName @order.User?.EnThirdName
+            </td>
+            <td>
+                @order.User?.PatientPersonalInformation?.City?.Name
+            </td>
+            <td>
+                @order.Template?.TemplateType?.Name
+            </td>
+            <td>
+                @if (order.Status != null)
+                {
+                    @if (order.StatusID == 398)
+                    {
+                        <span class="label label-danger btn-rounded">@order.Status.Name</span>
+                    }
+                    else
+                    {
+                        <span class="label label-success btn-rounded">@order.Status.Name</span>
+                    }
+
+                }
+            </td>
+            <td colspan="2">
+                @if (order.Status != null)
+                {
+                    @if (order.StatusID == 398)
+                    {
+                        <button type="button" class="btn btn-xs btn-warning UpdtOrdrBtn" value="@order.ID"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-xs btn-warning" disabled><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update</button>
+                    }
+                }
+
+                <button type="button" class="btn btn-xs btn-danger DltOrdrBtn" value="@order.ID"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+                <button type="button" class="btn btn-xs btn-success AttchOrdrBtn" value="@order.UserID"><i class="fa fa-paperclip" aria-hidden="true"></i> Attachment</button>
+                <button type="button" class="btn btn-xs btn-success OrderPrntOut" value="@order.ID"><i class="fa fa-paperclip" aria-hidden="true"></i> Order PDF</button>
+            </td>
+        </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="17">
+                @for (int i = 1; i <= Model.NumberOfPages; i++)
+                {
+                    <a class="page-number" href="javascript:void();">@i</a>
+                }
+            </td>
+        </tr>
+    </tfoot>
+</table>

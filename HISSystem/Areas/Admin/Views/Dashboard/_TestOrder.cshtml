@@ -1,0 +1,57 @@
+﻿@model GeneticSystem.Areas.Admin.Models.DashboardVM
+
+<table class="table table-hover table-bordered table-striped" id="relative-table">
+    <thead>
+        <tr class="">
+            <th>Order No</th>
+            <th>Order Date</th>
+            <th>Order DueDate</th>
+            <th>Client Name</th>
+            <th>Client Email</th>
+            <th>Client City</th>
+            <th>Test Type</th>
+            <th>Status</th>
+            <th colspan="2">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model.TestOrders)
+        {
+            <tr>
+                <td>
+                    @order.OrderNo
+                </td>
+                <td>
+                    @order.OrderDate.Value.ToShortDateString()
+                </td>
+                <td>
+                    @order.OrderDueDate.Value.ToShortDateString()
+                </td>
+                <td>
+                    @order.User?.EnFirstName @order.User?.EnSecondName @order.User?.EnThirdName @order.User?.EnFamilyName
+                </td>
+                <td>
+                    @order.User?.Email
+                </td>
+                <td>
+                    @order.User?.PatientPersonalInformation?.City?.Name
+                </td>
+                <td>
+                    @foreach (var item in order.TestArrayStrings)
+                    {
+                        <label class="label label-danger mr-2 btn-rounded">@item</label>
+                    }
+                </td>
+                <td>
+                    @if (order.Status != null)
+                    {
+                        <span class="label label-success btn-rounded">@order.Status.Name</span>
+                    }
+                </td>
+                <td colspan="2">
+                    <button type="button" class="btn btn-xs btn-success AttchOrdrBtn" value="@order.UserID"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> TestUpdate</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

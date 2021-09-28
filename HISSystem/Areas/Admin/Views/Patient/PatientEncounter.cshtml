@@ -1,0 +1,1428 @@
+﻿@model HISSystem.Areas.Admin.Models.PatientEncounterViewModel
+@{
+    ViewData["Title"] = "PatientEncounter";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+
+<div class="prtm-content">
+    <div class="form-style">
+
+        <form id="encounterForm">
+            <fieldset id="form-fieldset">
+                <div class="row">
+                    <div class="col-md-12 mrgn-b-md">
+                        <div class="row mg-b">
+                        </div>
+                        <div class="row mg-b">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>EncounterID</label>
+                                    @Html.HiddenFor(m => m.PatientEncounter.PatientID)
+                                    @Html.HiddenFor(m => m.PatientEncounter.ID)
+                                    @Html.TextBoxFor(m => m.PatientEncounter.EncounterID, null, new { @Class = "form-control", @readonly = true })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>EncounterDate</label>
+                                    @Html.TextBoxFor(m => m.PatientEncounter.EncounterDate, null, new { @Class = "form-control", @readonly = true })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>DischargeID</label>
+                                    @Html.TextBoxFor(m => m.PatientEncounter.DischargeID, null, new { @Class = "form-control", @readonly = true })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>DischargeDate</label>
+                                    @Html.TextBoxFor(m => m.PatientEncounter.EncounterDate, null, new { @Class = "form-control", @readonly = true })
+                                </div>
+                            </div>
+                            <div class="col-md-3 text-right">
+                                <a href="#" class="btn btn-xs btn-success" id="saveEncounter" onclick="saveEncounterFunction()"><i class="fa fa-plus" aria-hidden="true"></i> Save </a>
+                                <a href="/admin/patient/" class="btn btn-xs btn-warning"><i class="fa fa-hospital-o" aria-hidden="true"></i> Patient List</a>
+                                <a href="#" class="btn btn-xs btn-info" disabled><i class="fa fa-plus" aria-hidden="true"></i> New Visit</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12 col-lg-12">
+                                <div class="prtm-block pos-relative">
+                                    <div class="line-slide-tab">
+                                        <ul class="nav nav-tabs">
+                                            <li> <a data-toggle="tab" href="#tab-26" aria-expanded="false"><i class="fa fa-history" aria-hidden="true"></i> Visit History </a> </li>
+                                            <li class="active"><a data-toggle="tab" href="#tab-27" aria-expanded="true"><i class="fa fa-th-list" aria-hidden="true"></i> Vitals</a> </li>
+                                            <li><a data-toggle="tab" href="#tab-28" aria-expanded="true"><i class="fa fa-id-card" aria-hidden="true"></i> New Visit</a> </li>
+                                            <li>
+                                                <a data-toggle="tab" href="#tab-29" aria-expanded="true">
+                                                    <i class="fa fa-medkit" aria-hidden="true"></i> Dr Order
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content pad-all-sm">
+                                            <div id="tab-26" class=" row tab-pane fade in ">
+                                                hghgcgh
+                                            </div>
+                                            <div id="tab-27" class="tab-pane fade in active">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="table-responsive">
+                                                            <div>
+                                                                <table class="table table-hover table-bordered table-striped">
+                                                                    <thead>
+                                                                        <tr class="">
+                                                                            <th class="numeric">Type</th>
+                                                                            <th class="numeric">Number </th>
+                                                                            <th class="numeric">Details</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @foreach (var item in Model.PatientPreAssesmentVitals.Select((value, i) => new { i, value }))
+                                                                        {
+                                                                            <tr>
+                                                                                <td>
+                                                                                    @item.value.VitalType.Name
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input type="text" id="" name="PatientPreAssesmentVitals[@item.i].VitalTypeID" value="@item.value.VitalTypeID" class="form-control hidden">
+                                                                                    <input type="text" id="" name="PatientPreAssesmentVitals[@item.i].Value" value="@item.value.Value" class="form-control">
+                                                                                </td>
+                                                                                <td>
+                                                                                    @if (item.value.PreAssessmentVitalDetails != null && item.value.PreAssessmentVitalDetails.Count > 0)
+                                                                                    {
+                                                                                        @Html.DropDownList("something", new SelectList(item.value.PreAssessmentVitalDetails, "VitalDetailID", "VitalDetail.Name", 1), htmlAttributes: new { @class = "selectpicker tryMultiselect", multiple = "multiple", dataInfo = @item.value.VitalTypeID })
+                                                                                    }
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
+                                                                    </tbody>
+                                                                    <tfoot>
+                                                                        @*<tr>
+                                                                                <td colspan="3">
+                                                                                    <a class="btn btn-xs btn-warning">Save</a>
+                                                                                </td>
+                                                                            </tr>*@
+                                                                    </tfoot>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="panel-group panel-2" id="bs-collapse">
+                                                            <div class="panel">
+                                                                <div class="panel-heading">
+                                                                    <h4 class="panel-title">
+                                                                        <a data-toggle="collapse" data-info="Department" href="#one">
+                                                                            Chief Complaint
+                                                                        </a>
+                                                                    </h4>
+                                                                </div>
+                                                                <div id="one" class="panel-collapse collapse">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                @Html.TextAreaFor(m => m.PatientPreAssesment.ChiefComplaint, new { @class = "form-control" })
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- end of panel -->
+                                                                <div class="panel">
+                                                                    <div class="panel-heading">
+                                                                        <h4 class="panel-title">
+                                                                            <a data-toggle="collapse" data-info="Admission" href="#two">
+                                                                                Initial Medical Assessment
+                                                                            </a>
+                                                                        </h4>
+                                                                    </div>
+                                                                    <div id="two" class="panel-collapse collapse">
+                                                                        <div class="panel-body">
+                                                                            <div class="row">
+                                                                                @{ int istest = 1;
+
+                                                                                    <div class="col-md-12">
+
+                                                                                        @foreach (var item in Model.PatientPreAssesment.InitialMedicalAssessment.InitialMedicalAssesmentDetails.Where(x => x.InitialMedicalDetailType.Parent == "IntialMedicalDetail").Select((value, i) => new { i, value }))
+                                                                                        {
+                                                                                            istest++;
+
+                                                                                            if (istest < 4)
+                                                                                            {
+                                                                                                <div class="col-md-6">
+                                                                                                    <div class="row">
+                                                                                                        <div class="col-md-6">
+                                                                                                            <div class="form-check">
+
+                                                                                                                <label>
+                                                                                                                    @*<input type="checkbox" class="InitialMedicalDetailCheckBox" id="" name="" data-info="@item.InitialMedicalDetailTypeId" value="" onchange="checked();"><span class="label-text">@item.InitialMedicalDetailType.Type</span>*@
+                                                                                                                    <input type="checkbox" class="ExaminationDetailCheckBox" data-info="InitialMedicalAssessmentDetail@(item.i)AdditionalFieldValue1" id="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetail" name="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetail" value="true" onchange="Uncheck(this);" @(item.value.InitialMedicalDetail == true ? "checked" : "")><span class="label-text">@item.value.InitialMedicalDetailType.Type</span>
+                                                                                                                    <input type="text" class="ExaminationDetailCheckBox" data-info="InitialMedicalAssessmentDetail@(item.i)AdditionalFieldValue1" id="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetailTypeId" name="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetailTypeId" value="@item.value.InitialMedicalDetailTypeId" hidden>
+                                                                                                                </label>
+
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        @if (@item.value.InitialMedicalDetailType.HasAdditionalField1)
+                                                                                                        {
+                                                                                                            <div class="col-md-6">
+
+                                                                                                                @if (@item.value.InitialMedicalDetailType.AdditionalFieldText1 != null)
+                                                                                                                {
+                                                                                                                    <div class="pull-left">@item.value.InitialMedicalDetailType.AdditionalFieldText1</div>
+                                                                                                                }
+
+                                                                                                                <div class="pull-left input-inline"><input type="text" name="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue1" id="InitialMedicalAssessmentDetail@(item.i)AdditionalFieldValue1" class="line-input" value="@(item.value.AdditionalFieldValue1)" readonly /></div>
+                                                                                                            </div>
+                                                                                                        }
+
+                                                                                                        @*<div class="col-md-7">
+                                                                                                                <div class="pull-left">Since</div>
+                                                                                                                <div class="pull-left input-inline"><input type="text" class="form-control" /></div>
+                                                                                                            </div>*@
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <div class="col-md-6">
+                                                                                                    <div class="row">
+                                                                                                        <div class="col-md-6">
+                                                                                                            <div class="form-check">
+
+                                                                                                                <label>
+                                                                                                                    @*<input type="checkbox" class="InitialMedicalDetailCheckBox" id="" name="" data-info="@item.InitialMedicalDetailTypeId" value="" onchange="checked();"><span class="label-text">@item.InitialMedicalDetailType.Type</span>*@
+                                                                                                                    <input type="checkbox" class="ExaminationDetailCheckBox" data-info="InitialMedicalAssessmentDetail@(item.i)AdditionalFieldValue1" id="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetail" name="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetail" value="true" onchange="Uncheck(this);" @(item.value.InitialMedicalDetail == true ? "checked" : "")><span class="label-text">@item.value.InitialMedicalDetailType.Type</span>
+                                                                                                                    <input type="text" class="ExaminationDetailCheckBox" data-info="InitialMedicalAssessmentDetail@(item.i)AdditionalFieldValue1" id="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetailTypeId" name="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetailTypeId" value="@item.value.InitialMedicalDetailTypeId" hidden>
+                                                                                                                </label>
+
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        @if (@item.value.InitialMedicalDetailType.HasAdditionalField1)
+                                                                                                        {
+                                                                                                            <div class="col-md-6">
+                                                                                                                @if (@item.value.InitialMedicalDetailType.AdditionalFieldText1 != null)
+                                                                                                                {
+                                                                                                                    <div class="pull-left">@item.value.InitialMedicalDetailType.AdditionalFieldText1</div>
+                                                                                                                }
+
+                                                                                                                <div class="pull-left input-inline"><input type="text" name="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue1" id="InitialMedicalAssessmentDetail@(item.i)AdditionalFieldValue1" class="line-input" value="@(item.value.AdditionalFieldValue1)" readonly /></div>
+                                                                                                            </div>
+                                                                                                        }
+
+                                                                                                        @*<div class="col-md-7">
+                                                                                                                <div class="pull-left">Since</div>
+                                                                                                                <div class="pull-left input-inline"><input type="text" class="form-control" /></div>
+                                                                                                            </div>*@
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            }
+
+
+
+                                                                                            @*<div class="row">
+                                                                                                        <div class="col-md-5">
+                                                                                                            <div class="form-check">
+                                                                                                                <label>
+                                                                                                                    <input type="checkbox" class="search" id="" name=""  onchange=""><span class="label-text">Is Alcholic </span>
+                                                                                                                </label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div class="col-md-7">
+                                                                                                            <div class="pull-left">Since</div>
+                                                                                                            <div class="pull-left input-inline"><input type="text" class="form-control" /></div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="row">
+                                                                                                        <div class="col-md-12">
+                                                                                                            <div class="form-check">
+                                                                                                                <label>
+                                                                                                                    <input type="checkbox" class="search" id="" name=""  onchange=""><span class="label-text">Drugs</span>
+                                                                                                                </label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div class="col-md-12">
+                                                                                                            <div class="form-check">
+                                                                                                                <label>
+                                                                                                                    <input type="checkbox" class="search" id="" name=""  onchange=""><span class="label-text">Surgery</span>
+                                                                                                                </label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div class="col-md-12">
+                                                                                                            <div class="form-check">
+                                                                                                                <label>
+                                                                                                                    <input type="checkbox" class="search" id="" name=""  onchange=""><span class="label-text">Hypertension</span>
+                                                                                                                </label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div class="col-md-12">
+                                                                                                            <div class="form-check">
+                                                                                                                <label>
+                                                                                                                    <input type="checkbox" class="search" id="" name=""  onchange=""><span class="label-text">Trauma</span>
+                                                                                                                </label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="col-md-6">
+                                                                                                    <div class="row mrgn-b-xs">
+                                                                                                        <div class="col-md-4">
+                                                                                                            <div class="form-check">
+                                                                                                                <label>
+                                                                                                                    <input type="checkbox" class="search" id="" name=""  onchange=""><span class="label-text">Allergy </span>
+                                                                                                                </label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div class="col-md-8">
+                                                                                                            <input type="text" class="form-control" />
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                    <div class="row">
+                                                                                                        <div class="col-md-12">
+                                                                                                            <div class="form-check">
+                                                                                                                <label>
+                                                                                                                    <input type="checkbox" class="search" id="" name=""  onchange=""><span class="label-text">Neurological Problems</span>
+                                                                                                                </label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div class="col-md-12">
+                                                                                                            <div class="form-check">
+                                                                                                                <label>
+                                                                                                                    <input type="checkbox" class="search" id="" name=""  onchange=""><span class="label-text">Is Pregnent</span>
+                                                                                                                </label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div class="col-md-12">
+                                                                                                            <div class="form-check">
+                                                                                                                <label>
+                                                                                                                    <input type="checkbox" class="search" id="" name=""  onchange=""><span class="label-text">Bronchial Asthma</span>
+                                                                                                                </label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div class="col-md-12">
+                                                                                                            <div class="form-check">
+                                                                                                                <label>
+                                                                                                                    <input type="checkbox" class="search" id="" name=""  onchange=""><span class="label-text">Has Dialysis</span>
+                                                                                                                </label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div class="col-md-12">
+                                                                                                            <div class="form-check">
+                                                                                                                <label>
+                                                                                                                    <input type="checkbox" class="search" id="" name=""  onchange=""><span class="label-text">C.V.S.. Problems</span>
+                                                                                                                </label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>*@
+
+
+
+                                                                                        }
+                                                                                    </div>
+                                                                                }
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label>Note</label>
+                                                                                    @Html.TextAreaFor(m => m.PatientPreAssesment.InitialMedicalAssessment.InitialMedicalAssesmentNote, new { @class = "form-control" })
+                                                                                </div>
+                                                                            </div>
+                                                                            <hr />
+                                                                            <div class="row mrgn-b-xs">
+                                                                                <div class="col-md-12">
+                                                                                    <h6>Examination</h6>
+                                                                                    <label>Note</label>
+                                                                                    @Html.TextAreaFor(m => m.PatientPreAssesment.InitialMedicalAssessment.InitialMedicalExaminationNote, new { @class = "form-control" })
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row mrgn-b-xs">
+                                                                                <div class="col-md-12">
+                                                                                    <div class="form-check">
+                                                                                        <label>
+                                                                                            @*<input type="checkbox" class="search" id="" name="" onchange=""><span class="label-text"><strong>Detail</strong></span>*@
+                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_Detail" name="PatientPreAssesment.InitialMedicalAssessment.Detail" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.Detail == true ? "checked" : "") onchange="showdetail();"><span class="label-text"><strong>Detail</strong></span>
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-12" id="detail-div" style="display:none">
+                                                                                    <div class="detail-div pad-lr-xs">
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">GEN:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                @foreach (var item in Model.PatientPreAssesment.InitialMedicalAssessment.InitialMedicalAssesmentDetails.Select((value, i) => new { i, value }))
+                                                                                                {
+                                                                                                    if (item.value.InitialMedicalDetailType.SubParent == "GEN")
+                                                                                                    {
+                                                                                                        <div class="inline-box">
+                                                                                                            <div class="form-check">
+                                                                                                                @*<label>
+                                                                                                                    <input type="checkbox" class="ExaminationDetailCheckBox" data-info="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue1" datainfo1="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue2" id="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetail" name="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetail" value="true" onchange="enabletextbox(this);"><span class="label-text">@item.value.InitialMedicalDetailType.Type</span>
+                                                                                                                    <input type="text" class="ExaminationDetailCheckBox" data-info="@item.value.InitialMedicalDetailTypeId" id="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetailTypeId" name="ExaminationDetails[@item.i].InitialMedicalDetailTypeId" value="@item.value.InitialMedicalDetailTypeId" hidden onchange="">*@
+                                                                                                                <label>
+                                                                                                                    <input type="checkbox" class="ExaminationDetailCheckBox" data-info="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue1" datainfo1="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue2" id="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetail" name="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetail" value="true" onchange="enabletextbox(this);" @(item.value.InitialMedicalDetail == true ? "checked" : "")><span class="label-text">@item.value.InitialMedicalDetailType.Type</span>
+                                                                                                                    <input type="text" class="ExaminationDetailCheckBox" data-info="@item.value.InitialMedicalDetail" id="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetailTypeId" name="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetailTypeId" value="@item.value.InitialMedicalDetailTypeId" hidden onchange="">
+
+
+                                                                                                                </label>
+                                                                                                                @*</label>*@
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        @if (@item.value.InitialMedicalDetailType.HasAdditionalField1)
+                                                                                                        {
+                                                                                                            <div class="inline-box">
+                                                                                                                <div class="pull-left input-inline1"><input type="text" name="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue1" id="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue1" class="line-input" readonly value="@item.value.AdditionalFieldValue1" /></div>
+                                                                                                                <div class="pull-left">@item.value.InitialMedicalDetailType.AdditionalFieldText1</div>
+                                                                                                                @if (@item.value.InitialMedicalDetailType.HasAdditionalField2)
+                                                                                                                {
+                                                                                                                    <div class="pull-left input-inline1"><input type="text" name="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue2" id="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue2" class="line-input" readonly value="@item.value.AdditionalFieldValue2" /></div>
+                                                                                                                    <div class="pull-left">@item.value.InitialMedicalDetailType.AdditionalFieldText2</div>
+                                                                                                                }
+                                                                                                            </div>
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">SKIN:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                @foreach (var item in Model.PatientPreAssesment.InitialMedicalAssessment.InitialMedicalAssesmentDetails.Select((value, i) => new { i, value }))
+                                                                                                {
+                                                                                                    if (item.value.InitialMedicalDetailType.SubParent == "SKIN")
+                                                                                                    {
+                                                                                                        <div class="inline-box">
+                                                                                                            <div class="form-check">
+                                                                                                                <label>
+                                                                                                                    <input type="checkbox" class="ExaminationDetailCheckBox" data-info="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue1" datainfo1="ExaminationDetails[@item.i].AdditionalFieldValue2" id="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetail" name="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetail" value="true" onchange="enabletextbox(this);" @(item.value.InitialMedicalDetail == true ? "checked" : "")><span class="label-text">@item.value.InitialMedicalDetailType.Type</span>
+                                                                                                                    <input type="text" class="ExaminationDetailCheckBox" data-info="@item.value.InitialMedicalDetail" id="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetailTypeId" name="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetailTypeId" value="@item.value.InitialMedicalDetailTypeId" hidden onchange="">
+
+
+                                                                                                                </label>
+                                                                                                            </div>
+
+                                                                                                        </div>
+                                                                                                        @if (@item.value.InitialMedicalDetailType.HasAdditionalField1)
+                                                                                                        {
+                                                                                                            <div class="inline-box">
+                                                                                                                <div class="pull-left input-inline"><input type="text" name="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue1" id="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue1" class="line-input" readonly value="@item.value.AdditionalFieldValue1" /></div>
+                                                                                                                <div class="pull-left">@item.value.InitialMedicalDetailType.AdditionalFieldText1</div>
+                                                                                                                @if (@item.value.InitialMedicalDetailType.HasAdditionalField2)
+                                                                                                                {
+                                                                                                                    <div class="pull-left input-inline"><input type="text" name="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue2" id="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue2" class="line-input" readonly value="@item.value.AdditionalFieldValue2" /></div>
+                                                                                                                    <div class="pull-left">@item.value.InitialMedicalDetailType.AdditionalFieldText2</div>
+                                                                                                                }
+                                                                                                            </div>
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">HEAD:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                @foreach (var item in Model.PatientPreAssesment.InitialMedicalAssessment.InitialMedicalAssesmentDetails.Select((value, i) => new { i, value }))
+                                                                                                {
+                                                                                                    if (item.value.InitialMedicalDetailType.SubParent == "HEAD")
+                                                                                                    {
+
+                                                                                                        <div class="inline-box">
+                                                                                                            <div class="form-check">
+                                                                                                                <label>
+                                                                                                                    <input type="checkbox" class="ExaminationDetailCheckBox" data-info="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue1" datainfo1="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue2" id="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetail" name="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetail" value="true" onchange="enabletextbox(this);" @(item.value.InitialMedicalDetail == true ? "checked" : "")><span class="label-text">@item.value.InitialMedicalDetailType.Type</span>
+                                                                                                                    <input type="hidden" class="ExaminationDetailCheckBox" data-info="@item.value.InitialMedicalDetailTypeId" id="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetailTypeId" name="InitialMedicalAssessmentDetail[@item.i].InitialMedicalDetailTypeId" value="@item.value.InitialMedicalDetailTypeId" onchange="">
+                                                                                                                </label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        @if (@item.value.InitialMedicalDetailType.HasAdditionalField1)
+                                                                                                        {
+                                                                                                            <div class="inline-box">
+                                                                                                                <div class="pull-left input-inline"><input type="text" name="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue1" id="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue1" class="line-input" readonly value="@item.value.AdditionalFieldValue1" /></div>
+                                                                                                                <div class="pull-left">@item.value.InitialMedicalDetailType.AdditionalFieldText1</div>
+                                                                                                                @if (@item.value.InitialMedicalDetailType.HasAdditionalField2)
+                                                                                                                {
+                                                                                                                    <div class="pull-left input-inline"><input type="text" name="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue2" id="InitialMedicalAssessmentDetail[@item.i].AdditionalFieldValue2" class="line-input" readonly value="@item.value.AdditionalFieldValue2" /></div>
+                                                                                                                    <div class="pull-left">@item.value.InitialMedicalDetailType.AdditionalFieldText2</div>
+                                                                                                                }
+                                                                                                            </div>
+                                                                                                        }
+
+                                                                                                    }
+
+                                                                                                }
+                                                                                            </div>
+
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="row mrgn-b-md">
+                                                                                <div class="col-md-6">
+                                                                                    <h6>External Nose</h6>
+                                                                                    <div class="form-group">
+                                                                                        <label>Bony Pyramid</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.BonyPyramid, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        <label>Cartilage Pyramid</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.CartilagePyramid, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        <label>Lobule</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.Lobule, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        <label>Skin</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.Skin, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        <label>Nostrils</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.Nostrils, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <h6>
+                                                                                        Internal Nose & Rhinoscopy
+                                                                                    </h6>
+                                                                                    <div class="form-group">
+                                                                                        <label>Spetum</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.Spetum, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        <label>Valves</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.Valves, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        <label>Turbinates</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.Turbinates, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        <label>Muscosa</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.Muscosa, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        <label>Secretions</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.Secretions, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row mrgn-b-md">
+                                                                                <div class="col-md-6">
+                                                                                    <h6>
+                                                                                        Examination Mouth & Throat
+                                                                                    </h6>
+                                                                                    <div class="form-group">
+                                                                                        <label>Teeth n Gum</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.TeethGum, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        <label>Tonsils</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.Tonsils, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        <label>Pharynx</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.Pharynx, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        @*<label>Option 4</label>
+                                                                                            <input class="form-control" id="" name="" type="text" value="">*@
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <h6>
+                                                                                        Examination Ear & Neck
+                                                                                    </h6>
+                                                                                    <div class="form-group">
+                                                                                        <label>Right Ear</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.RightEar, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        <label>Left Ear</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.LeftEar, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        <label>Larynx</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.Larynx, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        <label>Neck</label>
+                                                                                        @*<input class="form-control" id="" name="" type="text" value="">*@
+                                                                                        @Html.TextBoxFor(x => x.PatientPreAssesment.InitialMedicalAssessment.Neck, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row mrgn-b-xs">
+                                                                                <div class="col-md-12">
+                                                                                    <div class="detail-div">
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">EYES:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_EyesAcuityChange" name="PatientPreAssesment.InitialMedicalAssessment.EyesAcuityChange" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.EyesAcuityChange == true ? "checked" : "")><span class="label-text">Acuity Change</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_EyesDiplopia" name="PatientPreAssesment.InitialMedicalAssessment.EyesDiplopia" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.EyesDiplopia == true ? "checked" : "")><span class="label-text">Diplopia</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_EyesDischarge" name="PatientPreAssesment.InitialMedicalAssessment.EyesDischarge" value="true"><span class="label-text" @(Model.PatientPreAssesment.InitialMedicalAssessment.EyesDischarge == true ? "checked" : "")>Discharge</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_EyesPain" name="PatientPreAssesment.InitialMedicalAssessment.EyesPain" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.EyesPain == true ? "checked" : "")><span class="label-text">Pain</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">EARS:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_EarsHearingLoss" name="PatientPreAssesment.InitialMedicalAssessment.EarsHearingLoss" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.EarsHearingLoss == true ? "checked" : "")><span class="label-text">Hearing Loss</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_EarsPain" name="PatientPreAssesment.InitialMedicalAssessment.EarsPain" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.EarsPain == true ? "checked" : "")><span class="label-text">Pain</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_EarsTinnitus" name="PatientPreAssesment.InitialMedicalAssessment.EarsTinnitus" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.EarsTinnitus == true ? "checked" : "")><span class="label-text">Tinnitus</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_EarsVertigo" name="PatientPreAssesment.InitialMedicalAssessment.EarsVertigo" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.EarsVertigo == true ? "checked" : "")><span class="label-text">Vertigo</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">NOSE:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_NoseDischarge" name="PatientPreAssesment.InitialMedicalAssessment.NoseDischarge" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.NoseDischarge == true ? "checked" : "")><span class="label-text">Discharge</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_NoseEpistaxis" name="PatientPreAssesment.InitialMedicalAssessment.NoseEpistaxis" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.NoseEpistaxis == true ? "checked" : "")><span class="label-text">Epistaxis</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_NoseRhinorrhea" name="PatientPreAssesment.InitialMedicalAssessment.NoseRhinorrhea" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.NoseRhinorrhea == true ? "checked" : "")><span class="label-text">Rhinorrhea</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">Mouth:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_MouthSoreThroat" name="PatientPreAssesment.InitialMedicalAssessment.MouthSoreThroat" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.MouthSoreThroat == true ? "checked" : "")><span class="label-text">Sore Throat</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_MouthSores" name="PatientPreAssesment.InitialMedicalAssessment.MouthSores" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.MouthSores == true ? "checked" : "")><span class="label-text">Sores</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_MouthBleedingGum" name="PatientPreAssesment.InitialMedicalAssessment.MouthBleedingGum" @(Model.PatientPreAssesment.InitialMedicalAssessment.MouthBleedingGum == true ? "checked" : "") value="true"><span class="label-text">Bleeding Gum</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">NECK:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_NeckPain" name="PatientPreAssesment.InitialMedicalAssessment.NeckPain" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.NeckPain == true ? "checked" : "")><span class="label-text">Pain</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_NeckDecreasedMobility" name="PatientPreAssesment.InitialMedicalAssessment.NeckDecreasedMobility" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.NeckDecreasedMobility == true ? "checked" : "")><span class="label-text">Decreased Mobility</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">Breast:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_BreastMasses" name="PatientPreAssesment.InitialMedicalAssessment.BreastMasses" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.BreastMasses == true ? "checked" : "")><span class="label-text">Masses</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_BreastPain" name="PatientPreAssesment.InitialMedicalAssessment.BreastPain" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.BreastPain == true ? "checked" : "")><span class="label-text">Pain</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_BreastDischarge" name="PatientPreAssesment.InitialMedicalAssessment.BreastDischarge" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.BreastDischarge == true ? "checked" : "")><span class="label-text">Discharge</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_BreastLastMamm" name="PatientPreAssesment.InitialMedicalAssessment.BreastLastMamm" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.BreastLastMamm == true ? "checked" : "")><span class="label-text">Last Mamm</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">CV:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_CVChestPain" name="PatientPreAssesment.InitialMedicalAssessment.CVChestPain" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.CVChestPain == true ? "checked" : "")><span class="label-text">Chest Pain</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_CVDiaphoresis" name="PatientPreAssesment.InitialMedicalAssessment.CVDiaphoresis" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.CVDiaphoresis == true ? "checked" : "")><span class="label-text">Diaphoresis</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_CVDoe" name="PatientPreAssesment.InitialMedicalAssessment.CVDoe" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.CVDoe == true ? "checked" : "")><span class="label-text">DOE</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_CVPnd" name="PatientPreAssesment.InitialMedicalAssessment.CVPnd" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.CVPnd == true ? "checked" : "")><span class="label-text">PND</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_CVMurmur" name="PatientPreAssesment.InitialMedicalAssessment.CVMurmur" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.CVMurmur == true ? "checked" : "")><span class="label-text">Murmur</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_CVOthopnea" name="PatientPreAssesment.InitialMedicalAssessment.CVOthopnea" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.CVOthopnea == true ? "checked" : "")><span class="label-text">Othopnea</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_CVPalpitations" name="PatientPreAssesment.InitialMedicalAssessment.CVPalpitations" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.CVPalpitations == true ? "checked" : "")><span class="label-text">Palpitations</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="search" id="PatientPreAssesment_InitialMedicalAssessment_CVDepEdema" name="PatientPreAssesment.InitialMedicalAssessment.CVDepEdema" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.CVDepEdema == true ? "checked" : "")><span class="label-text">Dep. Edema</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">Resp:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_RespSob" name="PatientPreAssesment.InitialMedicalAssessment.RespSob" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.RespSob == true ? "checked" : "")><span class="label-text">SOB</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_RespCough" name="PatientPreAssesment.InitialMedicalAssessment.RespCough" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.RespCough == true ? "checked" : "")><span class="label-text">Cough</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_RespSputum" name="PatientPreAssesment.InitialMedicalAssessment.RespSputum" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.RespSputum == true ? "checked" : "")><span class="label-text">Sputum</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_RespWheeze" name="PatientPreAssesment.InitialMedicalAssessment.RespWheeze" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.RespWheeze == true ? "checked" : "")><span class="label-text">Wheeze</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_RespHemoptysis" name="PatientPreAssesment.InitialMedicalAssessment.RespHemoptysis" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.RespHemoptysis == true ? "checked" : "")><span class="label-text">Hemoptysis</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_RespTBExposure" name="PatientPreAssesment.InitialMedicalAssessment.RespTBExposure" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.RespTBExposure == true ? "checked" : "")><span class="label-text">TBExposure</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_RespSkinTestResults" name="PatientPreAssesment.InitialMedicalAssessment.RespSkinTestResults" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.RespSkinTestResults == true ? "checked" : "")><span class="label-text">SkinTest Results</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">GI:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_GINvdc" name="PatientPreAssesment.InitialMedicalAssessment.GINvdc" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.GINvdc == true ? "checked" : "")><span class="label-text">N/V/D/C</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_GIPain" name="PatientPreAssesment.InitialMedicalAssessment.GIPain" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.GIPain == true ? "checked" : "")><span class="label-text">Pain</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_GIBrbpr" name="PatientPreAssesment.InitialMedicalAssessment.GIBrbpr" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.GIBrbpr == true ? "checked" : "")><span class="label-text">Brbpr</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_GIHematemesis" name="PatientPreAssesment.InitialMedicalAssessment.GIHematemesis" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.GIHematemesis == true ? "checked" : "")><span class="label-text">Hematemesis</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_GIMelena" name="PatientPreAssesment.InitialMedicalAssessment.GIMelena" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.GIMelena == true ? "checked" : "")><span class="label-text">Melena</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_GIDysphagia" name="PatientPreAssesment.InitialMedicalAssessment.GIDysphagia" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.GIDysphagia == true ? "checked" : "")><span class="label-text">Dysphagia</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_GIChangeinStoolColorConsist" name="PatientPreAssesment.InitialMedicalAssessment.GIChangeinStoolColorConsist" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.GIChangeinStoolColorConsist == true ? "checked" : "")><span class="label-text">ChangeinStoolColorConsist</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">GU:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_GUDysuria" name="PatientPreAssesment.InitialMedicalAssessment.GUDysuria" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.GUDysuria == true ? "checked" : "")><span class="label-text">Dysuria</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_GUHematuria" name="PatientPreAssesment.InitialMedicalAssessment.GUHematuria" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.GUHematuria == true ? "checked" : "")><span class="label-text">Hematuria</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_GUUrgency" name="PatientPreAssesment.InitialMedicalAssessment.GUUrgency" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.GUUrgency == true ? "checked" : "")><span class="label-text">Urgency</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_GUFrequency" name="PatientPreAssesment.InitialMedicalAssessment.GUFrequency" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.GUFrequency == true ? "checked" : "")><span class="label-text">Frequency</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_GUDifficultyInitiatingStream" name="PatientPreAssesment.InitialMedicalAssessment.GUDifficultyInitiatingStream" @(Model.PatientPreAssesment.InitialMedicalAssessment.GUDifficultyInitiatingStream == true ? "checked" : "") value="true"><span class="label-text">Frequency</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_GUBackGroinPain" name="PatientPreAssesment.InitialMedicalAssessment.GUBackGroinPain" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.GUBackGroinPain == true ? "checked" : "")><span class="label-text">Back Groin Pain</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">OB/Gyn:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_OBGYNBleeding" name="PatientPreAssesment.InitialMedicalAssessment.OBGYNBleeding" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.OBGYNBleeding == true ? "checked" : "")><span class="label-text">Bleeding</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_OBGYNDyspareunia" name="PatientPreAssesment.InitialMedicalAssessment.OBGYNDyspareunia" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.OBGYNDyspareunia == true ? "checked" : "")><span class="label-text">Dyspareunia</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_OBGYNMenopause" name="PatientPreAssesment.InitialMedicalAssessment.OBGYNMenopause" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.OBGYNMenopause == true ? "checked" : "")><span class="label-text">Menopause</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_OBGYNLmp" name="PatientPreAssesment.InitialMedicalAssessment.OBGYNLmp" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.OBGYNLmp == true ? "checked" : "")><span class="label-text">Lmp</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">MS:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_MSArthraligia" name="PatientPreAssesment.InitialMedicalAssessment.MSArthraligia" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.MSArthraligia == true ? "checked" : "")><span class="label-text">Arthraligia</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_MSMyalgia" name="PatientPreAssesment.InitialMedicalAssessment.MSMyalgia" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.MSMyalgia == true ? "checked" : "")><span class="label-text">Myalgia</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_MSCramps" name="PatientPreAssesment.InitialMedicalAssessment.MSCramps" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.MSCramps == true ? "checked" : "")><span class="label-text">Cramps</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_MSArthritis" name="PatientPreAssesment.InitialMedicalAssessment.MSArthritis" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.MSArthritis == true ? "checked" : "")><span class="label-text">Arthritis</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">Heme:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_HemeAnemia" name="PatientPreAssesment.InitialMedicalAssessment.HemeAnemia" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.HemeAnemia == true ? "checked" : "")><span class="label-text">Anemia</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_HemeEcchymosis" name="PatientPreAssesment.InitialMedicalAssessment.HemeEcchymosis" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.HemeEcchymosis == true ? "checked" : "")><span class="label-text">Ecchymosis</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_HemeBleeding" name="PatientPreAssesment.InitialMedicalAssessment.HemeBleeding" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.HemeBleeding == true ? "checked" : "")><span class="label-text">Bleeding</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_HemeTransfusion" name="PatientPreAssesment.InitialMedicalAssessment.HemeTransfusion" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.HemeTransfusion == true ? "checked" : "")><span class="label-text">Transfusion</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">Endo:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_EndoHeatColdIntol" name="PatientPreAssesment.InitialMedicalAssessment.EndoHeatColdIntol" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.EndoHeatColdIntol == true ? "checked" : "")><span class="label-text">Heat/Cold Intol</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_EndoPoluria" name="PatientPreAssesment.InitialMedicalAssessment.EndoPoluria" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.EndoPoluria == true ? "checked" : "")><span class="label-text">Poluria</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_EndoPolydipsia" name="PatientPreAssesment.InitialMedicalAssessment.EndoPolydipsia" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.EndoPolydipsia == true ? "checked" : "")><span class="label-text">Polydipsia</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">Neuro:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_NeuroSeizure" name="PatientPreAssesment.InitialMedicalAssessment.NeuroSeizure" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.NeuroSeizure == true ? "checked" : "")><span class="label-text">Seizure</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_NeuroSyncope" name="PatientPreAssesment.InitialMedicalAssessment.NeuroSyncope" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.NeuroSyncope == true ? "checked" : "")><span class="label-text">Syncope</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_NeuroParalysis" name="PatientPreAssesment.InitialMedicalAssessment.NeuroParalysis" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.NeuroParalysis == true ? "checked" : "")><span class="label-text">Paralysis</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_NeuroParesthesias" name="PatientPreAssesment.InitialMedicalAssessment.NeuroParesthesias" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.NeuroParesthesias == true ? "checked" : "")><span class="label-text">Paresthesias</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_NeuroTremor" name="PatientPreAssesment.InitialMedicalAssessment.NeuroTremor" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.NeuroTremor == true ? "checked" : "")><span class="label-text">Tremor</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_NeuroMemoryProblems" name="PatientPreAssesment.InitialMedicalAssessment.NeuroMemoryProblems" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.NeuroMemoryProblems == true ? "checked" : "")><span class="label-text">Memory Problems</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-1">Psych:</div>
+                                                                                            <div class="col-md-11">
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_PsychAnxiety" name="PatientPreAssesment.InitialMedicalAssessment.PsychAnxiety" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.PsychAnxiety == true ? "checked" : "")><span class="label-text">Anxiety</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_PsychDepression" name="PatientPreAssesment.InitialMedicalAssessment.PsychDepression" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.PsychDepression == true ? "checked" : "")><span class="label-text">Depression</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_PsychAnhedonia" name="PatientPreAssesment.InitialMedicalAssessment.PsychAnhedonia" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.PsychAnhedonia == true ? "checked" : "")><span class="label-text">Anhedonia</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_PsychSubstanceAbuse" name="PatientPreAssesment.InitialMedicalAssessment.PsychSubstanceAbuse" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.PsychSubstanceAbuse == true ? "checked" : "")><span class="label-text">Substance Abuse</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_PsychMoodSwings" name="PatientPreAssesment.InitialMedicalAssessment.PsychMoodSwings" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.PsychMoodSwings == true ? "checked" : "")><span class="label-text">Mood Swings</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="inline-box">
+                                                                                                    <div class="form-check">
+                                                                                                        <label>
+                                                                                                            <input type="checkbox" class="PatientPreAssesmentCheckbox" id="PatientPreAssesment_InitialMedicalAssessment_PsychSuicideAttempts" name="PatientPreAssesment.InitialMedicalAssessment.PsychSuicideAttempts" value="true" @(Model.PatientPreAssesment.InitialMedicalAssessment.PsychSuicideAttempts == true ? "checked" : "")><span class="label-text">Suicide Attempts</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="panel">
+                                                                        <div class="panel-heading">
+                                                                            <h4 class="panel-title">
+                                                                                <a data-toggle="collapse" data-info="Admission" href="#three">
+                                                                                    Physical Exam
+                                                                                </a>
+                                                                            </h4>
+                                                                        </div>
+                                                                        <div id="three" class="panel-collapse collapse">
+                                                                            <div class="panel-body">
+                                                                                <div class="row">
+                                                                                    <div class="col-md-12">
+                                                                                        <label>Note</label>
+                                                                                        @Html.TextAreaFor(m => m.PatientPreAssesment.PhysicalNote, new { @class = "form-control" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <div class="profile-box-r">
+                                                            <div class="row mrgn-all-xs">
+                                                                <div class="col-md-12">
+                                                                    <div class="pro-pic">
+                                                                        @if (Model.User.ImagePath != null)
+                                                                        {
+                                                                            <img src="@Model.User.ImagePath" alt="">
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <img src="/assets/img/user-1.jpg" alt="">
+                                                                        }
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <label>Reg No</label>
+                                                                        @Html.TextBoxFor(m => m.User.RegisterationNo, new { @class = "form-control", @readonly = "readonly" })
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>Patient Name</label>
+                                                                        @Html.TextBoxFor(m => m.User.EnFirstName, new { @class = "form-control", @readonly = "readonly" })
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Birthdate
+                                                                        </label>
+                                                                        @Html.TextBoxFor(m => m.User.PatientPersonalInformation.DateOfBirth, new { @class = "form-control", @readonly = "readonly" })
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>ID No</label>
+                                                                        @Html.TextBoxFor(m => m.User.ID, new { @class = "form-control", @readonly = "readonly" })
+                                                                    </div>
+                                                                    @*<div class="form-group">
+                                                                            <label>Age</label>
+                                                                            <input class="form-control" id="" name="" type="text" value="">
+                                                                        </div>*@
+                                                                    <div class="form-group">
+                                                                        <label>City</label>
+                                                                        @Html.TextBoxFor(m => m.User.PatientPersonalInformation.City.Name, new { @class = "form-control", @readonly = "readonly" })
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>Address</label>
+                                                                        @Html.TextBoxFor(m => m.User.Address, new { @class = "form-control", @readonly = "readonly" })
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>Mobile</label>
+                                                                        @Html.TextBoxFor(m => m.User.Mobile, new { @class = "form-control", @readonly = "readonly" })
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>Blood GR</label>
+                                                                        @Html.TextBoxFor(m => m.User.PatientPersonalInformation.BloodGroup.Name, new { @class = "form-control", @readonly = "readonly" })
+                                                                    </div>
+                                                                    @*<div class="form-group">
+                                                                            <label>Hight</label>
+                                                                            <input class="form-control" id="" name="" type="text" value="">
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label>Weight</label>
+                                                                            <input class="form-control" id="" name="" type="text" value="">
+                                                                        </div>*@
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+                                        @*TILL HERE*@ 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+
+    </div>
+</div>
+@section scripts{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+
+    <script>
+
+        var objfill;
+
+        function saveEncounterFunction() {
+
+            var formdata = new FormData($('form').get(0));
+
+
+
+            $(".tryMultiselect option:selected").each(function () {
+                var $this = $(this);
+                console.log($this);
+                debugger
+                formdata.append("PreAssessmentVitalDetails[" + $this[0].index + "].VitalDetailID", $this[0].value);
+                formdata.append("PreAssessmentVitalDetails[" + $this[0].index + "].VitalDetailValue", true);
+                //console.log($this.parent())
+                formdata.append("PreAssessmentVitalDetails[" + $this[0].index + "].VitalDetail.ParentId", $this.context.parentNode.attributes[1].value);
+                debugger
+});
+
+            //$(".InitialMedicalDetailCheckBox").each(
+            //    function (a, b) {
+            //        if ($(this).prop("checked")) {
+            //            formdata.append("InitialMedicalAssessmentDetail[" + a + "].InitialMedicalDetail", true);
+            //            formdata.append("InitialMedicalAssessmentDetail[" + a + "].InitialMedicalDetailTypeId", $(this).attr("data-info"));
+            //        }
+            //        else {
+            //            formdata.append("InitialMedicalAssessmentDetail[" + a + "].InitialMedicalDetail", false);
+            //            formdata.append("InitialMedicalAssessmentDetail[" + a + "].InitialMedicalDetailTypeId", $(this).attr("data-info"));
+            //        }
+            //    });
+
+            //$(".ExaminationDetailCheckBox").each(
+            //    function (a, b) {
+            //        if ($(this).prop("checked")) {
+            //            formdata.append($(this).attr("name"), true);
+            //            formdata.append($(this).attr("name"), $(this).attr("data-info"));
+            //        }
+            //        else {
+            //            formdata.append($(this).attr("name"), false);
+            //            formdata.append($(this).attr("name"), $(this).attr("data-info"));
+            //        }
+            //    });
+
+            for (var pair of formdata.entries()) {
+                console.log(pair[0] + ', ' + pair[1]);
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "/admin/patient/encounteradd",
+                data: formdata,
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    console.log(response);
+                    toastr.info('Record saved');
+                },
+                error: function (xhr, status) {
+                    toastr.error('Something went wrong');
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            var PatientEncounter_ID = $("#PatientEncounter_ID").val();
+           // alert(PatientEncounter_ID);
+            if (PatientEncounter_ID > 0) {
+                //alert(1);
+                $("#form-fieldset").prop("disabled", true);
+                $("#saveEncounter").attr("disabled", true);
+
+            }
+            if ($("#PatientPreAssesment_InitialMedicalAssessment_Detail").prop("checked")) {
+                $("#detail-div").show();
+            }
+            $("select").prop('class', 'selectpicker show-tick form-control');
+            $("select").attr('data-live-search', true);
+            var xray = @Html.Raw(Json.Serialize(Model.PreAssessmentVitalDetails));
+            console.log(xray);
+            if (xray != null) {
+                    $.each(xray, function(i,e){
+     $("#something option[value='" + e.vitalDetailID + "']").prop("selected", true);
+            });
+            }
+
+
+        });
+        var xray = @Html.Raw(Json.Serialize(Model.PreAssessmentVitalDetails));
+        if (xray != null) {
+            $("#something").multiselect('refresh');
+        }
+
+        $('select').selectpicker();
+        function Uncheck(data) {
+            var test = $(data).attr("data-info");
+            if ($(data).prop("checked")) {
+                document.getElementById(test).removeAttribute('readonly');
+            }
+            else {
+               document.getElementById(test).setAttribute('readonly',true);
+            }
+        }
+        function enabletextbox(data) {
+            var test = $(data).attr("data-info");
+            var test1 = $(data).attr("datainfo1");
+            if ($(data).prop("checked")) {
+                document.getElementById(test).removeAttribute('readonly');
+                document.getElementById(test1).removeAttribute('readonly');
+            }
+            else {
+                document.getElementById(test).setAttribute('readonly', true);
+                document.getElementById(test1).setAttribute('readonly',true);
+            }
+
+        }
+        function showdetail() {
+            $("#detail-div").toggle();
+        }
+
+
+    </script>
+}
+
+

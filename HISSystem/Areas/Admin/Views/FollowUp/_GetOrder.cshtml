@@ -1,0 +1,99 @@
+﻿@model GeneticSystem.Areas.Admin.Models.FollowUp.FollowUpVM
+
+<table id="patientTbl" class="table table-hover table-bordered table-striped">
+    <thead>
+        <tr class="">
+            <th>Order No</th>
+            <th>Order Date</th>
+            <th>Test Type</th>
+            <th>Follow Up Needed</th>
+            <th>Test Needed</th>
+            <th>Assigned Doctor</th>
+            <th>Status</th>
+            <th colspan="2">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model.ClientOrderList.Data)
+        {
+        <tr>
+            <td>
+                @order.OrderNo
+            </td>
+            <td>
+                @order.OrderDate
+            </td>
+            <td>
+                @if (order.TestArrayStrings != null)
+                {
+                    @foreach (var item in order.TestArrayStrings)
+                    {
+                        <label class="label label-primary mr-2 btn-rounded">@item</label>
+                    }
+                }
+            </td>
+            <td>
+                True
+            </td>
+            <td>
+                True
+            </td>
+            <td>
+                @order.Doctor?.EnFirstName
+            </td>
+            <td>
+                @if (order.Status != null)
+                {
+                    @if (order.StatusID == 397)
+                    {
+                        <span class="label label-success btn-rounded">@order.Status.Name</span>
+                    }
+                    else
+                    {
+                        <span class="label label-danger btn-rounded">@order.Status.Name</span>
+                    }
+
+                }
+
+            </td>
+            <td colspan="2">
+                @if (order.Status != null)
+                {
+                    @if (order.StatusID == 398)
+                    {
+                        <button type="button" class="btn btn-xs btn-warning UpdtOrdrBtn" value="@order.ID"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-xs btn-warning" disabled><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update</button>
+                    }
+                }
+
+                <button type="button" class="btn btn-xs btn-secondary AttchOrdrBtn" value="@order.UserID"><i class="fa fa-paperclip" aria-hidden="true"></i> Attachment</button>
+                <button type="button" class="btn btn-xs btn-info GtTmpData" value="@order.ID"><i class="fa fa-tv" aria-hidden="true"></i>  <i class="fa fa-pencil" aria-hidden="true"></i>Order Data</button>
+                @if (order.Status != null)
+                {
+                    @if (order.StatusID == 398)
+                    {
+            <button type="button" class="btn btn-xs btn-primary ClsOrdr" value="@order.ID"><i class="fa fa-pencil" aria-hidden="true"></i>   Close Order</button>
+                    }
+                    else
+                    {
+            <button type="button" class="btn btn-xs btn-success"><i class="fa fa-check" aria-hidden="true"></i> Order Closed</button>
+                    }
+                }
+            </td>
+        </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="17">
+                @for (int i = 1; i <= Model.ClientOrderList.NumberOfPages; i++)
+                {
+                    <a class="page-number" href="javascript:void();">@i</a>
+                }
+            </td>
+        </tr>
+    </tfoot>
+</table>

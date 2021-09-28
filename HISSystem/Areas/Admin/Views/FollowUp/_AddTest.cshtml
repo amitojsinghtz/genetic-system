@@ -1,0 +1,27 @@
+﻿@model GeneticSystem.Areas.Admin.Models.FollowUp.FollowUpVM
+
+    <form id="updtTstFrm">
+        <div class="row">
+            <div class="col-md-12 col-lg-12">
+                <div class="prtm-block pos-relative">
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="cmpltdTsts"> Completed Tests </label>
+                            <input type="text" id-="cmpltdTsts" class="form-control" placeholder="First name" value="@(Model.completedOrderTests)" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="clientOrder.ClientOrder.TestTypeArray"> Add/Edit Tests </label>
+                            @Html.ListBox("PendingTestArray", new MultiSelectList(Model.orderTest, "Value", "Text", Model.PendingTestArray), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                        </div>
+                    </div>
+                    <button type="button" id="updttTstsBtn" class="btn btn-primary btn-xs updttTstsBtn">
+                        Update Tests
+                    </button>
+                    <button type="button" data-dismiss="modal" class="btn btn-danger btn-xs">
+                        Back
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+

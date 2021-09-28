@@ -1,0 +1,34 @@
+﻿<table id="lookupDetailList" class="table table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+            <th class="numeric">Lookup Type</th>
+            <th class="numeric">Lookup Name</th>
+            <th class="numeric">Lookup TypeID</th>
+            <th class="numeric">IsActive?</th>
+            <th class="numeric" colspan="2">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.PagedLookups.Data)
+        {
+            <tr>
+                <td>@item.Type</td>
+                <td>@item.Name</td>
+                <td>@item.TypeID</td>
+                <td>@item.IsActive</td>
+                <td>@Html.ActionLink("", "Delete", "Lookup", new { lookupID = @item.ID }, new { @Class = "fa fa-trash mrgn-l-xs fa-2x" })</td>
+                <td id="@item.ID" class="editLookup"><i style="cursor:pointer" class="fa fa-edit fa-2x"></i></td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="6" value="@ViewBag.LookupName" id="@ViewBag.LookupName" ">
+                @for (int i = 1; i <= Model.PagedLookups.NumberOfPages; i++)
+                {
+                    <a class="page-number" href="javascript:void()">@i</a>
+                }
+            </td>
+        </tr>
+    </tfoot>
+</table>

@@ -1,0 +1,79 @@
+﻿@model List<Data.Models.PatientOrderFatConsumption>
+
+
+<div class="tab-content pad-all-sm">
+    <div id="tab-27" class="tab-pane fade in active">
+        <div class="row">
+            <div class="panel-group panel-2" id="bs-collapse">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-info="Department" href="#one">
+                                Fat Consumption Template
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="one" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <div>
+                                            <table class="table table-hover table-bordered table-striped">
+                                                <thead>
+                                                    <tr class="">
+                                                        <th class="numeric">ConsumptionType</th>
+                                                        <th class="numeric">Effected Gene</th>
+                                                        <th class="numeric">Is Effected</th>
+                                                        <th class="numeric">Recommendations</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.Select((value, i) => new { i, value }))
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                <input name="PatientOrderFatConsumptionList[@item.i].ID" value="@item.value.ID" hidden>
+                                                                <input name="PatientOrderFatConsumptionList[@item.i].OrderID" value="@item.value.OrderID" hidden>
+                                                                <input name="PatientOrderFatConsumptionList[@item.i].IsActive" value="True" hidden>
+                                                                <input name="PatientOrderFatConsumptionList[@item.i].CreatedOn" value="@item.value.CreatedOn" hidden>
+                                                                <input name="PatientOrderFatConsumptionList[@item.i].UpdatedOn" value="@ViewBag.Date" hidden>
+
+
+                                                                @if (item.value.ConsumptionType != null)
+                                                                {
+                                                                    @Html.DropDownList("PatientOrderFatConsumptionList[" + @item.i + "].ConsumptionTypeID", new SelectList(ViewBag.ConsumptionTypes, "ID", "Name", item.value.ConsumptionTypeID), htmlAttributes: new { @class = "form-control dropdown", id = "PatientOrderFatConsumptionList[" + @item.i + "].ConsumptionTypeID", name = "PatientOrderFatConsumptionList[" + @item.i + "].ConsumptionType" })
+                                                                }
+
+                                                            </td>
+                                                            <td>
+                                                                @if (item.value.EffectedGene != null)
+                                                                {
+                                                                    @Html.DropDownList("PatientOrderFatConsumptionList[" + @item.i + "].EffectedGeneID", new SelectList(ViewBag.EffectedGenes, "ID", "Name", item.value.EffectedGeneID), htmlAttributes: new { @class = "form-control dropdown", id = "PatientOrderFatConsumptionList[" + @item.i + "].EffectedGeneID", name = "PatientOrderFatConsumptionList[" + @item.i + "].EffectedGene" })
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check"><label><input type="checkbox" id="PatientOrderFatConsumptionList[@item.i].Effected" name="PatientOrderFatConsumptionList[@item.i].Effected" onclick="GetID(@item.value.ID)" @Html.Raw(item.value.Effected ? "checked" : "") value="true"><span class="label-text"></span></label></div>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="PatientOrderFatConsumptionList[@item.i].Reccomendations" name="PatientOrderFatConsumptionList[@item.i].Reccomendations" value="@item.value.Reccomendations" class="form-control">
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                </tfoot>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end of panel -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,215 @@
+﻿@model HISSystem.Areas.Admin.Models.BedIndexModel
+
+@{
+    ViewData["Title"] = "Bed List";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+    <div class="prtm-content">
+        @Html.Hidden("DeletedID")
+        <div class="prtm-page-bar">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item text-capitalize"><h2>Bed Management</h2></li>
+                <li class="breadcrumb-item"><a href="#">Settings</a></li>
+                <li class="breadcrumb-item"><a href="#">Bed</a></li>
+                <li class="breadcrumb-item"><a href="#" class="active">Bed List</a></li>
+            </ul>
+        </div>
+
+        <div class="table-style">
+            <div class="col-md-4 col-lg-4">
+                <div class="btn-group btn-group-justified mrgn-b-xs">
+                    <a class="btn btn-xs btn-primary" href="/Admin/Bed/Add"><i class="fa fa-plus" aria-hidden="true"></i> Add </a>
+                    
+                    <a class="btn btn-xs btn-warning" href="/admin/patient/History/" id="update-patient"><i class="fa fa-history" aria-hidden="true"></i> History </a>
+
+
+                </div>
+            </div>
+            <div class="row mrgn-b-sm">
+                <div class="col-md-12 col-lg-12">
+                    <h5>ADD BED</h5>
+                    <div class="quick-search-block">
+                        <div class="row">
+                            <div class="col-md-10 col-lg-10">
+                                <div id="searchDiv" class="row">
+                                    <div class="col-md-2 col-lg-2">
+                                        @Html.DropDownListFor(m => m.bed.BuildingID, new SelectList(ViewBag.Building, "ID", "Name"), "Select building", new { @class = "form-control dropdown searchDropDown" })
+                                        @*<label asp-for="Name" class="control-label"></label>
+                                            <select asp-for="ID" class="form-control" asp.items="@(new SelectList(ViewBag.Building, "ID", "Name"))"></select>*@
+                                    </div>
+                                    <div class="col-md-2 col-lg-2">
+                                        @Html.DropDownListFor(m => m.bed.FloorID, new SelectList(string.Empty, "ID", "Name"), "Select floor", new { @class = "form-control dropdown searchDropDown" })
+                                    </div>
+                                    <div class="col-md-2 col-lg-2">
+                                        @Html.DropDownListFor(m => m.bed.RoomID, new SelectList(string.Empty, "ID", "Name"), "Select room", new { @class = "form-control dropdown searchDropDown" })
+                                    </div>
+                                    <div class="col-md-2 col-lg-2">
+                                        <div class="form-check">
+                                            <label> <input type="checkbox" id="IsActive" name="IsActive"><span class="label-text"> IsActive</span></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prtm-block pos-relative">
+                <div class="prtm-block-content">
+                    <div class="table-responsive">
+                        <div id="bedList" class="unseen">
+                            @{
+                                Html.RenderPartial("_Index");
+                            }
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-4">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("body").on("click", '.page-number', function () {
+                var page = parseInt($(this).html());
+                debugger
+                $.ajax({
+                    url: '/admin/bed/_index',
+                    data: { "page": page },
+                    success: function (data) {
+                        debugger
+                        $(".unseen").html(data);
+                        debugger
+                    }
+                });
+            });
+        });
+
+        function RefreshPage() {
+            var page = parseInt($('.page-number').html());
+                debugger
+                $.ajax({
+                    url: '/admin/bed/_index',
+                    data: { "page": page },
+                    success: function (data) {
+                        debugger
+                        $(".unseen").html(data);
+                        debugger
+                    }
+                });
+        }
+
+        $(document).ready(function () {
+            $('#bed_BuildingID').change(function () {
+                var url = '@Url.Content("~/")' + "Admin/Bed/GetFloor";
+                var ddlsource = "#bed_BuildingID";
+                console.log($(ddlsource).children("option:selected").val());
+                debugger
+                $.getJSON(url, { BuildingID: $(ddlsource).children("option:selected").val() }, function (data) {
+                    var items = '';
+                    $('#bed_FloorID').empty();
+                    $('#bed_RoomID').html("<option value='0'>Select room</option>");
+                    debugger
+                    $.each(data, function (i, floor) {
+                        items += "<option value='" + floor.value + "'>" + floor.text + "</option>";
+                    });
+                    debugger
+                    $('#bed_FloorID').html(items);
+                    var BuildingID = ($("#bed_BuildingID").children("option:selected").val());
+                    dropDownSearchModel = { "BuildingID": BuildingID, "FloorID": 0, "RoomID": 0 }
+                    $.ajax({
+                            url: "/admin/bed/dynamicsearch",
+                            data: dropDownSearchModel,
+                            success: function (data) {
+
+                                $("#bedList").html(data);
+                             }
+                        })
+                })
+            });
+        });
+
+        $(document).ready(function () {
+            $('#bed_FloorID').change(function () {
+                var url = '@Url.Content("~/")' + "Admin/Bed/GetRoom";
+                var ddlsource = "#bed_FloorID";
+                console.log($(ddlsource).children("option:selected").val());
+                debugger
+                $.getJSON(url, { FloorID: $(ddlsource).children("option:selected").val() }, function (data) {
+                    var items = '';
+                    $('#bed_RoomID').empty();
+                    debugger
+                    $.each(data, function (i, room) {
+                        items += "<option value='" + room.value + "'>" + room.text + "</option>";
+                    });
+                    debugger
+                    $('#bed_RoomID').html(items);
+                });
+                var BuildingID = ($("#bed_BuildingID").children("option:selected").val());
+                var FloorID = ($("#bed_FloorID").children("option:selected").val());
+                    dropDownSearchModel = { "BuildingID": BuildingID, "FloorID": FloorID, "RoomID": 0 }
+                    $.ajax({
+                            url: "/admin/bed/dynamicsearch",
+                            data: dropDownSearchModel,
+                            success: function (data) {
+
+                                $("#bedList").html(data);
+                             }
+                        })
+            });
+        });
+
+        $(document).ready(function () {
+            $('#bed_RoomID').change(function () {
+                var BuildingID = ($("#bed_BuildingID").children("option:selected").val());
+                var FloorID = ($("#bed_FloorID").children("option:selected").val());
+                var RoomID = ($("#bed_RoomID").children("option:selected").val());
+                    dropDownSearchModel = { "BuildingID": BuildingID, "FloorID": FloorID, "RoomID": RoomID }
+                    $.ajax({
+                            url: "/admin/bed/dynamicsearch",
+                            data: dropDownSearchModel,
+                            success: function (data) {
+
+                                $("#bedList").html(data);
+                             }
+                        })
+            });
+        });
+
+        function Detele(id) {
+            $('#DeletedID').val(id);
+            swal({
+                title: "Are you sure?",
+                text: "Are you sure you want to delete this record!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-warning",
+                confirmButtonText: "Yes, delete it!",
+                closeOnConfirm: false
+            },
+                function () {
+                    debugger
+                    var id = $("#DeletedID").val();
+                    $.ajax({
+                        url: '/admin/bed/delete?id=' + id,
+                        type: 'GET',
+                        success: function (data) {
+                            debugger
+                            swal("Deleted!", "Your imaginary file has been deleted.", "success");
+                            RefreshPage();
+                        },
+                        error: function () {
+                            debugger
+                            swal("Cancelled", "Something went wrong:)", "error");
+                        }
+                    });
+                });
+        }
+    </script>
+}
+
+
+

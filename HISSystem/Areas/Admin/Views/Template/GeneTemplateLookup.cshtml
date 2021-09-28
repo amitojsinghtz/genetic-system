@@ -1,0 +1,81 @@
+﻿
+@{
+    ViewData["Title"] = "Gene Template";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<style>
+    .modal-dialog {
+        width: 520px;
+        margin: 30px auto;
+    }
+
+    .modal-body {
+        position: relative;
+        padding: 10px;
+        font-size: 14px;
+        max-height: 450px;
+        overflow: auto;
+        overflow-x: hidden;
+    }
+
+    .col-md-6 {
+        width: 50%;
+        padding-top: 10px;
+    }
+
+    .scroll_text {
+    height: 500px;
+    overflow: auto;
+    padding: 0px 23px 0 0;
+}
+</style>
+<div class="prtm-content">
+    <div class="prtm-page-bar">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item text-capitalize"><h2>Gene Template</h2></li>
+            <li class="breadcrumb-item"><a href="#">Settings</a></li>
+            <li class="breadcrumb-item"><a href="#" class="active">Gene Template</a></li>
+        </ul>
+    </div>
+    <div class="">
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-xs-12">
+                <div class="prtm-full-block p-10">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="row left-row-pad">
+                                <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+                                    <h4><b>All Gene Template</b></h4>
+                                </div>
+                                <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+                                    <div id="lookupList" class="scroll_text">
+
+                                        <h4><a href="/admin/template/metabolismtemplate" class="list-group-item ">Metabolism Template</a></h4>
+
+                                        <h4><a href="/admin//template/index" class="list-group-item ">Epilepsy Template</a></h4>
+
+                                        <h4><a href="/admin/template/prostatetemplate" class="list-group-item ">Prostate Cancer Template</a></h4>
+
+                                        <h4><a href="/admin/template/methyationtemplate" class="list-group-item ">Methyation & Autism Template</a></h4>
+
+                                        <h4><a href="/admin/template/fatconsumptiontemplate" class="list-group-item ">Fat Consumption Template</a></h4>
+
+                                        <h4><a href="/admin/template/fitnesstemplate" class="list-group-item ">Fitness Template</a></h4>
+
+                                        <h4><a href="/admin/template/diettemplate" class="list-group-item ">Diet Template</a></h4>
+
+                                        <h4><a href="/admin/template/vitamintemplate" class="list-group-item ">Vitamins Template</a></h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

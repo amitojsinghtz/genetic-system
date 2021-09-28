@@ -1,0 +1,276 @@
+﻿@model GeneticSystem.Areas.Admin.Models.DashboardVM
+
+<div id="mainDiv" class="frow" style="padding-left:20px; padding-top:10px">
+    <div class="column">
+        <div class="panel-group wrap" id="bs-collapse">
+            <div class="panel">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-info="Department" href="#one">
+                            Pending Orders
+                        </a>
+                    </h4>
+                </div>
+                <div id="one" class="panel-collapse collapse in">
+                    <div class="row" style="padding-top:3px; padding-bottom: 3px;">
+                        <div class="col-md-12 text-left search-block">
+                            <div class="input-group pull-right" id="adv-search">
+                                <input type="text" data-info="398" name="detailSearch" id="detailsearch" class="form-control detailsearch" placeholder="Search Lookup..." autocomplete="off" />
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model.PendingOrders != null && Model.PendingOrders.Count() > 0)
+                    {
+                        <div class="panel-body" id="pendingOrderList">
+                            <table class="table table-hover table-bordered table-striped" id="relative-table">
+                                <thead>
+                                    <tr class="">
+                                        <th>Order No</th>
+                                        <th>Order Date</th>
+                                        <th>Order DueDate</th>
+                                        <th>Client Name</th>
+                                        <th>Client Email</th>
+                                        <th>Client City</th>
+                                        <th>Gene Temp</th>
+                                        <th>Status</th>
+                                        <th colspan="2">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model.PendingOrders)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @order.OrderNo
+                                            </td>
+                                            <td>
+                                                @order.OrderDate.Value.ToShortDateString()
+                                            </td>
+                                            <td>
+                                                @order.OrderDueDate.Value.ToShortDateString()
+                                            </td>
+                                            <td>
+                                                @order.User?.EnFirstName @order.User?.EnSecondName @order.User?.EnThirdName @order.User?.EnFamilyName
+                                            </td>
+                                            <td>
+                                                @order.User?.Email
+                                            </td>
+                                            <td>
+                                                @order.User?.PatientPersonalInformation?.City?.Name
+                                            </td>
+                                            <td>
+                                                <label class="label label-danger mr-2 btn-rounded">@order.Template?.TemplateType?.Name</label>
+                                            </td>
+                                            <td>
+                                                @if (order.Status != null)
+                                                {
+                                                    <span class="label label-success btn-rounded">@order.Status.Name</span>
+                                                }
+
+                                            </td>
+                                            <td colspan="2">
+                                                <button type="button" class="btn btn-xs btn-warning UpdtOrdrBtn" value="@order.ID"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update</button>
+                                                <button type="button" class="btn btn-xs btn-success AttchOrdrBtn" value="@order.UserID"><i class="fa fa-paperclip" aria-hidden="true"></i> Attachment</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-info="Admission" href="#three">
+                            All Orders
+                        </a>
+                    </h4>
+                </div>
+                <div id="three" class="panel-collapse collapse in">
+                    <div class="row" style="padding-top:3px; padding-bottom: 3px;">
+                        <div class="col-md-12 text-left search-block">
+                            <div class="input-group pull-right" id="adv-search">
+                                <input type="text" data-info="397" name="detailSearch" id="detailsearch" class="form-control detailsearch" placeholder="Search Lookup..." autocomplete="off" />
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model.AllOrders != null && Model.AllOrders.Count() > 0)
+                    {
+                        <div class="panel-body" id="AllOrderList">
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-info="Status" href="#two">
+                            Test Orders
+                        </a>
+                    </h4>
+                </div>
+                <div id="two" class="panel-collapse collapse in">
+                    <div class="row" style="padding-top:3px; padding-bottom: 3px;">
+                        <div class="col-md-12 text-left search-block">
+                            <div class="input-group pull-right" id="adv-search">
+                                <input type="text" data-info="100" name="detailSearch" id="detailsearch" class="form-control detailsearch" placeholder="Search Lookup..." autocomplete="off" />
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model.TestOrders != null && Model.TestOrders.Count() > 0)
+                    {
+                        <div class="panel-body" id="TestOrderList">
+                            <table class="table table-hover table-bordered table-striped" id="relative-table">
+                                <thead>
+                                    <tr class="">
+                                        <th>Order No</th>
+                                        <th>Order Date</th>
+                                        <th>Order DueDate</th>
+                                        <th>Client Name</th>
+                                        <th>Client Email</th>
+                                        <th>Client City</th>
+                                        <th>Test Type</th>
+                                        <th>Status</th>
+                                        <th colspan="2">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model.TestOrders)
+                                    {
+                                    <tr>
+                                        <td>
+                                            @order.OrderNo
+                                        </td>
+                                        <td>
+                                            @order.OrderDate.Value.ToShortDateString()
+                                        </td>
+                                        <td>
+                                            @order.OrderDueDate.Value.ToShortDateString()
+                                        </td>
+                                        <td>
+                                            @order.User?.EnFirstName @order.User?.EnSecondName @order.User?.EnThirdName @order.User?.EnFamilyName
+                                        </td>
+                                        <td>
+                                            @order.User?.Email
+                                        </td>
+                                        <td>
+                                            @order.User?.PatientPersonalInformation?.City?.Name
+                                        </td>
+                                        <td>
+                                            @order.Template?.TemplateType?.Name
+                                        </td>
+                                        <td>
+                                            @if (order.Status != null)
+                                            {
+                                                <span class="label label-success btn-rounded">@order.Status.Name</span>
+                                            }
+                                        </td>
+                                        <td colspan="2">
+                                            <button type="button" class="btn btn-xs btn-success AttchOrdrBtn" value="@order.UserID"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> TestUpdate</button>
+                                        </td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column" style="padding-left:10px; padding-right:20px">
+        <div id="calender"></div>
+        <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><span id="eventTitle"></span></h4>
+                    </div>
+                    <div class="modal-body">
+                        <button id="btnDelete" class="btn btn-default btn-sm pull-right">
+                            <span class="glyphicon glyphicon-remove"></span> Remove
+                        </button>
+                        <button id="btnEdit" class="btn btn-default btn-sm pull-right" style="margin-right:5px;">
+                            <span class="glyphicon glyphicon-pencil"></span> Edit
+                        </button>
+                        <p id="pDetails"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="myModalSave" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Save Event</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="col-md-12 form-horizontal">
+                            <input type="hidden" id="hdEventID" value="0" />
+                            <div class="form-group">
+                                <label>Subject</label>
+                                <input type="text" id="txtSubject" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label>Start</label>
+                                <div class="input-group date" id="dtp1">
+                                    <input type="text" id="txtStart" class="form-control" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label><input type="checkbox" id="chkIsFullDay" checked="checked" />  Is Full Day event</label>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divEndDate" style="display:none">
+                                <label>End</label>
+                                <div class="input-group date" id="dtp2">
+                                    <input type="text" id="txtEnd" class="form-control" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea id="txtDescription" rows="3" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Theme Color</label>
+                                <select id="ddThemeColor" class="form-control">
+                                    <option value="">Default</option>
+                                    <option value="red">Red</option>
+                                    <option value="blue">Blue</option>
+                                    <option value="black">Black</option>
+                                    <option value="green">Green</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Event Type</label>
+                                <select id="ddThemeColor" class="form-control">
+                                    <option value="">Type</option>
+                                    <option value="red">Appointment</option>
+                                    <option value="red">Reminder</option>
+                                </select>
+                            </div>
+                            <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

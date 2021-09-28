@@ -1,0 +1,112 @@
+﻿
+@model GeneticSystem.Areas.Admin.Models.SendSMSGroupModel
+@using Data.Models
+@{
+    ViewData["Title"] = "Send SMS";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<style>
+    .border-left {
+        border-left: 1px solid black;
+    }
+
+    .mg-t {
+        margin-top: 10PX;
+    }
+</style>
+
+@using (Html.BeginForm("SendSMSToGroup", "SMS", FormMethod.Post))
+{
+    <div class="prtm-content">
+        <div class="prtm-page-bar">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item text-capitalize"><h2>@ViewData["Title"]</h2></li>
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="#">Ui elements</a></li>
+                <li class="breadcrumb-item"><a href="#" class="active"> Send To Group</a></li>
+            </ul>
+        </div>
+        <div class="col-md-4 col-lg-4">
+            <input type="submit" name="submit" value="Send" class="btn btn-xs btn-danger" />
+            <a href="/admin/sms/smsgroups" class="btn btn-xs btn-info">Back</a>
+        </div>
+        <div class="form-style">
+            <div class="row">
+                <div class="col-md-12 col-lg-12">
+                    <div class="prtm-block pos-relative">
+                        <div class="row">
+                            <div class="col-md-12 col-lg-12">
+                                <div class="row">
+                                   
+                                    <div class="col-md-3 col-lg-5">
+                                        <div class="form-group">
+                                            <label for="Department">Group</label>
+                                            @Html.DropDownListFor(m => m.GroupID, new SelectList(ViewBag.Groups, "ID", "GroupName"), "Select Group", new { @class = "form-control dropdown" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-lg-5">
+                                        <div class="form-group">
+                                            <label for="Department">Client</label>
+                                            @Html.DropDownListFor(m => m.UserID, new SelectList(ViewBag.Clients, "ID", "EnFirstName"), "Select Client", new { @class = "form-control dropdown" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="form-group">
+                                            <label>Message</label>
+                                            @Html.TextAreaFor(m => m.Message,5, 20, new { @Class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts{
+    <script>
+    $(document).ready(function () {
+            var items = "<option value='0'>Select</option>";
+            $('#FloorID').html(items);
+            $('#RoomID').html(items);
+        });
+    $(document).ready(function () {
+            $('#BuildingID').change(function () {
+                var url = '@Url.Content("~/")' + "Admin/Bed/GetFloor";
+                var ddlsource = "#BuildingID";
+                console.log($(ddlsource).children("option:selected").val());
+                $.getJSON(url, { BuildingID: $(ddlsource).children("option:selected").val() }, function (data) {
+                    var items = '';
+                    $('#FloorID').empty();
+                    $.each(data, function (i, floor) {
+                        items += "<option value='" + floor.value + "'>" + floor.text + "</option>";
+                    });
+                    $('#FloorID').html(items);
+                })
+            });
+        });
+
+        $(document).ready(function () {
+            $('#FloorID').change(function () {
+                var url = '@Url.Content("~/")' + "Admin/Bed/GetRoom";
+                var ddlsource = "#FloorID";
+                console.log($(ddlsource).children("option:selected").val());
+                debugger
+                $.getJSON(url, { FloorID: $(ddlsource).children("option:selected").val() }, function (data) {
+                    var items = '';
+                    $('#RoomID').empty();
+                    $.each(data, function (i, room) {
+                        items += "<option value='" + room.value + "'>" + room.text + "</option>";
+                    });
+                    $('#RoomID').html(items);
+                });
+            });
+        });
+    </script>
+}
+

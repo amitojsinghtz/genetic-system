@@ -1,0 +1,62 @@
+﻿
+@model Data.Models.EmailTrigger
+@using Data.Helpers
+
+<div class="modal-dialog modal-md">
+    <!-- Modal content-->
+    @using (Html.BeginForm("UpdateEmailTriggers", "Email", FormMethod.Post, new { enctype = "multipart/form-data", id = "createForm" }))
+    {
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <center>
+                    <h4 class="modal-title">
+                        Trigger Email
+                    </h4>
+                </center>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Trigger Name</h4>
+                        @Html.HiddenFor(model => model.ID)
+                        <div class="form-group">
+                            @Html.DropDownList("TriggerName", Html.GetEnumSelectList<EmailTriggerType>(), "Trigger to", new { @class = "form-control  chosen-select" })
+                            @Html.ValidationMessageFor(model => model.TriggerName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Template</h4>
+                        <div class="form-group">
+                            @Html.DropDownListFor(model => model.EmailID, new SelectList(ViewBag.AllEmails, "ID", "Name"), "Select Template", new { @class = "form-control chosen-select" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-outline-inverse">Cancel</button>
+                <button type="submit" class="btn btn-warning popup-savebtn">Save</button>
+            </div>
+        </div>
+    }
+</div>
+
+
+@*<script>
+        var config = {
+            '.chosen-select': {},
+            '.chosen-select-deselect': { allow_single_deselect: true },
+            '.chosen-select-no-results': { no_results_text: 'Oops, nothing found!' },
+            '.chosen-placeholder_text-single': { placeholder_text_single: 'Select option' },
+            '.chosen-select-width': { width: "100%" }
+        }
+        for (var selector in config) {
+            $(selector).chosen(config[selector]);
+        }
+    </script>*@
+
+<style>
+    .chosen-container {
+        width: 100% !important;
+    }
+</style>

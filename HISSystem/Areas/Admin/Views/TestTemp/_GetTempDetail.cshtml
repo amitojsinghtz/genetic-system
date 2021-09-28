@@ -1,0 +1,84 @@
+﻿@model GeneticSystem.Areas.Admin.Models.TestTempVM
+
+<div class="prtm-content">
+    <div class="row fieldDiv">
+        <input type="hidden" id="tmpInUse" value="@Model.TestTemp.InUse.ToString()" />
+        <div class="col-md-5 col-sm-5 col-xs-12 mrgn-b-sm">
+            <button type="button" class="btn btn-xs btn-outline-warning add-btn addTemplateData tstTmpBtn" data-info="@Model.TestTemp.ID">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                &nbsp;Add Template Data
+            </button>
+            &nbsp;
+            <button type="button" data-info="" data-val="" id="updtTmpDtBtn" class="btn btn-xs edit-post btn-outline-primary updateTemplateData tstTmpBtn" @*onclick="TempID(@Model.TestTemp.ID)"*@>
+                <i class="fa fa-edit" aria-hidden="true"></i>
+                &nbsp;Edit Template Data
+            </button>
+            &nbsp;
+            <button type="button" class="btn btn-xs edit-post btn-success updateTemplate tstTmpBtn" onclick="TempID(@Model.TestTemp.ID)">
+                <i class="fa fa-edit" aria-hidden="true"></i>
+                &nbsp;Edit Template Columns
+            </button>
+        </div>
+        <div class="col-md-7 col-lg-7 text-right">
+            <span class="info-box">
+                <i class="fa fa-info-circle text-warning" aria-hidden="true"></i> If a template is in use, it can't be edited.
+            </span>
+        </div>
+        <div class="col-md-12">
+            <table id="userTbl" class="table table-hover table-bordered table-striped">
+                <thead>
+                    <tr class="">
+                        <th>
+                            Select
+                        </th>
+                        @foreach (var item in Model.TestTemp.TestTempCols)
+                        {
+                            <th> @item.TestColName </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.expData.Count(); i++)
+                    {
+                        <tr>
+                            <td>
+                                <div class="form-check">
+                                    <label>
+                                        <input type="checkbox" value="false" class="updtchk" data-info="@Model.expData[i][0].RowNo" data-val="@Model.expData[i][0].TestTempID"><span class="label-text"></span>
+                                    </label>
+                                </div>
+                            </td>
+
+                            @for (int j = 0; j < Model.expData[i].Count(); j++)
+                            {
+                                <td>
+                                    @if (Model.expData[i][j].TestTempCol.TempColType.ColName == "Checkbox")
+                                    {
+
+                                        <div class="form-check">
+                                            <label>
+                                                <input type="checkbox" value="@Model.expData[i][j].BoolValue" class="itemDatadsbl" disabled @(Model.expData[i][j].BoolValue == true ? "checked" : "")><span class="label-text"></span>
+                                            </label>
+                                        </div>
+
+                                    }
+                                    else if (Model.expData[i][j].TestTempCol.TempColType.ColName == "Textbox")
+                                    {
+                                        <label> @Model.expData[i][j].StringValue </label>
+                                    }
+                                    else if (Model.expData[i][j].TestTempCol.TempColType.ColName == "Dropdown")
+                                    {
+                                        <label>
+                                            @Model.expData[i][j].multiSelectString
+                                        </label>
+                                    }
+                                </td>
+                            }
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

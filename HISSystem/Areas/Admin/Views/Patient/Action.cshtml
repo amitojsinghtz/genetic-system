@@ -1,0 +1,145 @@
+﻿@model HISSystem.Areas.Admin.Models.AppointmentViewModel
+@using (Html.BeginForm("Action", "Patient", FormMethod.Post, new { name = "myForm" }))
+{
+    @Html.HiddenFor(m => m.User.ID)
+    @Html.HiddenFor(m => m.User.PatientPersonalInformation.ID)
+
+    <div class="modal-header">
+        <div class="pull-left"><h5 class="modal-title" id="exampleModalLongTitle">Out-Patient</h5></div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row mrgn-b-sm">
+            <div class="col-md-8 col-lg-8">
+                <button type="submit" name="submit" class="btn btn-xs btn-primary">Save</button>
+                <a class="btn btn-xs btn-warning" href="#"> Update </a>
+                <a class="btn btn-xs btn-info" href="#"> History </a>
+                @*<a class="btn btn-xs btn-primary" href="#"> Direct Scan </a>*@
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Out-patient</label>
+                    @Html.HiddenFor(m => m.PatientAdmission.PatientTypeID)
+                    @Html.DropDownListFor(m => m.PatientAdmission.OutPatientTypeID, new SelectList(ViewBag.OutPatientType, "ID", "Name", "107"), null, new { @Class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Full name</label>
+                    @Html.TextBox("FullName", (String)ViewBag.Patient, new { @Class = "form-control" })
+                    @Html.HiddenFor(m => m.PatientAdmission.UserID, new { id = "hiddenUserID" })
+                </div>
+
+            </div>
+        </div>
+        <div class="row" id="appointReserveWrapper" hidden>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>AppointmentID</label>
+                    @Html.DropDownListFor(m => m.PatientAdmission.AppointmentID, new SelectList(ViewBag.Appoitment, "ID", "DoctorID"), "Select appointment", new { @Class = "form-control" })
+                </div>
+
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Reserved By</label>
+                    @Html.TextBoxFor(m => m.Appointment.CreatedBy, new { @Class = "form-control", @readonly = "readonly" })
+                </div>
+
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Mobile</label>
+                    @Html.TextBoxFor(m => m.PatientAdmission.Mobile, null, new { @Class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Purpose</label>
+                    @Html.DropDownListFor(m => m.PatientAdmission.PurposeID, new SelectList(ViewBag.Purpose, "ID", "Name"), "Select purpose", new { @Class = "form-control" })
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Department</label>
+                            @Html.DropDownListFor(m => m.PatientAdmission.DepartmentID, new SelectList(ViewBag.Department, "ID", "Name"), "Select Department", new { @Class = "form-control" })
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Speciality</label>
+                            @Html.DropDownListFor(m => m.PatientAdmission.SpecialityID, new SelectList(ViewBag.Speciality, "ID", "Name"), "Select speciality", new { @Class = "form-control" })
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Doctor</label>
+                            @Html.DropDownListFor(m => m.PatientAdmission.DoctorID, new SelectList(ViewBag.Doctor, "ID", "Name"), "Select doctor", new { @Class = "form-control" })
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Room</label>
+                            @Html.DropDownListFor(m => m.PatientAdmission.RoomID, new SelectList(ViewBag.Room, "ID", "Name"), "Select room", new { @Class = "form-control" })
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Note</label>
+                    @Html.TextAreaFor(m => m.PatientAdmission.Note, 11, 20, new { @Class = "form-control" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Created By</label>
+                @Html.TextBox("AddedBy", (string)ViewBag.AddedBy, new { @Class = "form-control", @readonly = "readonly" })
+                @Html.HiddenFor(m => m.PatientAdmission.AddedBy)
+            </div>
+            <div class="col-md-6">
+                <label>Created Date</label>
+                @Html.TextBox("AddedDate", (DateTime)ViewBag.AddedDate, new { @Class = "form-control", @readonly = "readonly" })
+                @Html.HiddenFor(m => m.PatientAdmission.AddedDate)
+            </div>
+        </div>
+    </div>
+}
+<script>
+     $(function () {
+            $("#FullName").autocomplete({
+                source: '/admin/patient/AutoCompleteNameWithID',
+                minLength: 0,
+                select: function (event, ui) {
+                    $("#hiddenUserID").val(ui.item.id);
+    },
+            }).focus(function () {
+                $("#FullName").autocomplete("search");
+            });
+        });
+    $( "#FullName" ).autocomplete( "option", "appendTo", ".eventInsForm" );
+</script>

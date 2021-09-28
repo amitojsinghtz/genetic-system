@@ -1,0 +1,414 @@
+﻿@model GeneticSystem.Areas.Admin.Models.FollowUp.FollowUpVM
+
+<div class="line-slide-tab">
+    <ul class="nav nav-tabs">
+        <li class="active"> <a data-toggle="tab" href="#tab-26" aria-expanded="true"><i class="fa fa-history" aria-hidden="true"></i> Order Details </a> </li>
+        <li><a data-toggle="tab" href="#tab-27" aria-expanded="false"><i class="fa fa-th-list" aria-hidden="true"></i> FollowUp By Doctor </a> </li>
+        <li><a data-toggle="tab" href="#tab-28" aria-expanded="false"><i class="fa fa-flask" aria-hidden="true"></i> Test Details </a> </li>
+    </ul>
+    <div class="tab-content pad-all-sm">
+        <div id="tab-26" class="tab-pane fade in active">
+            <div id="orderDataDiv" class="row fieldDiv">
+                <div class="tab-content pad-all-sm">
+                    <input id="hddnStatusField" value="@Model.ClientOrderViewModel.ClientOrder.StatusID" hidden />
+                    @foreach (var subTemplate in Model.ClientOrderViewModel.TemplateList.Select((value, i) => new { i, value }))
+                    {
+                        <div id="tab-(@subTemplate.i)" class="tab-pane fade in active">
+                            <div class="row">
+                                <div class="panel-group panel-2" id="bs-collapse(@subTemplate.i)">
+                                    <div class="panel">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">
+                                                <a data-toggle="collapse" data-info="Department" href="#one-@subTemplate.i">
+                                                    @subTemplate?.value?.SubTemplateType?.Name
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="one-@subTemplate.i" class="panel-collapse collapse">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="table-responsive">
+                                                            <div>
+                                                                <table id="userTbl" class="table table-hover table-bordered table-striped">
+                                                                    <thead>
+                                                                        <tr class="">
+                                                                            @foreach (var record in subTemplate.value.TemplateColumns)
+                                                                            {
+                                                                                <th> @record.DisplayName </th>
+                                                                            }
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @foreach (var itemData in Model.ClientOrderViewModel.ClientOrderData.Select((data, index) => new { index, data }))
+                                                                        {
+                                                                            <tr data-info="somerandom">
+                                                                                <td hidden>
+                                                                                    <input name="clientOrder.ClientOrderData[@itemData.index].TemplateID" class="form-control itemDatadsbl" value="@Model.ClientOrderViewModel.ClientOrderData[itemData.index].TemplateID" hidden>
+                                                                                    <input name="clientOrder.ClientOrderData[@itemData.index].IsActive" class="form-control itemDatadsbl" value="true" hidden>
+                                                                                    <input name="clientOrder.ClientOrderData[@itemData.index].AddedBy" class="form-control itemDatadsbl" value="1" hidden>
+                                                                                    <input name="clientOrder.ClientOrderData[@itemData.index].UpdatedBy" class="form-control itemDatadsbl" value="1" hidden>
+                                                                                </td>
+
+                                                                                @if (Model.ClientOrderViewModel.ClientOrderData.Count > 0)
+                                                                                {
+                                                                                    @foreach (var column in subTemplate.value.TemplateColumns.Select((column, p) => new { p, column }))
+                                                                                    {
+                                                                                        @if (itemData.data.TemplateID == subTemplate.value.ID)
+                                                                                        {
+                                                                                            <td class="" @*data-info="@itemData.value.ID"*@>
+
+                                                                                                @if (column.column.TemplateField.Name == "EffectedGene")
+                                                                                                {
+                                                                                                    @Html.ListBox("clientOrder.ClientOrderData[" + itemData.index + "].Genes", new MultiSelectList(ViewBag.EffectedGene, "ID", "Name", Model.ClientOrderViewModel.ClientOrderData[itemData.index].Genes), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                                                                                                }
+                                                                                                else if (column.column.TemplateField.Name == "ConsumptionType")
+                                                                                                {
+                                                                                                    @Html.DropDownList("clientOrder.ClientOrderData[" + itemData.index + "].ConsumptionTypeID", new SelectList(ViewBag.ConsumptionType, "ID", "Name", @Model.ClientOrderViewModel.ClientOrderData[itemData.index].ConsumptionTypeID), "Select Consumption Type", new { @class = "form-control dropdown itemDatadsbl" })
+                                                                                                }
+                                                                                                else if (column.column.TemplateField.Name == "Element")
+                                                                                                {
+                                                                                                    @Html.DropDownList("clientOrder.ClientOrderData[" + itemData.index + "].ElementID", new SelectList(ViewBag.Element, "ID", "Name", @Model.ClientOrderViewModel.ClientOrderData[itemData.index].ElementID), "Select Element Type", new { @class = "form-control dropdown itemDatadsbl" })
+                                                                                                }
+                                                                                                else if (column.column.TemplateField.Name == "Result")
+                                                                                                {
+                                                                                                    @Html.DropDownList("clientOrder.ClientOrderData[" + itemData.index + "].Result", new SelectList(ViewBag.Result, "Value", "Text", @Model.ClientOrderViewModel.ClientOrderData[itemData.index].Result), "Select Result Type", new { @class = "form-control dropdown itemDatadsbl" })
+                                                                                                }
+                                                                                                else if (column.column.TemplateField.Name == "HaveMutationEffected")
+                                                                                                {
+                                                                                                    <div class="form-check"><label><input name="clientOrder.ClientOrderData[@itemData.index].HaveMutationEffected" type="checkbox" class="itemDatadsbl" value="@Model.ClientOrderViewModel.ClientOrderData[itemData.index].HaveMutationEffected"><span class="label-text">Have Mutation Effected</span></label></div>
+                                                                                                }
+                                                                                                else if (column.column.TemplateField.Name == "EffectedGood")
+                                                                                                {
+                                                                                                    <textarea name="clientOrder.ClientOrderData[@itemData.index].EffectedGood" class="form-control itemDatadsbl" value="@Model.ClientOrderViewModel.ClientOrderData[itemData.index].EffectedGood" cols="50">@Model.ClientOrderViewModel.ClientOrderData[itemData.index].EffectedGood</textarea>
+
+                                                                                                    @*<input name="clientOrder.ClientOrderData[@itemData.index].EffectedGood" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].EffectedGood">*@
+                                                                                                }
+                                                                                                else if (column.column.TemplateField.Name == "EffectedBad")
+                                                                                                {
+                                                                                                    <textarea name="clientOrder.ClientOrderData[@itemData.index].EffectedBad" class="form-control itemDatadsbl" value="@Model.ClientOrderViewModel.ClientOrderData[itemData.index].EffectedBad" cols="50">@Model.ClientOrderViewModel.ClientOrderData[itemData.index].EffectedBad</textarea>
+
+                                                                                                    @*<input name="clientOrder.ClientOrderData[@itemData.index].EffectedBad" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].EffectedBad">*@
+                                                                                                }
+                                                                                                else if (column.column.TemplateField.Name == "GeneticMutation")
+                                                                                                {
+                                                                                                    <textarea name="clientOrder.ClientOrderData[@itemData.index].GeneticMutation" class="form-control itemDatadsbl" value="@Model.ClientOrderViewModel.ClientOrderData[itemData.index].GeneticMutation" cols="50">@Model.ClientOrderViewModel.ClientOrderData[itemData.index].GeneticMutation</textarea>
+
+                                                                                                    @*<input name="clientOrder.ClientOrderData[@itemData.index].GeneticMutation" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].GeneticMutation">*@
+                                                                                                }
+                                                                                                else if (column.column.TemplateField.Name == "PersonalRiskFactor")
+                                                                                                {
+                                                                                                    <textarea name="clientOrder.ClientOrderData[@itemData.index].PersonalRiskFactor" class="form-control itemDatadsbl" value="@Model.ClientOrderViewModel.ClientOrderData[itemData.index].PersonalRiskFactor" cols="50">@Model.ClientOrderViewModel.ClientOrderData[itemData.index].PersonalRiskFactor</textarea>
+
+                                                                                                    @*<input name="clientOrder.ClientOrderData[@itemData.index].PersonalRiskFactor" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].PersonalRiskFactor">*@
+                                                                                                }
+                                                                                                else if (column.column.TemplateField.Name == "Hereditary")
+                                                                                                {
+                                                                                                    <textarea name="clientOrder.ClientOrderData[@itemData.index].Hereditary" class="form-control itemDatadsbl" value="@Model.ClientOrderViewModel.ClientOrderData[itemData.index].Hereditary" cols="50">@Model.ClientOrderViewModel.ClientOrderData[itemData.index].Hereditary</textarea>
+
+                                                                                                    @*<input name="clientOrder.ClientOrderData[@itemData.index].Hereditary" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].Hereditary">*@
+                                                                                                }
+                                                                                                else if (column.column.TemplateField.Name == "ResultSummary")
+                                                                                                {
+                                                                                                    <textarea name="clientOrder.ClientOrderData[@itemData.index].ResultSummary" class="form-control itemDatadsbl" value="@Model.ClientOrderViewModel.ClientOrderData[itemData.index].ResultSummary" cols="50">@Model.ClientOrderViewModel.ClientOrderData[itemData.index].ResultSummary</textarea>
+
+                                                                                                    @*<input name="clientOrder.ClientOrderData[@itemData.index].ResultSummary" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].ResultSummary">*@
+                                                                                                }
+                                                                                                else if (column.column.TemplateField.Name == "Recommendations")
+                                                                                                {
+                                                                                                    <textarea name="clientOrder.ClientOrderData[@itemData.index].Recommendation" class="form-control itemDatadsbl" value="@Model.ClientOrderViewModel.ClientOrderData[itemData.index].Recommendation" cols="50">@Model.ClientOrderViewModel.ClientOrderData[itemData.index].Recommendation</textarea>
+
+                                                                                                    @*<input name="clientOrder.ClientOrderData[@itemData.index].Recommendation" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].Recommendation">*@
+                                                                                                }
+                                                                                            </td>
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            </tr>
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table style="width: 100%;border: 1px solid #ddd; border-collapse: collapse;">
+                                <thead style="text-align: center;padding: 8px;border: 1px solid #ddd;padding-top: 12px; padding-bottom: 12px;">
+                                    <tr class="">
+                                        <th>
+                                            Summary
+                                        </th>
+                                        <th>
+                                            Follow Up Needed
+                                        </th>
+                                        <th>
+                                            Test Name
+                                        </th>
+                                        <th>
+                                            Assigned Doctor
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr data-info="somerandom">
+                                        <td style="text-align: center;padding: 8px;border: 1px solid #ddd;">
+                                            @Model.ClientOrderViewModel.ClientOrder.OrderSummary
+                                        </td>
+                                        <td style="text-align: center;padding: 8px;border: 1px solid #ddd;">
+                                            @Model.ClientOrderViewModel.ClientOrder.FollowUpStrings
+                                        </td>
+                                        <td style="text-align: center;padding: 8px;border: 1px solid #ddd;">
+                                            @Model.ClientOrderViewModel.ClientOrder.TestStrings
+                                        </td>
+                                        <td style="text-align: center;padding: 8px;border: 1px solid #ddd;">
+                                            @Model.ClientOrderViewModel.ClientOrder?.Doctor?.EnFirstName @Model.ClientOrderViewModel.ClientOrder?.Doctor?.EnSecondName @Model.ClientOrderViewModel.ClientOrder?.Doctor?.EnThirdName @Model.ClientOrderViewModel.ClientOrder?.Doctor?.EnFamilyName
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="tab-27" class="tab-pane fade in">
+            <div id="ordrFllwUpDiv" class="fieldDiv">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Summary</label>
+                                    <textarea id="fllwpInput" class="form-control" rows="5"></textarea>
+                                    <input type="hidden" id="clntOrdrIdHdn" value="@Model.ClientOrderViewModel.ClientOrder.ID" />
+                                    <input type="hidden" id="dctrIdHdn" value="@Model.ClientOrderViewModel.ClientOrder.DoctorID" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="button" name="submit" class="btn btn-xs btn-primary" id="addSmryBtn" value="Confirm">
+                                </div>
+                            </div>
+                            @if (Model.FollowUpByDocConvList != null)
+                            {
+                                <div id="flwUpConvDiv" class="row">
+                                    <div class="col-md-12">
+                                        <div class="comments-container">
+                                            @foreach (var conv in Model.FollowUpByDocConvList.Where(x => x.ParentID == null))
+                                            {
+                                                <ul id="comments-list" class="comments-list">
+                                                    <li>
+                                                        <div class="comment-main-level">
+                                                            <div class="comment-avatar"><img src="@conv?.Sender?.ImagePath" alt=""></div>
+                                                            <div class="comment-box">
+                                                                <div class="comment-head">
+                                                                    @*<h6 class="comment-name by-author"><a href="http://creaticode.com/blog">@conv?.Sender?.ImagePath</a></h6>*@
+                                                                    <span>@conv?.CreatedOn</span>
+                                                                    <i class="fa fa-reply replyBtn"></i>
+                                                                    <i class="fa fa-heart"></i>
+                                                                </div>
+                                                                <div class="comment-content">
+                                                                    @conv?.Message
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <ul class="comments-list reply-list">
+                                                            @foreach (var item in Model.FollowUpByDocConvList.Where(x => x.ParentID == conv.ID))
+                                                            {
+                                                                <li>
+                                                                    <div class="comment-avatar"><img src="@item?.Sender?.ImagePath" alt=""></div>
+                                                                    <div class="comment-box">
+                                                                        <div class="comment-head">
+                                                                            <h6 class="comment-name"><a href="http://creaticode.com/blog">Lorena Rojero</a></h6>
+                                                                            <span>@item.CreatedOn</span>
+                                                                            <i class="fa fa-reply replyBtn"></i>
+                                                                            @*<i class="fa fa-heart"></i>*@
+                                                                        </div>
+                                                                        <div class="comment-content">
+                                                                            @item.Message
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                </ul>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        @if (Model.RoleChk != 5)
+                        { 
+                            <div class="row mrgn-tb-md">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <button class="btn btn-xs btn-secondary btn-block sndSMSBtn" onclick="SendSMS(@Model.ClientOrderViewModel.ClientOrder.User.ID)"><i class="fa fa-envelope"></i> Send SMS</button>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-xs btn-success btn-block adddTstBtn"><i class="fa fa-pencil"></i> Add Test</button>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-xs btn-info btn-block addRsltBtn"><i class="fa fa-star"></i> Add Result Test</button>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-xs btn-warning btn-block AttchOrdrBtn" value="@Model.ClientOrderViewModel.ClientOrder.UserID"><i class="fa fa-paperclip" aria-hidden="true"></i> Add Attachment</button>
+                                    </div>
+                                </div>
+                            </div>
+                            }
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        @*<div>
+                            @Html.DropDownList("addRsltdrpdwn", new SelectList(ViewBag.PendingTest, "Value", "Text"), new { @class="form-control" })
+                        </div>*@
+                                        <div id="rsltList" class="unseen">
+                                            <table id="rsltTbl" class="table table-hover table-bordered table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="numeric">Test Name</th>
+                                                        <th class="numeric">Done </th>
+                                                        @*<th class="numeric">Result</th>*@
+                                                    </tr>
+                                                    @if (Model.ClientOrderViewModel.ClientOrder.ClientOrderTests != null)
+                                                    {
+                                                        @foreach (var item in Model.ClientOrderViewModel.ClientOrder.ClientOrderTests)
+                                                        {
+                                                            <tr>
+                                                                <td class="numeric">@item.TestTemplate.TestTempType.Name >> @item.TestTemplate.SubTestTempType.Name</td>
+                                                                <td class="numeric">@item.Done</td>
+                                                                @*<td class="numeric">@item.Result</td>*@
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+            </div>
+        </div>
+        <div id="tab-28" class="tab-pane fade in">
+            <div id="orderTestDiv" class="row fieldDiv">
+                @*<button id="svTstDtBtn" class="btn btn-primary">
+                    Update Test Data
+                </button>*@
+                <form id="fllwTstForm">
+                    <input name="ClientOrderViewModel.ClientOrder.ID" value="@Model.ClientOrderViewModel.ClientOrder.ID" hidden>
+                    <div class="tab-content pad-all-sm">
+                        @for (int i = 0; i < Model.ClientOrderViewModel.followUpTempDataListVM.Count(); i++)
+                        {
+                            <div id="tab-(@i)" class="tab-pane fade in active">
+                                <div class="row">
+                                    <div class="panel-group panel-2" id="bs-collapse(@i)">
+                                        <div class="panel">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-info="Department" href="#two-@i">
+                                                        @Model.ClientOrderViewModel.followUpTempDataListVM[i].TestName
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="two-@i" class="panel-collapse collapse">
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="table-responsive">
+                                                                <div>
+                                                                    <table id="userTbl" class="table table-hover table-bordered table-striped">
+                                                                        <thead>
+                                                                            <tr class="">
+                                                                                @foreach (var record in Model.ClientOrderViewModel.followUpTempDataListVM[i].testTempCols)
+                                                                                {
+                                                                                    <th> @record.TestColName </th>
+                                                                                }
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @for (int j = 0; j < Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList.Count(); j++)
+                                                                            {
+                                                                                int f = j;
+                                                                                <tr data-info="somerandom">
+
+                                                                                    @for (int k = 0; k < Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList[j].Count(); k++)
+                                                                                    {
+
+                                                                                        <td>
+                                                                                            @*<input name="followUpTestTempDataList[@i][@j][@k].ID" value="0" hidden>
+                                                                                            <input name="followUpTestTempDataList[@i][@j][@k].TestTempID" value="@Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList[j][k].TestTempID" hidden>
+                                                                                            <input name="followUpTestTempDataList[@i][@j][@k].TestTempColID" value="@Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList[j][k].TestTempColID" hidden>
+                                                                                            <input name="followUpTestTempDataList[@i][@j][@k].RowNo" value="@Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList[j][k].RowNo" hidden />
+                                                                                            <input name="followUpTestTempDataList[@i][@j][@k].OrderID" value="@Model.ClientOrderViewModel.ClientOrder.ID" hidden />*@
+                                                                                            @if (Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList[j][k].TestTempCol.TempColType.ColName == "Checkbox")
+                                                                                            {
+
+                                                                                                <div class="form-check">
+                                                                                                    <label>
+                                                                                                        <input type="checkbox" name="followUpTestTempDataList[@i][@j][@k].BoolValue" value="@Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList[j][k].BoolValue" class="itemDatadsbl" @(Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList[j][k].BoolValue == true ? "checked" : "") disabled><span class="label-text"></span>
+                                                                                                    </label>
+                                                                                                </div>
+
+                                                                                            }
+                                                                                            else if (Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList[j][k].TestTempCol.TempColType.ColName == "Textbox")
+                                                                                            {
+                                                                                                <textarea name="followUpTestTempDataList[@i][@j][@k].StringValue" class="form-control" rows="4" cols="50" disabled>@Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList[j][k].StringValue</textarea>
+                                                                                            }
+                                                                                            else if (Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList[j][k].TestTempCol.TempColType.ColName == "Dropdown")
+                                                                                            {
+                                                                                                if (Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList[j][k].TestTempCol.DataSource.Name == "EffectedGene")
+                                                                                                {
+                                                                                                    @Html.ListBox("followUpTestTempDataList[" + i + "[" + j + "]" + "[" + k + "]" + "].multiSelect", new MultiSelectList(ViewBag.EffectedGene, "ID", "Name", @Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList[j][k].multiSelect), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple", @disabled=true })
+                                                                                                }
+                                                                                                else if (Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList[j][k].TestTempCol.DataSource.Name == "FeederType")
+                                                                                                {
+                                                                                                    @Html.ListBox("followUpTestTempDataList[" + i + "[" + j + "]" + "[" + k + "]" + "].multiSelect", new MultiSelectList(ViewBag.FeederType, "ID", "Name", @Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList[j][k].multiSelect), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple", @disabled=true })
+                                                                                                }
+                                                                                                else if (Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList[j][k].TestTempCol.DataSource.Name == "Element")
+                                                                                                {
+                                                                                                    @Html.ListBox("followUpTestTempDataList[" + i + "[" + j + "]" + "[" + k + "]" + "].multiSelect", new MultiSelectList(ViewBag.Element, "ID", "Name", @Model.ClientOrderViewModel.followUpTempDataListVM[i].expDataList[j][k].multiSelect), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple", @disabled=true })
+                                                                                                }
+                                                                                            }
+
+                                                                                        </td>
+
+                                                                                    }
+                                                                                </tr>
+                                                                            }
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

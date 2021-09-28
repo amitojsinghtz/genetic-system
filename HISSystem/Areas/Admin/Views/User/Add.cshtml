@@ -1,0 +1,798 @@
+﻿@model Data.Models.User
+@using Data.Models
+@{
+    ViewData["Title"] = "Add";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<style>
+  
+
+    .border-left {
+        border-left: 1px solid black;
+    }
+
+
+    .mg-t {
+        margin-top: 10PX;
+    }
+</style>
+<form asp-action="Add" class="form-elments1" role="form" method="post" enctype="multipart/form-data">
+    <div class="prtm-content">
+        <div class="prtm-page-bar">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item text-capitalize"><h2>@ViewData["Title"]</h2></li>
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="#">Ui elements</a></li>
+                <li class="breadcrumb-item"><a href="#" class="active"> New Patient</a></li>
+            </ul>
+        </div>
+        <div class="row mrgn-b-sm">
+            <div class="col-md-5 col-lg-5">
+                <input type="submit" name="submit" value="Save" class="btn btn-xs btn-primary sbmtBtn" />
+                <input type="button" name="Update" value="Update" class="btn btn-xs btn-warning sbmtBtn" disabled />
+                <input type="button" name="History" value="History" class="btn btn-xs btn-info" />
+            </div>
+            <div class="col-md-7 text-right search-block">
+
+            </div>
+        </div>
+
+        <div class="form-style">
+            <div class="row mrgn-b-sm">
+                <div class="col-md-3">
+                    @Html.TextBoxFor(m => m.RegisterationNo, new { @Class = "form-control", @Name = "Registeration", @readonly = "readonly", autocomplete = "true", onkeyup = "sync(this)", onchange = "CheckUnique('regn');" })
+                    <span id="regn" style="color:red;" hidden="hidden" data-info="success">This registeration no. already exists!</span>
+
+                </div>
+                <div class="col-md-2">
+                    <label>
+                        <input type="checkbox" name="rd-id-manual" id="rd-id-manual" /><span class="label-text">Add ID Manual</span>
+                    </label>
+                </div>
+                <div class="row mrgn-b-xs">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="EnglishName">EnName<span style="color:red;">*</span></label>
+                                    @Html.TextBoxFor(m => m.EnFirstName, null, new { @Class = "form-control", autocomplete = "true", required = "required" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="ArabicName">ArName <span style="color:red;"> * </span></label>
+                                    @Html.TextBoxFor(m => m.ArFirstName, null, new { @Class = "form-control", autocomplete = "true", required = "required" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="Department">Departments <span style="color:red;"> * </span></label>
+                                    @Html.DropDownListFor(m => m.PersonalInformation.DepartmentID, new SelectList(ViewBag.Department, "ID", "Name"), "Select Department", new { @class = "form-control dropdown", onChange = "GetDepartment1(this)" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="SubDepartment">Sub Departments <span style="color:red;"> * </span></label>
+                                    @Html.DropDownListFor(m => m.PersonalInformation.SubDepartmentID, new SelectList(ViewBag.SubDepartment, "ID", "Name"), "Select Department", new { @class = "form-control dropdown" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="Position">Position <span style="color:red;"> * </span></label>
+                                    @Html.DropDownListFor(m => m.PersonalInformation.PositionID, new SelectList(ViewBag.Position, "ID", "Name"), "Select Position", new { @class = "form-control dropdown" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="Speciality">Speciality <span style="color:red;"> * </span></label>
+                                    @Html.DropDownListFor(m => m.PersonalInformation.SpecialityID, new SelectList(ViewBag.Speciality, "ID", "Name"), "Select Speciality", new { @class = "form-control dropdown" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mrgn-b-sm">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="Branch">Branch <span style="color:red;"> * </span></label>
+                                    @Html.DropDownListFor(m => m.PersonalInformation.BranchID, new SelectList(ViewBag.Branch, "ID", "Name"), "Select Branch", new { @class = "form-control dropdown" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="ResponsibleOfficer">Responsible Officer <span style="color:red;"> * </span></label>
+                                    @Html.DropDownListFor(m => m.PersonalInformation.ResponsibleOfficerID, new SelectList(ViewBag.ResponsibleOfficer, "ID", "Name"), "Responsible Officer", new { @class = "form-control dropdown" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="EmployeeType">Employee Type <span style="color:red;"> * </span></label>
+                                    @Html.DropDownListFor(m => m.PersonalInformation.EmploymentTypeID, new SelectList(ViewBag.EmployeeType, "ID", "Name"), "Employee Type", new { @class = "form-control dropdown" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="EmployeeClass">Employee Class <span style="color:red;"> * </span></label>
+                                    @Html.DropDownListFor(m => m.PersonalInformation.EmploymentClassID, new SelectList(ViewBag.EmployeeClass, "ID", "Name"), "Employment Class", new { @class = "form-control dropdown" })
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="pull-left">
+                                    <input type="file" name="file" multiple onchange="show(this,1)" style="display:none;" id="fileimage" />
+                                    <div id="display-img" class="img-div">
+                                        <img src="~/assets/img/avatar.png" alt="Image" id="user_img" />
+                                    </div>
+                                </div>
+
+                                <div class="pull-left mrgn-l-xs">
+                                    <input type="file" style="display:none" id="filesign" multiple name="filesign" onchange="show(this,2)" />
+                                    <div class="img-div" id="img-div">
+                                        <img src="~/assets/img/sign.png" alt="Sign" id="user_sign" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="prtm-block pos-relative">
+                                <div class="line-slide-tab">
+                                    <ul class="nav nav-tabs">
+                                        <li class="active"> <a data-toggle="tab" href="#tab-26" aria-expanded="false"><i class="fa fa-address-card" aria-hidden="true"></i> Persional Info</a> </li>
+                                        <li><a data-toggle="tab" href="#tab-27" aria-expanded="true"><i class="fa fa-money" aria-hidden="true"></i> Salary Detail</a> </li>
+                                        <li><a data-toggle="tab" href="#tab-28" aria-expanded="true"><i class="fa fa-users" aria-hidden="true"></i> Family Detail</a> </li>
+                                        <li>
+                                            <a data-toggle="tab" href="#tab-29" aria-expanded="true">
+                                                <i class="fa fa-medkit" aria-hidden="true"></i>     Medical detail
+                                            </a>
+                                        </li>
+                                        <li> <a data-toggle="tab" href="#tab-30" aria-expanded="true"><i class="fa fa-graduation-cap" aria-hidden="true"></i> Education Detail</a> </li>
+                                        <li> <a data-toggle="tab" href="#tab-31" aria-expanded="true"><i class="fa fa-paperclip" aria-hidden="true"></i> Attachment</a> </li>
+                                    </ul>
+                                    <div class="tab-content pad-all-lg">
+                                        <div id="tab-26" class=" row tab-pane fade in active">
+                                            <div class="col-md-12 col-lg-12">
+                                                <div class="row">
+                                                    <div class="col-md-4 col-lg-4">
+                                                        <div class="form-group">
+                                                            <label for="Nationality">Nationality</label>
+                                                            @Html.DropDownListFor(m => m.PersonalInformation.CountryID, new SelectList(ViewBag.Country, "ID", "Name"), "nationality", new { @class = "form-control dropdown" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="IdentificationType">Identification Type</label>
+                                                            @Html.DropDownListFor(m => m.PersonalInformation.IdentificationID, new SelectList(ViewBag.IdentificationType, "ID", "Name"), "Select identification type", new { @Class = "form-control" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="msg">Identification Type ID </label>
+                                                            @Html.TextBoxFor(m => m.PersonalInformation.IdentificationTypeID, null, new { @Class = "form-control", autocomplete = "true", onchange = "CheckUnique('typeid');" })
+                                                        <span id="typeid" style="color:red;" hidden="hidden" data-info="success">This IdentificationTypeID already exists!</span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="PlaceOfBirth">Place of Birth</label>
+                                                            @Html.DropDownListFor(m => m.PlaceOfBirthID, new SelectList(ViewBag.PlaceOfBirth, "ID", "Name"), "Select Place Of Birth", new { @class = "form-control dropdown" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Date of Birth</label>
+                                                            @Html.TextBoxFor(m => m.PersonalInformation.DateOfBirth, "{0:yyyy-MM-dd}", new { @Class = "form-control datepickerbirth ", autocomplete = "true" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Gender <span style="color:red;">*</span></label>
+                                                            @Html.DropDownListFor(m => m.PersonalInformation.GenderID, new SelectList(ViewBag.Gender, "ID", "Name"), "Select Gender", new { @class = "form-control dropdown" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="Religion">Religion</label>
+                                                            @Html.DropDownListFor(m => m.PersonalInformation.ReligionID, new SelectList(ViewBag.Religion, "ID", "Name"), "select religion", new { @Class = "form-control", autocomplete = "true" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Social status</label>
+                                                            @Html.DropDownListFor(m => m.PersonalInformation.SocialStatusID, new SelectList(ViewBag.SocialStatus, "ID", "Name"), "Select social status", new { @Class = "form-control" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>City</label>
+                                                            @Html.DropDownListFor(m => m.PersonalInformation.CityID, new SelectList(ViewBag.City, "ID", "Name"), "Select city", new { @class = "form-control dropdown" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Education level</label>
+                                                            @Html.DropDownListFor(m => m.PersonalInformation.EducationLevelID, new SelectList(ViewBag.EducationLevel, "ID", "Name"), new { @class = "form-control dropdown" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Address</label>
+                                                            @Html.TextBoxFor(m => m.Address, null, new { @Class = "form-control", autocomplete = "true" })
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4 col-lg-4">
+                                                        <div class="form-group">
+                                                            <label for="DateOfHiring">Date of hiring</label>
+                                                            @Html.TextBoxFor(m => m.PersonalInformation.DateOfHiring, "{0:yyyy-MM-dd}", new { @Class = "form-control datepickerhiring", autocomplete = "true" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="DateOfStartJob">Date of start job</label>
+                                                            @Html.TextBoxFor(m => m.PersonalInformation.DateOfStartJob, "{0:yyyy-MM-dd}", new { @Class = "form-control datepickerstartjob", autocomplete = "true" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="ProbationPeriod">Probation period</label>
+                                                            <input type="text" id="dateRangePicker" class="form-control daterange" />
+                                                            @Html.HiddenFor(m => m.PersonalInformation.ProbationPeriodStartDate)
+                                                            @Html.HiddenFor(m => m.PersonalInformation.ProbationPeriodEndDate)
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="DateOfEndContract">Date of end Contract</label>
+                                                            @Html.TextBoxFor(m => m.PersonalInformation.DateOfEndContract, "{0:yyyy-MM-dd}", new { @Class = "form-control datepickerendcontract", autocomplete = "true" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="DateOfEndJob">Date of end job</label>
+                                                            @Html.TextBoxFor(m => m.PersonalInformation.DateOfEndJob, "{0:yyyy-MM-dd}", new { @Class = "form-control datepickerendjob", autocomplete = "true" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="Email">Email</label>
+                                                            @Html.TextBoxFor(m => m.Email, null, new { @Class = "form-control", autocomplete = "true" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="Telephone">Telephone</label>
+                                                            @Html.TextBoxFor(m => m.Telephone, null, new { @Class = "form-control number", autocomplete = "true" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="Telephone2">Telephone 2</label>
+                                                            @Html.TextBoxFor(m => m.Telephone2, null, new { @Class = "form-control number", autocomplete = "true" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="Mobile">Mobile </label>
+                                                            @Html.TextBoxFor(m => m.Mobile, null, new { @Class = "form-control number", autocomplete = "true" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="Mobile2">Mobile 2</label>
+                                                            @Html.TextBoxFor(m => m.Mobile2, null, new { @Class = "form-control number", autocomplete = "true" })
+                                                        </div>
+                                                        <div class="form-group">
+
+                                                            <label>
+                                                                <input type="checkbox" name="CompanyCommitment" id="CompanyCommitment"><span class="label-text">Company Commitment</span>
+                                                                @Html.HiddenFor(m => m.PersonalInformation.CompanyCommitment)
+                                                            </label>
+                                                            <label style="padding-left:5px">
+                                                                <input type="checkbox" name="SubjectToFingerPrint" id="SubjectToFingerPrint"> <span class="label-text">Subject to finger print</span>
+                                                                @Html.HiddenFor(m => m.PersonalInformation.SubjectToFingerPrint)
+                                                            </label><br />
+                                                            <label><input type="checkbox" id="enableSpecialTax"> <span class="label-text">Special Tax</span></label>
+                                                            <input disabled type="text" class="form-control" name="SpecialTax" id="PersonalInformation_SpecialTax" placeholder="0.00%" style="width:50%">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4 col-lg-4">
+                                                        <div class="login-block">
+                                                            <h5>Login Info:</h5>
+                                                            <div class="form-group">
+                                                                <label for="UserName">UserName</label>
+                                                                @Html.TextBoxFor(m => m.UserName, null, new { @Class = "form-control", onkeyup = "sync(this)", onchange = "CheckUnique('username');", autocomplete = "off" })
+                                                                <span id="username" style="color:red;" hidden="hidden" data-info="success">This Username already exists!</span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="Password">Password <span style="color:red;"> * </span></label>
+                                                                <input name="Password" id="Password" type="Password" autocomplete="off" Class="form-control" />
+                                                                @*@Html.PasswordFor(m => m.Password, new { @Class = "form-control", autocomplete = "true" })*@
+                                                            </div>
+                                                            @*<div class="form-group">
+            <label for="ConfirmPassword">Confirm Password <span style="color:red;"> * </span></label>
+            @Html.Password("ConfirmPassword", null, new { @Class = "form-control", autocomplete = "true" })
+        </div>*@
+                                                            <div class="form-group">
+                                                                <label for="ExpiryDate">Expiry Date </label>
+                                                                @Html.TextBoxFor(m => m.ExpiryDate, "{0:yyyy-MM-dd}", new { @Class = "form-control datepickerexpiry", autocomplete = "off" })
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="msg">Role-Security group </label>
+                                                                @Html.DropDownListFor(m => m.RoleID, new SelectList(ViewBag.Role, "ID", "Name"), "Select city", new { @class = "form-control dropdown" })
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="ComputerName">Computer name</label>
+                                                                @Html.TextBoxFor(m => m.ComputerName, null, new { @Class = "form-control", autocomplete = "true" })
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="IPAddress">IP Address</label>
+                                                                @Html.TextBoxFor(m => m.IPAddress, null, new { @Class = "form-control", @readonly = "readonly", autocomplete = "true" })
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>
+                                                                    <input type="checkbox" name="rd-ip-manual" id="rd-ip-manual" /><span class="label-text">Add IP Manual</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="CreatedDate">Created Date</label>
+                                                            @Html.TextBoxFor(m => m.AddedDate, "{0:MM/dd/yyyy}", new { @Class = "form-control", autocomplete = "true", @readonly = "readonly" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="msg">Created by</label>
+                                                            @Html.TextBox("CreatedBy", ViewBag.UserName, null, new { @Class = "form-control", autocomplete = "true", @readonly = "readonly" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12 pad-tb-sm text-right">
+                                                            <label>
+                                                                <input type="checkbox" name="@Model.IsActive" id="active" value="active" checked> <span class="label-text">Active</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12 text-right">
+                                                            <button type="button" class="btn btn-xs btn-primary"> <i class="fa fa-location-arrow"></i> Default Annual Leave</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="tab-27" class="tab-pane fade in">
+
+                                        </div>
+                                        <div id="tab-28" class="tab-pane fade in">
+
+                                        </div>
+                                        <div id="tab-29" class="tab-pane fade in">
+
+                                        </div>
+                                        <div id="tab-30" class="tab-pane fade in">
+
+                                        </div>
+                                        <div id="tab-31" class="tab-pane fade in">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@section Scripts{
+    <script>
+        $(document).ajaxStart(function () {
+            $(".sbmtBtn").attr("disabled", true);
+        });
+
+        $(document).ajaxComplete(function () {
+            $(".sbmtBtn").attr("disabled", false);
+        });
+
+
+        function GetDepartment1(event) {
+            var id1 = event.id;
+
+            var id = $("#" + id1 + "").val();
+
+            var selectRoom = "<option value='0'>Select Room</option>";
+
+            url = '/admin/user/FillSubDepartmentDropDown?DepartmentID=' + id;
+            $("#PersonalInformation_SubDepartmentID")
+                .find('option')
+                .remove()
+                .end()
+                .append('<option value="">Select SubDepartment</option>')
+                .val('');
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (data) {
+                    if (data.length > 0) {
+                        console.log(data);
+                            $.each(data, function (val, text) {
+                                $("#PersonalInformation_SubDepartmentID").append($('<option></option>').val(text.ID).html(text.Name));
+                            });
+                    }
+                    else {
+                        $("#PersonalInformation_SubDepartmentID").html("<option value='0'>Select SubDepartment</option>").show();
+                    }
+                },
+                error: function (xhr, status) {
+                    toastr.error('Something went wrong');
+                }
+            });
+        };
+
+
+
+        
+        $(document).ready(function () {
+             $("#PersonalInformation_SubDepartmentID").html("<option value='0'>Select SubDepartment</option>");
+            $.ajax({
+                url: "/admin/user/Department",
+                type: "GET",
+                data: { isActive: true, departmentID: 1 },
+                success: function (response) {
+                    debugger
+                    $('#department-list-table').html(response)
+                },
+                error: function (response) {
+                    debugger
+                    alert("Something went wrong");
+                }
+            });
+        });
+
+        $('.datepickerbirth').datepicker({
+            format: "yyyy-mm-dd",
+            autoclose: true,
+        }).on('changeDate', function (ev) {
+            $(this).datepicker('hide');
+
+        }).keydown(function (event) {
+            if (event.which == 9)
+                $('.datepickerbirth').datepicker("hide");
+
+        }).on('click', function () {
+
+            $(this).datepicker('show');
+        });
+        $('.datepickerhiring').datepicker({
+            format: "yyyy-mm-dd",
+            autoclose: true,
+        }).on('changeDate', function (ev) {
+            $(this).datepicker('hide');
+
+        }).keydown(function (event) {
+            if (event.which == 9)
+                $('.datepickerhiring').datepicker("hide");
+
+        }).mousedown(function(){
+    $(".datepickerhiring").datepicker('hide');
+        }).on('click', function () {
+
+            $(this).datepicker('show');
+        });
+          $('.datepickerstartjob').datepicker({
+            format: "yyyy-mm-dd",
+            autoclose: true,
+        }).on('changeDate', function (ev) {
+            $(this).datepicker('hide');
+
+        }).keydown(function (event) {
+            if (event.which == 9)
+                $('.datepickerstartjob').datepicker("hide");
+
+        }).mousedown(function(){
+    $(".datepickerstartjob").datepicker('hide');
+        }).on('click', function () {
+
+            $(this).datepicker('show');
+        });
+
+          $('.datepickerendcontract').datepicker({
+            format: "yyyy-mm-dd",
+            autoclose: true,
+        }).on('changeDate', function (ev) {
+            $(this).datepicker('hide');
+
+        }).keydown(function (event) {
+            if (event.which == 9)
+                $('.datepickerendcontract').datepicker("hide");
+
+        }).mousedown(function(){
+    $(".datepickerendcontract").datepicker('hide');
+        }).on('click', function () {
+
+            $(this).datepicker('show');
+        });
+
+          $('.datepickerendjob').datepicker({
+            format: "yyyy-mm-dd",
+            autoclose: true,
+        }).on('changeDate', function (ev) {
+            $(this).datepicker('hide');
+
+        }).keydown(function (event) {
+            if (event.which == 9)
+                $('.datepickerendjob').datepicker("hide");
+
+        }).mousedown(function(){
+    $(".datepickerendjob").datepicker('hide');
+        }).on('click', function () {
+
+            $(".datepickerendjob").datepicker('show');
+        });
+
+        $('.datepickerexpiry').datepicker({
+            format: "yyyy-mm-dd",
+            autoclose: true,
+        }).on('changeDate', function (ev) {
+            $(this).datepicker('hide');
+
+        }).keydown(function (event) {
+            if (event.which == 9)
+                $('.datepickerexpiry').datepicker("hide");
+
+        }).mousedown(function () {
+            $(".datepickerexpiry").datepicker('hide');
+        }).on('click', function () {
+
+            $(".datepickerexpiry").datepicker('show');
+        });
+
+        $(function () {
+            $('.daterange').daterangepicker({
+                opens: 'left'
+            }, function (start, end, label) {
+
+                console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+                $("#PersonalInformation_ProbationPeriodStartDate").val(start.format('YYYY-MM-DD'));
+                $("#PersonalInformation_ProbationPeriodEndDate").val(end.format('YYYY-MM-DD'));
+            });
+
+        });
+    </script>
+
+    <script type="text/javascript">
+        $("#display-img").click(function () {
+            $("#fileimage").click();
+        });
+
+        $("#img-div").click(function () {
+            $("#filesign").click();
+        });
+
+        function show(input, id) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    if (id == 1) {
+                        $('#user_img').attr('src', e.target.result);
+                    }
+                    else {
+                        $('#user_sign').attr('src', e.target.result);
+                    }
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function GetDepartment(isActive) {
+            debugger
+            var val = +$('#DepartmentID').val();
+            if (val == "") {
+                return false;
+            }
+
+            $.ajax({
+                url: "/admin/user/Department",
+                type: "GET",
+                data: { isActive: isActive, departmentID: val },
+                success: function (response) {
+                    $('#department-list-table').html(response)
+                },
+                error: function (response) {
+                    alert("Something went wrong");
+                }
+            });
+        }
+        $("#CompanyCommitment").on("click", function () {
+            debugger
+            if ($(this).prop("checked") == true) {
+                debugger
+                document.getElementById("PersonalInformation_CompanyCommitment").value=true;
+            }else {
+                     document.getElementById("PersonalInformation_CompanyCommitment").value=false;
+            }
+              });
+             $("#SubjectToFingerPrint").on("click", function () {
+                 if ($(this).prop("checked") == true) {
+                     document.getElementById("PersonalInformation_SubjectToFingerPrint").value = true;
+                    
+                 }
+                 else {
+                      document.getElementById("PersonalInformation_SubjectToFingerPrint").value = false;
+                 }
+        });
+        $('#DepartmentID').change(function () {
+            debugger
+            var radioValue = $("input[name='active']:checked").val();
+            var isActive;
+            if (radioValue == 'active') {
+                isActive = true;
+            }
+            else {
+                isActive = false;
+            }
+            if (this.value == "") {
+                return false;
+            }
+
+            $.ajax({
+                url: "/admin/user/Department",
+                type: "GET",
+                data: { IsActive: isActive, departmentID: +this.value },
+                success: function (response) {
+                    $('#department-list-table').html(response);
+                },
+                error: function (response) {
+                    alert("Something went wrong");
+                }
+            });
+        });
+
+        $("form").submit(function (e) {
+            debugger
+             if ($('#typeid').attr('data-info') == 'error') {
+                //alert('error');
+                return false;
+            }
+             if ($('#regn').attr('data-info') == 'error') {
+               // alert('error');
+                return false;
+            }
+             if ($('#username').attr('data-info') == 'error') {
+               // alert('error');
+                return false;
+            }
+            var pass = $('#Password').val();
+            var cnpassword = $('#ConfirmPassword').val();
+            var Enname = $('#EnFirstName').val();
+            var Arname = $('#ArFirstName').val();
+            var departmentid = $("#PersonalInformation_DepartmentID").val();
+            var SubDepartmentID = $("#PersonalInformation_SubDepartmentID").val();
+            var SpecialityID = $("#PersonalInformation_SpecialityID").val();
+            var BranchID = $("#PersonalInformation_BranchID").val();
+            var ResponsibleOfficerID = $("#PersonalInformation_ResponsibleOfficerID").val();
+            var EmploymentTypeID = $("#PersonalInformation_EmploymentTypeID").val();
+            var EmploymentClassID = $("#PersonalInformation_EmploymentClassID").val();
+            var PositionID = $("#PersonalInformation_PositionID").val();
+            if (Enname == "" && Arname == "") {
+                $('#EnFirstName').focus();
+                $('#ArFirstName').focus();
+                toastr.error('Please enter Arabic or English name.');
+                e.preventDefault();
+                return false;
+            }
+            if (departmentid == "") {
+
+                $("#PersonalInformation_DepartmentID").focus();
+                toastr.error('Please Select Department');
+                e.preventDefault();
+                return false;
+            }
+            if (SubDepartmentID == "") {
+
+                $("#PersonalInformation_SubDepartmentID").focus();
+                toastr.error('Please Select Sub Department');
+                e.preventDefault();
+                return false;
+            }
+             if (SubDepartmentID == "") {
+
+                $("#PersonalInformation_SubDepartmentID").focus();
+                toastr.error('Please Select Sub Department');
+                e.preventDefault();
+                return false;
+            }
+
+            if (PositionID == '') {
+                $('#PersonalInformation_PositionID').focus();
+                toastr.error('Please Select Position');
+                e.preventDefault();
+                return false;
+            }
+             if (BranchID == "") {
+
+                $("#PersonalInformation_BranchID").focus();
+                toastr.error('Please Select Branch');
+                e.preventDefault();
+                return false;
+            }
+
+            if (ResponsibleOfficerID == '') {
+                $('#PersonalInformation_ResponsibleOfficerID').focus();
+                toastr.error('Please Select Responsible Officer');
+                e.preventDefault();
+                return false;
+            }
+             if (EmploymentTypeID == "") {
+
+                $("#PersonalInformation_EmploymentTypeID").focus();
+                toastr.error('Please Select Employment Type');
+                e.preventDefault();
+                return false;
+            }
+
+            if (EmploymentClassID == '') {
+                $('#PersonalInformation_EmploymentClassID').focus();
+                toastr.error('Please Select Employement Class');
+                e.preventDefault();
+                return false;
+            }
+
+         /*   if (email == '') {
+                $('#Email').focus();
+                toastr.error('Please enter Email address.');
+                return false;
+            }
+            else {
+                var regex = /^([a-zA-Z0-9_\.\-\+])+\@@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+                if (!regex.test(email)) {
+                    $('#Email').focus();
+                    toastr.error('Please enter Valid email.');
+                    e.preventDefault();
+                    return false;
+                }
+            }*/
+
+            //if (pass == null) {
+            //    $('#Password').focus();
+            //    toastr.error('Please enter Password.');
+            //    e.preventDefault();
+            //    return false;
+            //}
+
+            //if (pass != cnpassword) {
+            //    $('#ConfirmPassword').focus();
+            //    toastr.error('Please enter Confirm Password.');
+            //    e.preventDefault();
+            //    return false;
+            //}
+          
+
+        });
+
+        //$.getJSON("https://api.ipify.org/?format=json", function (e) {
+        //    $('#IPAddress').val(e.ip);
+        //});
+
+        document.getElementById('enableSpecialTax').onchange = function () {
+            document.getElementById('PersonalInformation_SpecialTax').disabled = !this.checked;
+        };
+
+        document.getElementById('rd-id-manual').onchange = function () {
+            document.getElementById('RegisterationNo').readOnly = !this.checked;
+            //document.getElementById('UserName').value = document.getElementById('ID').value;
+            //document.getElementById('UserName').readOnly = this.checked;
+
+        };
+        function sync(textbox) {
+           document.getElementById('UserName').value = textbox.value;
+        };
+
+        document.getElementById('rd-ip-manual').onchange = function () {
+            document.getElementById('IPAddress').readOnly = !this.checked;
+        };
+        var pdp = $("#PersonalInformation_ProbationPeriodStartDate").val();
+        var plp = $("#PersonalInformation_ProbationPeriodEndDate").val();
+        $("#dateRangePicker").val(pdp + " " + plp);
+        document.getElementById('RegisterationNo').readOnly = !this.checked;
+
+        function CheckUnique(spantype) {
+            var User = {};
+            if (spantype == "regn") {
+                var searchstring = $("#RegisterationNo").val();
+            }
+            else if (spantype == "typeid") {
+                var searchstring = $("#PersonalInformation_IdentificationTypeID").val();
+            }
+            else {
+                var searchstring = $("#UserName").val();
+            }
+            User.ID = 0;
+            $.ajax({
+                url: '/admin/user/CustRemoteValidation',
+                type: "get",
+                data: {
+                    ID: 0,
+                    SearchString: searchstring,
+                    Type: spantype
+                },
+                success: function (result) {
+                    if (result == false) {
+                        $("#" + spantype + "").attr('data-info', 'error');
+                        $("#" + spantype + "").show();
+                    }
+                    else {
+                        $("#" + spantype + "").attr("data-info","success");
+                        $("#" + spantype + "").hide();
+                    }
+                }
+            });
+        }
+
+    </script>
+}

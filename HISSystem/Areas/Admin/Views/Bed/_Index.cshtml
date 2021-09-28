@@ -1,0 +1,37 @@
+﻿@model HISSystem.Areas.Admin.Models.BedIndexModel
+
+<table class="table table-hover table-bordered table-striped">
+    <thead>
+        <tr>
+            <th class="numeric">Bed Number</th>
+            <th class="numeric">Bed Name</th>
+            <th class="numeric">Status</th>
+            <th class="numeric" colspan="2">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.PagedBed.Data)
+        {
+            <tr>
+                <td>@item.BedNumber</td>
+                <td>@item.Name</td>
+                <td></td>
+                <td>
+                    @Html.ActionLink("", "GetBed", "Bed", new { id = item.ID }, new { @Class = "fa fa-pencil", id = @item.ID, data_toggle = "tooltip", data_placement = "top", title = "Update" })
+                    @*@Html.ActionLink("", "Delete", "Bed", new { id = item.ID }, new { @Class = "fa fa-trash mrgn-l-xs", id = @item.ID, data_toggle = "tooltip", data_placement = "top", title = "Trach" })*@
+                    <a href="javascript:void(0);" class="fa fa-trash mrgn-l-xs" onclick="Detele(@item.ID)" data-toggle="tooltip" , data-placement="top" title="Trach"></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="6">
+                @for (int i = 1; i <= Model.PagedBed.NumberOfPages; i++)
+                {
+                    <a class="page-number" href="javascript:void()">@i</a>
+                }
+            </td>
+        </tr>
+    </tfoot>
+</table>

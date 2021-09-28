@@ -1,0 +1,158 @@
+﻿@model GeneticSystem.Areas.Admin.Models.MetabolismAddViewModel
+
+@{
+    ViewData["Title"] = "Metabolism List";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+
+<form action="/admin/template/EditMetabolismTemplate" method="post">
+    <div class="prtm-content">
+        <div class="prtm-page-bar">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item text-capitalize"><h2>@ViewData["Title"]</h2></li>
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="#">Ui elements</a></li>
+                <li class="breadcrumb-item"><a href="#" class="active"> Edit Metabolism</a></li>
+            </ul>
+        </div>
+        
+        <div class="form-style">
+            <div class="row">
+                <div class="col-md-12 col-lg-12">
+                    <div class="prtm-block pos-relative">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="row left-row-pad">
+                                    <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+                                        <h4><b>All Gene Template </b></h4>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+                                        <div id="lookupList" class="scroll_text">
+
+                                            <h4><a href="/admin/template/metabolismtemplate" class="list-group-item active">Metabolism Template</a></h4>
+
+                                            <h4><a href="/admin//template/index" class="list-group-item ">Epilepsy Template</a></h4>
+
+                                            <h4><a href="/admin/template/prostatetemplate" class="list-group-item ">Prostate Cancer Template</a></h4>
+
+                                            <h4><a href="/admin/template/methyationtemplate" class="list-group-item ">Methyation & Autism Template</a></h4>
+
+                                            <h4><a href="/admin/template/fatconsumptiontemplate" class="list-group-item ">Fat Consumption Template</a></h4>
+
+                                            <h4><a href="/admin/template/fitnesstemplate" class="list-group-item ">Fitness Template</a></h4>
+
+                                            <h4><a href="/admin/template/diettemplate" class="list-group-item ">Diet Template</a></h4>
+
+                                            <h4><a href="/admin/template/vitamintemplate" class="list-group-item ">Vitamins Template</a></h4>
+
+                                            <h4><a href="/admin/template/mineraltemplate" class="list-group-item ">Mineral Template</a></h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="row">
+                                    <div class="col-md-4 col-lg-4">
+                                        <input type="button" name="submit" onclick="AddMetabolism();" value="Update" class="btn btn-xs btn-warning" />
+                                        <a href="/admin/template/metabolismtemplate" class="btn btn-xs btn-info">Back</a>
+                                    </div>
+                                    <div class="col-md-12 col-lg-12">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Consumption Type</label>
+                                                <div class="form-group">
+                                                    @Html.HiddenFor(m => m.ID)
+                                                    @Html.DropDownListFor(m => m.ConsumptionTypeID, new SelectList(ViewBag.ConsumptionType, "ID", "Name"), "Select Consumption Type", new { @class = "form-control dropdown" })
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Effected Gene</label>
+                                                <div class="form-group">
+                                                    @Html.DropDownList("something", new SelectList(ViewBag.Gene, "ID", "Name"), htmlAttributes: new { @class = "selectpicker tryMultiselect", multiple = "multiple" })
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Effected</label>
+                                                <div class="form-group">
+                                                    @Html.DropDownList("Effected", new List<SelectListItem>
+                                                     {
+                                                          new SelectListItem{ Text="High", Value = "1" },
+                                                          new SelectListItem{ Text="Medium", Value = "2" },
+                                                          new SelectListItem{ Text="Low", Value = "3" },
+                                                     }, "Select Effected Level", new { @class = "form-control dropdown" })
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Recomendation</label>
+                                                <div class="form-group">
+                                                    @Html.TextBoxFor(m => m.Recomendation, new { @Class = "form-control" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+
+
+<script>
+    function AddMetabolism() {
+        debugger
+        var formdata = new FormData($('form').get(0));
+        i = 0;
+        $("#something option:selected").each(function () {
+            debugger
+            var $this = $(this);
+
+            formdata.append("EffectedGeneMetabolism[" + i + "].GeneID", $this[0].value);
+            i++;
+        });
+        for (var pair of formdata.entries()) {
+            console.log(pair[0] + ', ' + pair[1]);
+        }
+        debugger
+        $.ajax({
+            type: 'POST',
+            url: "/admin/template/EditMetabolismTemplate",
+            data: formdata,
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                debugger
+                console.log(response);
+                toastr.info('Record saved');
+            },
+            error: function (xhr, status) {
+                toastr.error('Something went wrong');
+            }
+        });
+
+
+    }
+
+
+
+    $(document).ready(function () {
+         var xray = @Html.Raw(Json.Serialize(Model.EffectedGeneMetabolism));
+            console.log(xray);
+            if (xray != null) {
+                $.each(xray, function (i, e) {
+                    console.log(xray);
+     $("#something option[value='" + e.geneID + "']").prop("selected", true);
+            });
+            }
+        $("select").prop('class', 'selectpicker show-tick form-control');
+        $("select").attr('data-live-search', true);
+    });
+</script>

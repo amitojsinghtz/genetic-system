@@ -1,0 +1,158 @@
+﻿
+@model GeneticSystem.Areas.Admin.Models.AddGroupViewModel
+@using Data.Helpers
+@{
+    ViewData["Title"] = " Update SMS Group";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+
+
+}
+<style>
+    .border-left {
+        border-left: 1px solid black;
+    }
+
+    .mg-t {
+        margin-top: 10PX;
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+<form action="/admin/sms/updatesmsgroups" method="post">
+    <div class="prtm-content">
+        <div class="prtm-page-bar">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item text-capitalize"><h2>@ViewData["Title"]</h2></li>
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="#">Ui elements</a></li>
+                <li class="breadcrumb-item"><a href="#" class="active"> New Patient</a></li>
+            </ul>
+        </div>
+        <div class="col-md-4 col-lg-4">
+            @*<input type="button" name="submit" value="Save" class="btn btn-xs btn-primary" />*@
+            <input type="button" name="submit" onclick="AddSmsGroup();" value="Update" class="btn btn-xs btn-warning" />
+            <a href="/admin/SMS/smsgroups" class="btn btn-xs btn-info">Back</a>
+        </div>
+        <div class="form-style">
+            <div class="row">
+                <div class="col-md-12 col-lg-12">
+                    <div class="prtm-block pos-relative">
+                        <!-- Modal content-->
+                        <div class="row">
+                            <div class="col-md-12 col-lg-12">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Group Name</label>
+                                        @Html.HiddenFor(model => model.ID)
+                                        <div class="form-group">
+
+                                            @Html.TextBoxFor(x => x.GroupName, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Clients</label>
+                                        <div class="form-group">
+                                            @*@Html.DropDownList("something", new SelectList(ViewBag.ClientList, "ID", "EnFirstName", 1), htmlAttributes: new { @class = "selectpicker tryMultiselect", multiple = "multiple" })*@
+                                            @Html.DropDownList("something", new SelectList(ViewBag.ClientList, "ID", "EnFirstName"), htmlAttributes: new { @class = "selectpicker tryMultiselect", multiple = "multiple" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+
+
+<script>
+      $(document).ready(function () {
+            var PatientEncounter_ID = $("#PatientEncounter_ID").val();
+           // alert(PatientEncounter_ID);
+            if (PatientEncounter_ID > 0) {
+                //alert(1);
+                $("#form-fieldset").prop("disabled", true);
+                $("#saveEncounter").attr("disabled", true);
+
+            }
+            if ($("#PatientPreAssesment_InitialMedicalAssessment_Detail").prop("checked")) {
+                $("#detail-div").show();
+            }
+            $("select").prop('class', 'selectpicker show-tick form-control');
+          $("select").attr('data-live-search', true);
+          var xray = @Html.Raw(Json.Serialize(Model.GroupClientLists));
+            console.log(xray);
+            if (xray != null) {
+                $.each(xray, function (i, e) {
+                    debugger
+     $("#something option[value='" + e.userID + "']").prop("selected", true);
+            });
+          }
+
+
+
+      });
+     var xray = @Html.Raw(Json.Serialize(Model.GroupClientLists));
+    debugger
+    //    if (xray.length !=null) {
+    //        //$("#something").multiselect('refresh');
+    //    }
+
+    //   $('select').selectpicker('show');
+    //$('.selectpicker').selectpicker('render');
+    //$('.select').selectpicker('show');
+    //  $('select').selectpicker();
+
+       //$('#something').multiselect()
+
+
+
+
+
+    function AddSmsGroup() {
+        var formdata = new FormData($('form').get(0));
+        i = 0;
+        $("#something option:selected").each(function () {
+            debugger
+            var $this = $(this);
+
+            formdata.append("GroupClientLists["+i+"].UserID", $this[0].value);
+            i++;
+        });
+           for (var pair of formdata.entries()) {
+                console.log(pair[0] + ', ' + pair[1]);
+        }
+        debugger
+         $.ajax({
+                type: 'POST',
+                url: "/admin/sms/updatesmsgroups",
+                data: formdata,
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    console.log(response);
+                    toastr.info('Record saved');
+                },
+                error: function (xhr, status) {
+                    toastr.error('Something went wrong');
+                }
+            });
+
+
+            }
+
+
+</script>
+<style>
+    .chosen-container {
+        width: 100% !important;
+    }
+</style>

@@ -1,0 +1,62 @@
+﻿@model Data.Helpers.PagedData<Data.Models.MedicalDictionary>
+
+<table id="patientTbl" class="table table-hover table-bordered table-striped">
+    <thead>
+        <tr>
+            <th class="numeric">Select</th>
+            <th class="numeric">Type</th>
+            <th class="numeric">En Name</th>
+            <th class="numeric">Ar Name</th>
+            <th class="numeric">Tel 1</th>
+            <th class="numeric">Mobile 1</th>
+            <th class="numeric">Full Address</th>
+            <th class="numeric">City</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model.Data)
+        {
+            <tr>
+                <td><div class="form-check"><label><input type="checkbox" id="select-id" onclick="GetID(@item.ID)"><span class="label-text"></span></label></div></td>
+                <td>
+                    @item?.Type?.Name
+                </td>
+                <td>
+                    @item?.EnName
+                </td>
+                <td>
+                    @item?.ArName
+                </td>
+                <td>
+                    @item?.Telephone
+                </td>
+                <td>
+                    @item?.Mobile
+                </td>
+                <td>
+                    @item?.Address
+                </td>
+                <td>
+                    @item?.City?.Name
+                </td>
+                <td>
+                    @Html.ActionLink("", "UpdateMedicalDictionary", "MedicalDictionary", new { id = item.ID }, new { @Class = "fa fa-pencil", data_toggle = "tooltip", data_placement = "top", title = "Update" })
+                
+                    <button type="button" class="btn btn-xs btn-warning" onclick="Detele(@item.ID)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="17">
+                @for (int i = 1; i <= Model.NumberOfPages; i++)
+                {
+                    <a class="page-number" onclick="getEnName(@i)" href="javascript:void();">@i</a>
+                }
+            </td>
+        </tr>
+    </tfoot>
+</table>

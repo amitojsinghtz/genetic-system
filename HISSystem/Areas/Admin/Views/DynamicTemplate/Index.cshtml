@@ -1,0 +1,850 @@
+﻿@model List<Data.Models.Template>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<style>
+    .alert {
+        padding: 10px;
+        color: white;
+        opacity: 1;
+        transition: opacity 0.6s;
+        margin-bottom: 15px;
+        width: 340px;
+    }
+
+        .alert.info {
+            background-color: #2196F3;
+        }
+
+        .alert.warning {
+            background-color: #ff9800;
+        }
+
+    .closebtn {
+        margin-left: 15px;
+        color: white;
+        font-weight: bold;
+        float: right;
+        font-size: 22px;
+        line-height: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+        .closebtn:hover {
+            color: black;
+        }
+    /*.modal-dialog {
+        width: 520px;
+        margin: 30px auto;
+    }
+
+    .modal-body {
+        position: relative;
+        padding: 10px;
+        font-size: 14px;
+        max-height: 450px;
+        overflow: auto;
+        overflow-x: hidden;
+    }
+
+    .col-md-6 {
+        width: 50%;
+        padding-top: 10px;
+    }*/
+</style>
+<div class="prtm-content">
+    <div class="prtm-page-bar">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item text-capitalize"><h2>DynamicTemplate</h2></li>
+            <li class="breadcrumb-item"><a href="#">Management</a></li>
+            <li class="breadcrumb-item"><a href="#">Template</a></li>
+            <li class="breadcrumb-item"><a href="#" class="active">Template List</a></li>
+        </ul>
+        <div class="row">
+            <div class="col-md-7 text-left search-block">
+                <div class="input-group pull-right" id="adv-search">
+                    <label for="search">Search Master Templates:</label>
+                    <input type="text" name="search" id="search" class="form-control" placeholder="Search Master Template..." />
+                </div>
+            </div>
+            <div class="col-md-5">
+                <label for="search">&nbsp;</label> <br /><a href="#" data-info="addMasterLookup" class="btn btn-xs btn-warning addMasterLookup sbmtBtn"><i class="fa fa-plus" aria-hidden="true"></i> Add Master Template</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="">
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-xs-12">
+                <div class="prtm-full-block p-10">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="row left-row-pad">
+                                <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+                                    <h5>All Templates</h5>
+                                </div>
+                                <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+                                    <div id="lookupList" class="scroll_text">
+                                        @foreach (var item in ViewBag.Templates)
+                                        {
+                                            <h4><a href="#" class="list-group-item " onclick="GetTemplateDetail(this,'@item')">@item</a></h4>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <input type="hidden" id="LKPType" name="Type" />
+                                <div id="DataLookup">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" tabindex="-1" role="dialog" id="addModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div id="addModalContent" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Template Data</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="addModalBody" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="addMasterModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div id="masterModalContent" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Template</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="masterModalBody" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.js" integrity="sha256-TDtzz+WOGufaQuQzqpEnnxdJQW5xrU+pzjznwBtaWs4=" crossorigin="anonymous"></script>
+    <script>
+
+        function printDiv() {
+
+            var divToPrint = document.getElementById('userTbl');
+
+            var newWin = window.open('', 'Print-Window');
+
+            newWin.document.open();
+
+            newWin.document.write('<html><body onload="window.print()">' + divToPrint.innerHTML + '</body></html>');
+
+            newWin.document.close();
+
+            setTimeout(function () { newWin.close(); }, 10);
+
+        }
+
+        //$("body").on("click", "#pdfExport", function () {
+        //    html2canvas($('#userTbl')[0], {
+        //        onrendered: function (canvas) {
+        //            var data = canvas.toDataURL();
+        //            var docDefinition = {
+        //                content: [{
+        //                    image: data,
+        //                    width: 500
+        //                }]
+        //            };
+        //            pdfMake.createPdf(docDefinition).download("Table.pdf");
+        //        }
+        //    });
+        //});
+
+        $(document).on('change', '.chkBx', function () {
+
+            var chkBool = $(this).prop("checked");
+
+            if (chkBool) {
+                $(this).val('True');
+            } else {
+                $(this).val('False');
+            }
+        });
+        function DeleteTemplate(Id){
+            $.ajax({
+                url: '/admin/dynamictemplate/deletetemplate?templateId=' + Id,
+                contentType: 'application/json; charse=utf-8',
+                type: 'get',
+                success: function (result) {
+                    $("#DataLookup").empty();
+                    $('#search').keyup();
+                    toastr.success("Deleted Template!")
+                },
+                error: function (xhr, status) {
+                    alert(status)
+                }
+            });
+        }
+
+        var resultOptions = [{ Text: "High", Value: "1" }, { Text: "Medium", Value: "2" }, { Text: "Low", Value: "3" }];
+        var amountOptions = [{ Text: "Increase", Value: "1" }, { Text: "Decrease", Value: "2" }];
+
+        $(document).on('change', '.coldrpchk', function () {
+            var selectedOption = $(this).find('option:selected').text();
+            var parentRow = $(this).closest("tr");
+            var depEl = $(parentRow).find(".depOptions");
+
+            $(depEl)
+                .find('option')
+                .remove()
+                .end()
+                .append('<option value="">--Dependent On--</option>')
+                .val('');
+
+            if (selectedOption == "Result") {
+                $.each(resultOptions, function (key, value) {
+                    depEl.append($('<option></option>').val(value.Value).html(value.Text));
+                });
+            }
+            else if (selectedOption == "LevelChange") {
+                $.each(amountOptions, function (key, value) {
+                    depEl.append($('<option></option>').val(value.Value).html(value.Text));
+                });
+            } /*else {*/
+            //    $(depEl)
+            //        .find('option')
+            //        .remove()
+            //        .end()
+            //        .append('<option value="">--Dependent On--</option>')
+            //        .val('');
+            //}
+        });
+
+        function postDropDownDependency() {
+            var formdata = new FormData();
+            $('#relative-table tfoot tr').each(function (a, b) {
+                var fields = $(this).find(":input");
+                formdata.append("tempDependencies[" + a + "].TempID", fields.eq(0).val());
+                formdata.append("tempDependencies[" + a + "].DropDownId", fields.eq(1).val());
+                formdata.append("tempDependencies[" + a + "].ColID", fields.eq(2).val());
+                formdata.append("tempDependencies[" + a + "].DepOnOption", fields.eq(3).val());
+            });
+
+            $.ajax({
+                type: "POST",
+                url: '/admin/dynamictemplate/PostDropDownDependency',
+                data: formdata,
+                processData: false,
+                contentType: false,
+                dataType: "text",
+                success: function (data) {
+                    toastr.success('record updated')
+                    $("#DataLookup").empty();
+                    $("#DataLookup").append(data);
+                    $('.tryMultiselect').chosen();
+                    $('#search').keyup();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest, textStatus, errorThrown);
+                }
+            });
+        }
+
+        $(document).on('change', '.chkdup', function () {
+            if ($('select option[value="' + $(this).val() + '"]:selected').length > 1) {
+                $(this).val('');
+                toastr.error("You have already selected this option previously - please choose another.")
+            }
+        });
+
+        $(document).ajaxStart(function () {
+            $(".sbmtBtn").attr("disabled", true);
+        });
+
+        $(document).ajaxComplete(function () {
+            $(".sbmtBtn").attr("disabled", false);
+        });
+
+        var getGlobalHTML;
+
+        function GetTemplateDetail(current, type) {
+
+            var fields = type.split('>>');
+
+            var temptype = encodeURIComponent(fields[0]);
+            var subtemptype = encodeURIComponent(fields[1]);
+            $(".list-group-item").removeClass('active')
+            $(current).addClass('active')
+            $.ajax({
+                url: '/admin/dynamictemplate/getdynamictemplate?temptype=' + temptype + "&subtemptype=" + subtemptype,
+                contentType: 'application/json; charse=utf-8',
+                type: 'get',
+                success: function (result) {
+                    $("#DataLookup").html(result);
+                    $('.tryMultiselect').chosen();
+                },
+                error: function (xhr, status) {
+                    alert(status)
+                }
+            });
+        }
+
+        function enableSubTemp() {
+            if (document.getElementById("TemplateData.HaveSubTemplate").checked)
+                document.getElementById("subTempDiv").hidden = false;
+            else {
+                document.getElementById("subTempDiv").hidden = true;
+                $("#Template_SubTemplateTypeID").val('');
+            }
+            TempValidation();
+        }
+
+
+        $(document).on("click", ".addMasterLookup", function () {
+            var options = {
+                "backdrop": "static",
+                keyboard: true
+            };
+            $.ajax({
+                type: "GET",
+                url: '/admin/dynamictemplate/AddTemplate',
+                success: function (data) {
+                    $("#DataLookup").html(data);
+                    document.getElementById("Template_TemplateTypeID").addEventListener("change", function () {
+                        TempValidation();
+                    });
+                    document.getElementById("Template_SubTemplateTypeID").addEventListener("change", function () {
+                        TempValidation();
+                    });
+                },
+                error: function () {
+                    console.log("error");
+                }
+            });
+        });
+
+
+
+
+
+        //GLOBAL VARIABLE TO STORE TEMPLATE ROW DATA
+        var templateHtml = null;
+
+        function editTemplateData(tempDataId) {
+            var getInnerHTML = document.getElementById("DataLookup").innerHTML;
+            getGlobalHTML = getInnerHTML;
+            console.log(tempDataId);
+            //var targetElement = event.target.parentElement;
+            //var id = targetElement.previousElementSibling.getAttribute("data-info");
+            //var multiSelect = targetElement.parentElement.getElementsByClassName('tryMultiselect');
+            //$(multiSelect[0]).prop("disabled", false).trigger("chosen:updated");
+            //var elements = event.target.parentElement.parentElement.getElementsByClassName('itemDatadsbl');
+            //for (i = 0; i < elements.length; i++) { elements[i].disabled = false; }
+            //targetElement.lastElementChild.hidden = false;
+            //targetElement.firstElementChild.nextElementSibling.hidden = true;
+            //targetElement.firstElementChild.nextElementSibling.nextElementSibling.hidden = false;
+            //targetElement.firstElementChild.hidden = true;
+
+            $.ajax({
+                type: 'GET',
+                url: '/admin/dynamictemplate/updatetemplatedata?tempDataID=' + tempDataId,
+                success: function (data) {
+                    $("#DataLookup").html(data);
+                    $('.tryMultiselect').chosen();
+
+                },
+                error: function () {
+                    console.log("error");
+                }
+            });
+
+        }
+        function cancelTemplateData(event) {
+            document.getElementById("DataLookup").innerHTML = getGlobalHTML;
+            var row = event.target.parentElement.parentElement.getElementsByClassName('tryMultiselect');
+            $("#DataLookup").find('.tryMultiselect').each(function (i, element) {
+                $(element).chosen('destroy');
+                $(element).chosen();
+                var removeTemp = element.parentElement.getElementsByClassName('chosen-container');
+                removeTemp[1].remove();
+            });
+            getGlobalHTML = undefined;
+
+
+        }
+
+        function disableTemplateData(event) {
+            var targetElement = event.target.parentElement;
+            var id = targetElement.previousElementSibling.getAttribute("data-info");
+            var multiSelect = targetElement.parentElement.getElementsByClassName('tryMultiselect');
+            $(multiSelect[0]).prop("disabled", true).trigger("chosen:updated");
+            var elements = targetElement.parentElement.getElementsByClassName('itemDatadsbl');
+            for (i = 0; i < elements.length; i++) { elements[i].disabled = true; }
+            targetElement.lastElementChild.hidden = true;
+            targetElement.firstElementChild.nextElementSibling.hidden = false;
+            targetElement.firstElementChild.nextElementSibling.nextElementSibling.hidden = true;
+            targetElement.firstElementChild.hidden = false;
+            templateHtml = targetElement.parentElement.innerHTML;
+        }
+
+
+        function updateTemplateData(event) {
+            var formdata = new FormData();
+            var targetElement = event.target.parentElement;
+            disableTemplateData(event);
+            var formRow = targetElement.parentElement;
+            formdata.append("TemplateData.ID", targetElement.previousElementSibling.getAttribute("data-info"));
+            formdata.append("TemplateData.TemplateID", formRow.getAttribute("data-info"));
+            $(formRow).each(function (a, b) {
+                debugger
+                var fields = $(this).find(":input");
+                for (i = 0; i < fields.length; i++) {
+                    formdata.append(fields[i].name, fields[i].value);
+                }
+            });
+            for (var pair of formdata.entries()) {
+    console.log(pair[0]+ ', ' + pair[1]);
+}
+            $.ajax({
+                type: "POST",
+                url: '/admin/dynamictemplate/updatetemplatedata',
+                data: formdata,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data == true)
+                        alert("Success");
+                    else {
+                        alert("Something went wrong!");
+                        cancelTemplateData(event);
+                    }
+                },
+                error: function () {
+                    console.log("error");
+                }
+            });
+        }
+
+        function hideTemplateData(event) {
+            event.target.parentElement.parentElement.hidden = true;
+        }
+
+        function deleteTemplateData(event) {
+            var id = event.target.parentElement.previousElementSibling.getAttribute("data-info");
+            hideTemplateData(event);
+            $.ajax({
+                type: 'GET',
+                url: '/admin/dynamictemplate/deletetemplatedata?id=' + id,
+                success: function (data) {
+                    data == true ? toastr.success('record deleted') : toastr.error('Something went wrong');
+                },
+                error: function () {
+                    console.log("error");
+                }
+            });
+        }
+
+        function addTemplate() {
+            var formdata = new FormData();
+            formdata.append('Template.TemplateTypeID', $('#Template_TemplateTypeID').val());
+            formdata.append('Template.SubTemplateTypeID', $('#Template_SubTemplateTypeID').val());
+
+            $('#relative-table tfoot tr').each(function (a, b) {
+                var fields = $(this).find(":input");
+                formdata.append("TemplateColumns[" + a + "].TemplateFieldID", fields.eq(0).val());
+                formdata.append("TemplateColumns[" + a + "].DisplayName", fields.eq(1).val());
+            });
+
+            //for (var pair of formdata.entries()) {
+            //    debugger
+            //    console.log(pair[0] + ', ' + pair[1]);
+            //}
+
+            $.ajax({
+                type: "POST",
+                url: '/admin/dynamictemplate/AddTemplate',
+                data: formdata,
+                processData: false,
+                contentType: false,
+                dataType: "text",
+                success: function (data) {
+                    toastr.success('record updated')
+                    $("#DataLookup").empty();
+                    $("#DataLookup").append(data);
+                    $('.tryMultiselect').chosen();
+                    $('#search').keyup();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                   console.log(XMLHttpRequest, textStatus, errorThrown)
+                }
+            });
+        }
+
+        function postDependency() {
+            var formdata = new FormData();
+
+            $('#relative-table tfoot tr').each(function (a, b) {
+                var fields = $(this).find(":input");
+                formdata.append("tempDependencies[" + a + "].TempID", fields.eq(0).val());
+                formdata.append("tempDependencies[" + a + "].ChkBoxID", fields.eq(1).val());
+                formdata.append("tempDependencies[" + a + "].ColID", fields.eq(2).val());
+                if (fields.eq(3).val() == "0") {
+                    formdata.append("tempDependencies[" + a + "].DependentYes", true);
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: '/admin/dynamictemplate/AddDependency',
+                data: formdata,
+                processData: false,
+                contentType: false,
+                dataType: "text",
+                success: function (data) {
+                    toastr.success('record updated')
+                    $("#DataLookup").empty();
+                    $("#DataLookup").append(data);
+                    $('.tryMultiselect').chosen();
+                    $('#search').keyup();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest, textStatus, errorThrown);
+                }
+            });
+        }
+
+        $(document).on("click", ".addTemplateData", function () {
+            var getHTML = document.getElementById("DataLookup").innerHTML;
+            debugger
+            getGlobalHTML = getHTML;
+            var TemplateID = $(this).data('info');
+            debugger
+
+
+            var options = {
+                "backdrop": "static",
+                keyboard: true
+            };
+            $.ajax({
+                type: "GET",
+                url: '/admin/dynamictemplate/addtemplatedata',
+                data: { templateId: TemplateID },
+                success: function (data) {
+                    $("#DataLookup").html(data);
+                    $('.tryMultiselect').chosen();
+                },
+                error: function () {
+                    console.log("error")
+                }
+            });
+        });
+
+               $(document).on("click", ".updatetempData", function () {
+                   var values = $(this).attr("data-catch");
+                   console.log(values);
+            var formdata = new FormData($('#updateTemplateDetailFrm').get("0"));
+            $.ajax({
+                type: 'POST',
+                url: '/admin/dynamictemplate/UpdateTemplateData',
+                data: formdata,
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response == true) {
+                        toastr.info('Record saved');
+                        GetTemplateDetailByID(values);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    GetTemplateDetailByID(values);
+                    toastr.error('Something went wrong');
+                }
+            });
+        });
+
+
+        $(document).on("click", ".addTemplateDetail", function () {
+            var values = $(this).attr("data-catch")
+            var formdata = new FormData($('#addTemplateDetailFrm').get("0"));
+            $.ajax({
+                type: 'POST',
+                url: '/admin/dynamictemplate/addtemplatedetail',
+                data: formdata,
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response == true) {
+                        toastr.info('Record saved');
+                        GetTemplateDetail(values);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    GetTemplateDetail(values);
+                    toastr.error('Something went wrong');
+                }
+            });
+            GetTemplateDetailFix(values);
+        });
+
+
+        function GetTemplateDetailByID(tempID) {
+            $.ajax({
+                url: '/admin/dynamictemplate/getdynamictemplatebyID?tempID=' + tempID,
+                contentType: 'application/json; charse=utf-8',
+                type: 'get',
+                success: function (result) {
+                    debugger
+                    $("#DataLookup").html(result);
+                    $('.tryMultiselect').chosen();
+                },
+                error: function (xhr, status) {
+                    alert(status)
+                }
+            });
+        }
+
+        function GetTemplateDetailFix(type) {
+            var fields = type.split('>>');
+            var temptype = encodeURIComponent(fields[0]);
+            var subtemptype = encodeURIComponent(fields[1]);
+            $.ajax({
+                url: '/admin/dynamictemplate/getdynamictemplate?temptype=' + temptype + "&subtemptype=" + subtemptype,
+                contentType: 'application/json; charse=utf-8',
+                type: 'get',
+                success: function (result) {
+                    debugger
+                    $("#DataLookup").html(result);
+                    $('.tryMultiselect').chosen();
+                },
+                error: function (xhr, status) {
+                    alert(status)
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $("body").on("click", '.page-number', function () {
+
+                var page = parseInt($(this).html());
+                //alert(page);
+                var lookupName = $(this).closest('td').attr('id');
+                $.ajax({
+                    url: '/admin/lookup/_getlookupindex',
+                    context: $(this),
+                    data: { "lookupName": lookupName, "page": page },
+                    success: function (data) {
+                        $("#DataLookup").html(data);
+                    }
+                });
+            });
+        });
+
+
+        $("#search").on("keyup", function () {
+            var search = $(this).val();
+            $.ajax({
+                type: "GET",
+                dataType: 'text',
+                url: '/admin/dynamictemplate/SearchTemplate?searchTemplate',
+                data: { searchQuery: search },
+                success: function (data) {
+                    $("#lookupList").html(data);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest, textStatus, errorThrown)
+                }
+            });
+        });
+
+
+        function TempValidation() {
+
+            var tempId = $('#Template_TemplateTypeID').val();
+            var subtempId = $('#Template_SubTemplateTypeID').val();
+
+            if (tempId == null || (subtempId == null && !(document.getElementById("TemplateData.HaveSubTemplate").checked)))
+                return false;
+
+            if (tempId == "" && subtempId == "")
+                return false;
+
+            $.ajax({
+                url: '/admin/dynamicTemplate/tempValidation',
+                type: 'GET',
+                data: {
+                    tempId: tempId, subtempId: subtempId
+                },
+                success: function (response) {
+                    if (response == true) {
+                        toastr.success('This template type is unique!');
+                        $('#addTemplateBtn').prop("disabled", false);
+                    } else {
+                        toastr.error('This template type already exists!');
+                        $('#addTemplateBtn').prop("disabled", true);
+                    }
+                },
+                error: function () {
+                    toastr.error('This template type already exists!');
+                    $('#addTemplateBtn').prop("disabled", true);
+                }
+            });
+        }
+
+
+        $(document).on("click", "#closeModal", function () {
+            $("#DataLookup").empty();
+        });
+
+        var x = 1; //counter for appending formRows (global variable)
+        var maxFields = 5; //Maximum number of formRows allowed (global variable)
+
+        function AddField() {
+            var $tableBody = $('#relative-table').find("tfoot");
+            $trLast = $tableBody.find("tr:last");
+            $trNew = $trLast.clone();
+            $trNew.find(':text').val('');
+            $trLast.after($trNew);
+        }
+
+        function RemoveField(event) {
+            $(event).parents("tr").remove();
+        }
+
+
+        function AddFieldForDependency() {
+
+            var count = parseInt($("#colCount").val());
+            var trCount = $('#relative-table >tfoot >tr').length;
+
+            if (count == trCount || trCount > count) {
+                toastr.error("You can't add more dependency rules then number columns!");
+                return false;
+            }
+
+            var $tableBody = $('#relative-table').find("tfoot");
+            $trLast = $tableBody.find("tr:last");
+            $trNew = $trLast.clone();
+            $trLast.after($trNew);
+        }
+
+        function TempID(Id) {
+            getGlobalHTML = document.getElementById("DataLookup").innerHTML;
+            var Id;
+            $.ajax({
+                url: '/admin/dynamictemplate/UpdateTemplate?ID=' + Id,
+                contentType: 'application/json; charse=utf-8',
+                type: 'get',
+                success: function (result) {
+                    $("#DataLookup").html(result);
+                },
+                error: function (xhr, status) {
+                    alert(status)
+                }
+            });
+        }
+
+        function AddDependency(Id) {
+            getGlobalHTML = document.getElementById("DataLookup").innerHTML;
+            var Id;
+            $.ajax({
+                url: '/admin/dynamictemplate/AddDependency?ID=' + Id,
+                contentType: 'application/json; charse=utf-8',
+                type: 'get',
+                success: function (result) {
+                    $("#DataLookup").html(result);
+                },
+                error: function (xhr, status) {
+                    alert(status)
+                }
+            });
+        }
+
+        function GetDropDownDependency(Id) {
+            getGlobalHTML = document.getElementById("DataLookup").innerHTML;
+            var Id;
+            $.ajax({
+                url: '/admin/dynamictemplate/GetDropDownDependency?ID=' + Id,
+                contentType: 'application/json; charse=utf-8',
+                type: 'get',
+                success: function (result) {
+                    $("#DataLookup").html(result);
+                },
+                error: function (xhr, status) {
+                    alert(status)
+                }
+            });
+        }
+
+
+        function updateTemplateCol() {
+            var tempValue = document.getElementById('Template_TemplateTypeID');
+            var subTempValue = document.getElementById('Template_SubTemplateTypeID');
+            var values = tempValue.options[tempValue.selectedIndex].text + ">>" + subTempValue.options[subTempValue.selectedIndex].text;
+            var formdata = new FormData();
+            formdata.append('Template.ID', $('#Template_ID').val());
+            formdata.append('Template.TemplateTypeID', $('#Template_TemplateTypeID').val());
+            formdata.append('Template.SubTemplateTypeID', $('#Template_SubTemplateTypeID').val());
+
+            $('#relative-table tfoot tr').each(function (a, b) {
+                var fields = $(this).find(":input");
+                formdata.append("TemplateColumns[" + a + "].TemplateFieldID", fields.eq(0).val());
+                formdata.append("TemplateColumns[" + a + "].DisplayName", fields.eq(1).val());
+                formdata.append("TemplateColumns[" + a + "].TemplateID", $('#UpdtTemplateID').val());
+            });
+
+            $.ajax({
+                type: "POST",
+                url: '/admin/dynamictemplate/UpdateTemplate',
+                data: formdata,
+                dataType: "text",
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log(data);
+                    toastr.success('record updated')
+                    $("#DataLookup").html(data);
+                    $('.tryMultiselect').chosen();
+                },
+                error: function (xhr, status) {
+                    GetTemplateDetailFix(values);
+                }
+            });
+        }
+
+
+        $(document).on("click", ".backToTemplate", function () {
+            if (getGlobalHTML != undefined) {
+                document.getElementById("DataLookup").innerHTML = getGlobalHTML;
+            }
+            else {
+                var getTemplateID = $('.addTemplateDetail').attr("data-info");
+                Id = getTemplateID;
+                TempID(Id);
+
+            }
+
+            $("#DataLookup").find('.tryMultiselect').each(function (i, element) {
+                $(element).chosen('destroy');
+                $(element).chosen();
+                var removeTemp = element.parentElement.getElementsByClassName('chosen-container');
+                removeTemp[1].remove();
+            });
+            getGlobalHTML = undefined;
+        });
+    </script>
+}

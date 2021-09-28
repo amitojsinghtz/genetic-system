@@ -1,0 +1,112 @@
+﻿@model Data.Models.Bed
+@using Data.Models
+@{
+    ViewData["Title"] = "Add Bed";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<style>
+    .border-left {
+        border-left: 1px solid black;
+    }
+
+    .mg-t {
+        margin-top: 10PX;
+    }
+</style>
+
+@using (Html.BeginForm("GetBed", "Areas/Admin/Bed/", FormMethod.Post))
+{
+<div class="prtm-content">
+    <div class="prtm-page-bar">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item text-capitalize"><h2>Settings</h2></li>
+            <li class="breadcrumb-item"><a href="#">Bed</a></li>
+            <li class="breadcrumb-item"><a href="#">Update</a></li>
+        </ul>
+    </div>
+    <div class="row mrgn-b-sm">
+        <div class="col-md-4 col-lg-4">
+            <input type="submit" name="submit" value="Update" class="btn btn-xs btn-warning" />
+            <a href="/admin/bed/index" class="btn btn-xs btn-info">Back</a>
+            <input type="button" value="Add Bed" class="btn btn-xs btn-secondary" href="/admin/bed/add" />
+        </div>
+        <div class="col-md-4 col-lg-4">
+        </div>
+        <div class="col-md-4 col-lg-4">
+        </div>
+    </div>
+
+        <div class="form-style">
+            <div class="row">
+                <div class="col-md-12 col-lg-12">
+                    <div class="prtm-block pos-relative">
+                        <div class="row">
+                            <div class="col-md-12 col-lg-12">
+                                <div class="row">
+                                    <div class="col-md-3 col-lg-3">
+                                            <div class="form-group">
+                                                <label for="ID">ID</label>
+                                                @Html.TextBoxFor(m => m.ID, "{0:##}", new { @Class = "form-control", @Disabled = "true" })
+                                            </div>
+                                        </div>
+                                    <div class="col-md-3 col-lg-3">
+                                        <div class="form-group">
+                                            <label for="Name">BedName</label>
+                                            @Html.TextBoxFor(m => m.Name, null, new { @Class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-lg-3">
+                                        <div class="form-group">
+                                            <label for="BedNumber">BedNumber</label>
+                                            @Html.TextBoxFor(m => m.BedNumber, null, new { @Class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-lg-3">
+                                        <div class="form-group">
+                                            <label for="Department">Department</label>
+                                            @Html.DropDownListFor(m => m.DepartmentID, new SelectList(ViewBag.Department, "ID", "Name"), "Department Name", new { @class = "form-control dropdown" })
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 col-lg-3">
+                                        <div class="form-group">
+                                            <label for="BuildingID">Building</label>
+                                            @Html.DropDownListFor(m => m.BuildingID, new SelectList(ViewBag.Building, "ID", "Name"), new { @class = "form-control dropdown searchDropDown" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-lg-3">
+                                        <div class="form-group">
+                                            <label for="FloorID">Floor</label>
+                                            @Html.DropDownListFor(m => m.FloorID, new SelectList(ViewBag.Floor, "ID", "Name"), new { @class = "form-control dropdown searchDropDown" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-lg-3">
+                                        <div class="form-group">
+                                            <label for="Room">Room</label>
+                                            @Html.DropDownListFor(m => m.RoomID, new SelectList(ViewBag.Room, "ID", "Name"), new { @class = "form-control dropdown searchDropDown" })
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+
+                                <div class="row mrgn-b-sm">
+                                    <div class="col-md-3 col-lg-3">
+                                        <div class="form-group">
+                                            <div class="form-check">
+                                                <label>
+                                                    <input type="checkbox" name="Isolated" id="Isolated"> <span class="label-text">Isolated?</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

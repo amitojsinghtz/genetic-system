@@ -1,0 +1,6 @@
+﻿@model List<Data.Models.Template>
+
+@foreach (var item in ViewBag.Templates)
+{
+    <h4><a href="#" class="list-group-item " onclick="GetTemplateDetail(this,'@item')">@item</a></h4>
+}

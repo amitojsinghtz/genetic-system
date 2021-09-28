@@ -1,0 +1,129 @@
+﻿@model GeneticSystem.Areas.Admin.Models.AddDynamicTemplate
+
+<form action="/admin/lookup/addmaster" method="post" id="updateTemplateDetailFrm">
+    <div class="prtm-content">
+        <div class="row">
+            <div class="col-md-7 col-sm-7 col-xs-12">
+                <button type="button" class="btn btn-xs btn-outline-danger add-btn backToTemplate">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                    &nbsp;Back @Model.Template?.TemplateType?.Name >> @Model.Template?.SubTemplateType?.Name List
+                </button>
+                &nbsp;
+                <button type="button" class="btn btn-xs btn-outline-warning add-btn updatetempData sbmtBtn" data-info="@ViewBag.TemplateID" data-catch="@Model.Template.ID">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                    &nbsp;Update @Model.Template?.TemplateType?.Name >> @Model.Template?.SubTemplateType?.Name Data
+                </button>
+
+                <h3 id="lName"></h3>
+            </div>
+            <div class="col-md-12">
+                <table id="userTbl" class="table table-hover table-bordered table-striped">
+                    <thead>
+                        <tr class="">
+                            @foreach (var item in Model.Template.TemplateColumns)
+                            {
+                                <th> @item.DisplayName </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            @foreach (var item in Model.Template.TemplateColumns.Select((value, i) => new { i, value }))
+                            {
+                            <td class="" data-info="@item.value.ID">
+
+                                <input type="hidden" name="TemplateData.ID" class="form-control itemDatadsbl" value="@Model.TemplateData.ID">
+                                <input type="hidden" name="TemplateData.TemplateID" class="form-control itemDatadsbl" value="@Model.TemplateData.TemplateID">
+
+                                @if (item.value.TemplateField.Name == "EffectedGene")
+                                {
+                                    @Html.ListBox("TemplateData.Genes", new MultiSelectList(ViewBag.EffectedGene, "ID", "Name", Model?.TemplateData.Genes), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                                }
+                                else if (item.value.TemplateField.Name == "ConsumptionType")
+                                {
+                                    @Html.DropDownList("TemplateData.ConsumptionTypeID", new SelectList(ViewBag.ConsumptionType, "ID", "Name", @Model.TemplateData.ConsumptionTypeID), "Select Consumption Type", new { @class = "form-control dropdown itemDatadsbl" })
+                                }
+                                else if (item.value.TemplateField.Name == "Element")
+                                {
+                                    @Html.DropDownList("TemplateData.ElementID", new SelectList(ViewBag.Element, "ID", "Name", @Model.TemplateData.ElementID), "Select Element Type", new { @class = "form-control dropdown itemDatadsbl" })
+                                }
+                                else if (item.value.TemplateField.Name == "Result")
+                                {
+                                    @Html.DropDownList("TemplateData.Result", new SelectList(ViewBag.Result, "Value", "Text", @Model.TemplateData.Result), "Select Result Type", new { @class = "form-control dropdown itemDatadsbl" })
+
+                                }
+                                else if (item.value.TemplateField.Name == "HaveMutationEffected")
+                                {
+                                    <label class="form-check">
+                                        <input type="checkbox" name="TemplateData.HaveMutationEffected" class="itemDatadsbl chkBx" value="@Model.TemplateData.HaveMutationEffected.ToString()" @(Model.TemplateData.HaveMutationEffected == true ? "checked" : "")><span class="label-text">Have Mutation Effected</span>
+                                    </label>
+                                }
+                                else if (item.value.TemplateField.Name == "EffectedGood")
+                                {
+                                    <input name="TemplateData.EffectedGood" class="form-control itemDatadsbl" value="@Model.TemplateData.EffectedGood">
+                                }
+                                else if (item.value.TemplateField.Name == "EffectedBad")
+                                {
+                                    <input name="TemplateData.EffectedBad" class="form-control itemDatadsbl" value="@Model.TemplateData.EffectedBad">
+                                }
+                                else if (item.value.TemplateField.Name == "GeneticMutation")
+                                {
+                                    <input name="TemplateData.GeneticMutation" class="form-control itemDatadsbl" value="@Model.TemplateData.GeneticMutation">
+                                }
+                                else if (item.value.TemplateField.Name == "PersonalRiskFactor")
+                                {
+                                    <input name="TemplateData.PersonalRiskFactor" class="form-control itemDatadsbl" value="@Model.TemplateData.PersonalRiskFactor">
+                                }
+                                else if (item.value.TemplateField.Name == "Hereditary")
+                                {
+                                    <input name="TemplateData.Hereditary" class="form-control itemDatadsbl" value="@Model.TemplateData.Hereditary">
+                                }
+                                else if (item.value.TemplateField.Name == "ResultSummary")
+                                {
+                                    <input name="TemplateData.ResultSummary" class="form-control itemDatadsbl" value="@Model.TemplateData.ResultSummary">
+                                }
+                                else if (item.value.TemplateField.Name == "Recommendations")
+                                {
+                                    <input name="TemplateData.Recommendation" class="form-control itemDatadsbl" value="@Model.TemplateData.Recommendation">
+                                }
+                                else if (item.value.TemplateField.Name == "Recommendation2")
+                                {
+                                    <input name="TemplateData.Recommendation2" class="form-control itemDatadsbl" value="@Model.TemplateData.Recommendation2">
+                                }
+                                else if (item.value.TemplateField.Name == "Recommendation3")
+                                {
+                                    <input name="TemplateData.Recommendation3" class="form-control itemDatadsbl" value="@Model.TemplateData.Recommendation3">
+                                }
+                                else if (item.value.TemplateField.Name == "FollowUp")
+                                {
+                                    <input name="TemplateData.FollowUp" class="form-control itemDatadsbl" value="@Model.TemplateData.FollowUp">
+                                }
+                                else if (item.value.TemplateField.Name == "EffectedMiddle")
+                                {
+                                    <input name="TemplateData.EffectedMiddle" class="form-control itemDatadsbl" value="@Model.TemplateData.EffectedMiddle">
+                                }
+                                else if (item.value.TemplateField.Name == "LevelChange")
+                                {
+                                    @Html.DropDownList("TemplateData.LevelChange", new SelectList(ViewBag.LevelUp, "Value", "Text", @Model.TemplateData.LevelChange), "Select LevelChange Type", new { @class = "form-control dropdown itemDatadsbl" })
+                                }
+                                else if (item.value.TemplateField.Name == "HaveMutationEffected2")
+                                {
+                                    <label class="form-check">
+                                        <input type="checkbox" name="TemplateData.HaveMutationEffected2" class="itemDatadsbl chkBx" value="@Model.TemplateData.HaveMutationEffected2.ToString()" @(Model.TemplateData.HaveMutationEffected2 == true ? "checked" : "")><span class="label-text">Have Mutation Effected2</span>
+                                    </label>
+                                }
+                                else if (item.value.TemplateField.Name == "HaveMutationEffected")
+                                {
+                                    <label class="form-check">
+                                        <input type="checkbox" name="TemplateData.HaveMutationEffected3" class="itemDatadsbl chkBx" value="@Model.TemplateData.HaveMutationEffected3.ToString()" @(Model.TemplateData.HaveMutationEffected3 == true ? "checked" : "")><span class="label-text">Have Mutation Effected3</span>
+                                    </label>
+                                }
+                            </td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>

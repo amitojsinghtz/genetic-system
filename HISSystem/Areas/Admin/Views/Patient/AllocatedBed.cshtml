@@ -1,0 +1,104 @@
+﻿@model IEnumerable<Data.Models.Bed>
+@using (Html.BeginForm("Action", "Patient", FormMethod.Post, new { name = "myForm" }))
+{
+    <div class="modal-header">
+        <div class="pull-left"><h5 class="modal-title" id="exampleModalLongTitle">Allocate bed</h5></div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close-model">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row mrgn-b-sm">
+            <div class="col-md-5 col-lg-5">
+                <div class="btn-group btn-group-justified mrgn-b-xs">
+                    <a class="btn btn-xs btn-primary" href="#"> Save </a>
+                    <a class="btn btn-xs btn-warning" href="#"> Update </a>
+                    <a class="btn btn-xs btn-info" href="#"> History </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Department</label>
+                    @Html.DropDownList("DepartmentID", ViewBag.Department, "Select department", new { @Class = "form-control", onchange = "Filter(this)", @Id = "bed-DepartmentID" })
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Status</label>
+                    @Html.DropDownList("StatusID", ViewBag.Status, "Select status", new { @Class = "form-control", onchange = "Filter(this)" })
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check">
+                    <label>
+                        <input type="checkbox" name="Isolated" id="Isolated" onchange="Filter(this)"><span class="label-text">Isolated</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row mrgn-b-lg">
+            <div class="col-md-12">
+                <div class="bed-status-block">
+                    <div class="pull-left mr-2"><i class="fa fa-circle color-red" aria-hidden="true"></i> Busy</div>
+                    <div class="pull-left mr-2"><i class="fa fa-circle color-green" aria-hidden="true"></i> Availble</div>
+                    <div class="pull-left mr-2"><i class="fa fa-circle color-orange" aria-hidden="true"></i> Isolated</div>
+                    <div class="pull-left mr-2"><i class="fa fa-circle color-blue" aria-hidden="true"></i> Will be availble today</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="beds-block">
+                    @foreach (var item in Model)
+                    {
+                        if (item.Status.Name == "Available")
+                        {
+                            <div class="bed-box green" onclick="GetBedID(@item.ID, @item.RoomID,@item.FloorID, @item.BuildingID)">
+                                <img src="~/assets/img/bed-icon.png" />
+                                <p class="bed-title">@item.BedNumber</p>
+                            </div>
+                        }
+                        if (item.Status.Name == "Isolated")
+                        {
+                            <div class="bed-box orange" onclick="GetBedID(@item.ID, @item.RoomID,@item.FloorID, @item.BuildingID)">
+                                <img src="~/assets/img/bed-icon.png" />
+                                <p class="bed-title">@item.BedNumber</p>
+                            </div>
+                        }
+
+
+                        if (item.Status.Name == "Busy")
+                        {
+                            <div class="bed-box red blockClick" @*onclick="GetBedID(@item.ID, @item.RoomID,@item.FloorID, @item.BuildingID)"*@>
+                                <img src="~/assets/img/bed-icon.png" />
+                                <p class="bed-title">@item.BedNumber</p>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    function GetBedID(bedID, RoomID, floorID, buildingID) {
+        $('#BedID').val(bedID);
+        $('#RoomID').val(RoomID);
+        $('#FloorID').val(floorID);
+        $('#BuildingID').val(buildingID);
+        document.getElementById("hiddenBuilding").value = $("#BuildingID").val();
+        document.getElementById("hiddenFloor").value = $("#FloorID").val();
+        document.getElementById("hiddenRoom").value = $("#RoomID").val();
+        document.getElementById("hiddenBed").value = $("#BedID").val();
+        document.getElementById("hiddenDepartment").value = $("#DepartmentID").val();
+        $("#DepartmentID").prop("disabled", true);
+        $("#BuildingID").prop("disabled", true);
+        $("#FloorID").prop("disabled", true);
+        $("#RoomID").prop("disabled", true);
+        $("#BedID").prop("disabled", true);
+        $('#close-model').trigger('click');
+    };
+</script>

@@ -1,0 +1,66 @@
+﻿@model Data.Models.User
+
+<form id="MedHisForm" name="MedHisForm">
+    <table class="table table-hover table-bordered table-striped" id="medical-table">
+        <thead>
+            <tr class="">
+                <th>Unknown Diseases</th>
+                <th>Start Date</th>
+                <th class="numeric">Family History</th>
+                <th>Payment Type</th>
+                <th>Summary</th>
+                @*<th class="numeric"><a href="javascript:void(0)" onclick="AddFieldForMedical()"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></th>*@
+            </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+            @if (Model.MedicalHistory != null && Model.MedicalHistory.Count > 0)
+            {
+                foreach (var item in Model.MedicalHistory)
+                {
+                    <tr id="formRow1">
+                        <td>
+                            <div class="form-group">
+                                @Html.ListBox("MedicalHistory[0].UnknownDiseaseArray", new MultiSelectList(ViewBag.UnknownDisease, "ID", "Name", item?.UnknownDiseaseArray), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                                <input name="MedicalHistory[0].UserId" value="@item.UserId" hidden />
+                                <input name="MedicalHistory[0].ID" value="@item.ID" hidden />
+                            </div>
+                        </td>
+                        <td>@Html.TextBox("MedicalHistory[0].StartDate", item.StartDate, new { @class = "form-control", autocomplete = "true" })</td>
+                        <td>
+                            @Html.ListBox("MedicalHistory[0].FamilyHistoryArray", new MultiSelectList(ViewBag.FamilyHistory, "ID", "Name", item?.FamilyHistoryArray), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                        </td>
+                        <td>
+                            @Html.TextBox("MedicalHistory[0].PaymentType", item.PaymentType, new { @class = "form-control", autocomplete = "true" })
+                        </td>
+                        <td>@Html.TextBox("MedicalHistory[0].Summary", item.Summary, new { @class = "form-control", autocomplete = "true" })</td>
+                        @*<td>
+                                <a href="javascript:void(0)"><i class="fa fa-trash" aria-hidden="true" onclick="RemoveField(this)"></i></a>
+                            </td>*@
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr id="formRow1">
+                    <td>
+                        <div class="form-group">
+                            @Html.ListBox("MedicalHistory[0].UnknownDiseaseArray", new MultiSelectList(ViewBag.UnknownDisease, "ID", "Name"), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                        </div>
+                    </td>
+                    <td>@Html.TextBox("MedicalHistory[0].StartDate", null, new { @class = "form-control datepicker", autocomplete = "true" })</td>
+                    <td>
+                        @Html.ListBox("MedicalHistory[0].FamilyHistoryArray", new MultiSelectList(ViewBag.FamilyHistory, "ID", "Name"), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                    </td>
+                    <td>
+                        @Html.TextBox("MedicalHistory[0].PaymentType", null, new { @class = "form-control", autocomplete = "true" })
+                    </td>
+                    <td>@Html.TextBox("MedicalHistory[0].Summary", null, new { @class = "form-control", autocomplete = "true" })</td>
+                    @*<td>
+                            <a href="javascript:void(0)"><i class="fa fa-trash" aria-hidden="true" onclick="RemoveField(this)"></i></a>
+                        </td>*@
+                </tr>
+            }
+        </tfoot>
+    </table>
+</form>

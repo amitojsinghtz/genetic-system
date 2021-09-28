@@ -1,0 +1,640 @@
+﻿@model GeneticSystem.Areas.Admin.Models.ClientOrderViewModel
+
+<div class="tab-content pad-all-sm">
+    @foreach (var subTemplate in Model.TemplateList.Select((value, i) => new { i, value }))
+    {
+        <div id="tab-(@subTemplate.i)" class="tab-pane fade in active">
+            <div class="row">
+                <div class="panel-group panel-2" id="bs-collapse(@subTemplate.i)">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-info="Department" href="#one-@subTemplate.i">
+                                    @subTemplate?.value?.SubTemplateType?.Name
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="one-@subTemplate.i" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <div>
+                                                <table id="userTbl" class="table table-hover table-bordered table-striped">
+                                                    <thead>
+                                                        <tr class="">
+                                                            @foreach (var record in subTemplate.value.TemplateColumns)
+                                                            {
+                                                                <th> @record.DisplayName </th>
+                                                            }
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var itemData in Model.ClientOrderData.Select((data, index) => new { index, data }))
+                                                        {
+                                                            <tr data-info="somerandom">
+                                                                <td hidden>
+                                                                    <input name="clientOrder.ClientOrderData[@itemData.index].TemplateID" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].TemplateID" hidden>
+                                                                    <input name="clientOrder.ClientOrderData[@itemData.index].IsActive" class="form-control itemDatadsbl" value="true" hidden>
+                                                                    <input name="clientOrder.ClientOrderData[@itemData.index].AddedBy" class="form-control itemDatadsbl" value="1" hidden>
+                                                                    <input name="clientOrder.ClientOrderData[@itemData.index].UpdatedBy" class="form-control itemDatadsbl" value="1" hidden>
+                                                                </td>
+
+                                                                @if (Model.ClientOrderData.Count > 0)
+                                                                {
+                                                                    @foreach (var column in subTemplate.value.TemplateColumns.Select((column, p) => new { p, column }))
+                                                                    {
+                                                                        @if (itemData.data.TemplateID == subTemplate.value.ID)
+                                                                        {
+                                                            <td class="" @*data-info="@itemData.value.ID"*@>
+
+                                                                @if (column.column.TemplateField.Name == "EffectedGene")
+                                                                {
+                                                                    @Html.ListBox("clientOrder.ClientOrderData[" + itemData.index + "].Genes", new MultiSelectList(ViewBag.EffectedGene, "ID", "Name", Model.ClientOrderData[itemData.index].Genes), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "ConsumptionType")
+                                                                {
+                                                                    @Html.DropDownList("clientOrder.ClientOrderData[" + itemData.index + "].ConsumptionTypeID", new SelectList(ViewBag.ConsumptionType, "ID", "Name", @Model.ClientOrderData[itemData.index].ConsumptionTypeID), "Select Consumption Type", new { @class = "form-control dropdown itemDatadsbl" })
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "Element")
+                                                                {
+                                                                    @Html.DropDownList("clientOrder.ClientOrderData[" + itemData.index + "].ElementID", new SelectList(ViewBag.Element, "ID", "Name", @Model.ClientOrderData[itemData.index].ElementID), "Select Element Type", new { @class = "form-control dropdown itemDatadsbl" })
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "Result")
+                                                                {
+                                                                    @*@Html.DropDownList("clientOrder.ClientOrderData[" + itemData.index + "].Result", new SelectList(ViewBag.Result, "Value", "Text", @Model.TemplateDataList[itemData.index].Result), "Select Result Type", new { @class = "form-control dropdown itemDatadsbl rsltDrp", data_extid = column.column.ID })*@
+                                                                    @Html.DropDownList("clientOrder.ClientOrderData[" + itemData.index + "].Result", new SelectList(ViewBag.Result, "Value", "Text", @Model.ClientOrderData[itemData.index].Result), "Select Result Type", new { @class = "form-control dropdown itemDatadsbl rsltDrp", data_extid = column.column.ID })
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "HaveMutationEffected")
+                                                                {
+                                                                    <div class="form-check">
+                                                                        <label>
+                                                                            <input name="clientOrder.ClientOrderData[@itemData.index].HaveMutationEffected" type="checkbox" data-chk="@column.column.TemplateField.Name"
+                                                                                   class="itemDatadsbl chkBx" value="@Model.ClientOrderData[itemData.index].HaveMutationEffected.ToString()"
+                                                                                   @(Model.ClientOrderData[itemData.index].HaveMutationEffected == true ? "checked" : "")>
+                                                                            <span class="label-text">Have Mutation Effected</span>
+                                                                        </label>
+                                                                    </div>
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "EffectedGood")
+                                                                {
+                                                                    @*<textarea name="clientOrder.ClientOrderData[@itemData.index].EffectedGood" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].EffectedGood" cols="50">@Model.ClientOrderData[itemData.index].EffectedGood</textarea>*@
+
+                                                                    if (column.column.ColIDTempDependencies != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDTempDependencies.ChkBox.TemplateField.Name;
+                                                                        var chkBoxVal = Convert.ToBoolean(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (chkBoxVal == column.column.ColIDTempDependencies.DependentYes)
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].EffectedGood" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].EffectedGood" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()"
+                                                                                      cols="50">@Model.ClientOrderData[itemData.index].EffectedGood</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].EffectedGood" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].EffectedGood" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()" cols="50"></textarea>
+                                                                        }
+                                                                    }
+                                                                    else if (column.column.ColIDDropDownDependency != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDDropDownDependency.DropDown.TemplateField.Name;
+                                                                        var dropDownVal = Convert.ToInt32(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (dropDownVal == column.column.ColIDDropDownDependency.DepOnOption)
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].EffectedGood" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].EffectedGood" cols="50">@Model.ClientOrderData[itemData.index].EffectedGood</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].EffectedGood" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].EffectedGood" cols="50"></textarea>
+                                                                        }
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <textarea name="clientOrder.ClientOrderData[@itemData.index].EffectedGood" class="form-control itemDatadsbl" cols="50">@Model.ClientOrderData[itemData.index].EffectedGood</textarea>
+                                                                    }
+
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "EffectedBad")
+                                                                {
+                                                                    @*<textarea name="clientOrder.ClientOrderData[@itemData.index].EffectedBad" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].EffectedBad" cols="50">@Model.ClientOrderData[itemData.index].EffectedBad</textarea>*@
+
+                                                                    if (column.column.ColIDTempDependencies != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDTempDependencies.ChkBox.TemplateField.Name;
+                                                                        var chkBoxVal = Convert.ToBoolean(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (chkBoxVal == column.column.ColIDTempDependencies.DependentYes)
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].EffectedBad" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].EffectedBad" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()"
+                                                                                      cols="50">@Model.ClientOrderData[itemData.index].EffectedBad</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].EffectedBad" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].EffectedBad" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()"
+                                                                                      value="@Model.ClientOrderData[itemData.index].EffectedBad" cols="50"></textarea>
+                                                                        }
+                                                                    }
+                                                                    else if (column.column.ColIDDropDownDependency != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDDropDownDependency.DropDown.TemplateField.Name;
+                                                                        var dropDownVal = Convert.ToInt32(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (dropDownVal == column.column.ColIDDropDownDependency.DepOnOption)
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].EffectedBad" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].EffectedBad" cols="50">@Model.ClientOrderData[itemData.index].EffectedBad</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].EffectedBad" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].EffectedBad" cols="50"></textarea>
+                                                                        }
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <textarea name="clientOrder.ClientOrderData[@itemData.index].EffectedBad" class="form-control itemDatadsbl" cols="50">@Model.ClientOrderData[itemData.index].EffectedBad</textarea>
+                                                                    }
+
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "GeneticMutation")
+                                                                {
+                                                                    @*<textarea name="clientOrder.ClientOrderData[@itemData.index].GeneticMutation" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].GeneticMutation" cols="50">@Model.ClientOrderData[itemData.index].GeneticMutation</textarea>*@
+
+                                                                    @*<input name="clientOrder.ClientOrderData[@itemData.index].GeneticMutation" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].GeneticMutation">*@
+
+                                                                    if (column.column.ColIDTempDependencies != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDTempDependencies.ChkBox.TemplateField.Name;
+                                                                        var chkBoxVal = Convert.ToBoolean(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (chkBoxVal == column.column.ColIDTempDependencies.DependentYes)
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].GeneticMutation" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].GeneticMutation" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()"
+                                                                                      cols="50">@Model.ClientOrderData[itemData.index].GeneticMutation</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].GeneticMutation" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].GeneticMutation" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()" cols="50"></textarea>
+                                                                        }
+                                                                    }
+                                                                    else if (column.column.ColIDDropDownDependency != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDDropDownDependency.DropDown.TemplateField.Name;
+                                                                        var dropDownVal = Convert.ToInt32(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (dropDownVal == column.column.ColIDDropDownDependency.DepOnOption)
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].GeneticMutation" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].GeneticMutation" cols="50">@Model.ClientOrderData[itemData.index].GeneticMutation</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].GeneticMutation" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].GeneticMutation" cols="50"></textarea>
+                                                                        }
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <textarea name="clientOrder.ClientOrderData[@itemData.index].GeneticMutation" class="form-control itemDatadsbl" cols="50">@Model.ClientOrderData[itemData.index].GeneticMutation</textarea>
+                                                                    }
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "PersonalRiskFactor")
+                                                                {
+                                                                    @*<textarea name="clientOrder.ClientOrderData[@itemData.index].PersonalRiskFactor" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].PersonalRiskFactor" cols="50">@Model.ClientOrderData[itemData.index].PersonalRiskFactor</textarea>*@
+
+                                                                    @*<input name="clientOrder.ClientOrderData[@itemData.index].PersonalRiskFactor" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].PersonalRiskFactor">*@
+
+                                                                    if (column.column.ColIDTempDependencies != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDTempDependencies.ChkBox.TemplateField.Name;
+                                                                        var chkBoxVal = Convert.ToBoolean(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (chkBoxVal == column.column.ColIDTempDependencies.DependentYes)
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].PersonalRiskFactor" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].PersonalRiskFactor" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()"
+                                                                                      cols="50">@Model.ClientOrderData[itemData.index].PersonalRiskFactor</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].PersonalRiskFactor" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].PersonalRiskFactor" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()" cols="50"></textarea>
+                                                                        }
+                                                                    }
+                                                                    else if (column.column.ColIDDropDownDependency != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDDropDownDependency.DropDown.TemplateField.Name;
+                                                                        var dropDownVal = Convert.ToInt32(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (dropDownVal == column.column.ColIDDropDownDependency.DepOnOption)
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].PersonalRiskFactor" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].PersonalRiskFactor" cols="50">@Model.ClientOrderData[itemData.index].PersonalRiskFactor</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].PersonalRiskFactor" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].PersonalRiskFactor" cols="50"></textarea>
+                                                                        }
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <textarea name="clientOrder.ClientOrderData[@itemData.index].PersonalRiskFactor" class="form-control itemDatadsbl" cols="50">@Model.ClientOrderData[itemData.index].PersonalRiskFactor</textarea>
+                                                                    }
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "Hereditary")
+                                                                {
+                                                                    @*<textarea name="clientOrder.ClientOrderData[@itemData.index].Hereditary" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].Hereditary" cols="50">@Model.ClientOrderData[itemData.index].Hereditary</textarea>*@
+
+                                                                    @*<input name="clientOrder.ClientOrderData[@itemData.index].Hereditary" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].Hereditary">*@
+
+                                                                    if (column.column.ColIDTempDependencies != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDTempDependencies.ChkBox.TemplateField.Name;
+                                                                        var chkBoxVal = Convert.ToBoolean(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (chkBoxVal == column.column.ColIDTempDependencies.DependentYes)
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].Hereditary" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].Hereditary" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()"
+                                                                                      cols="50">@Model.ClientOrderData[itemData.index].Hereditary</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].Hereditary" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].Hereditary" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()" cols="50"></textarea>
+                                                                        }
+
+                                                                    }
+                                                                    else if (column.column.ColIDDropDownDependency != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDDropDownDependency.DropDown.TemplateField.Name;
+                                                                        var dropDownVal = Convert.ToInt32(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (dropDownVal == column.column.ColIDDropDownDependency.DepOnOption)
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].Hereditary" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].Hereditary" cols="50">@Model.ClientOrderData[itemData.index].PersonalRiskFactor</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].Hereditary" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].Hereditary" cols="50"></textarea>
+                                                                        }
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <textarea name="clientOrder.ClientOrderData[@itemData.index].Hereditary" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].Hereditary" cols="50">@Model.ClientOrderData[itemData.index].Hereditary</textarea>
+                                                                    }
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "ResultSummary")
+                                                                {
+                                                                    @*<textarea name="clientOrder.ClientOrderData[@itemData.index].ResultSummary" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].ResultSummary" cols="50">@Model.ClientOrderData[itemData.index].ResultSummary</textarea>*@
+
+                                                                    @*<input name="clientOrder.ClientOrderData[@itemData.index].ResultSummary" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].ResultSummary">*@
+
+                                                                    if (column.column.ColIDTempDependencies != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDTempDependencies.ChkBox.TemplateField.Name;
+                                                                        var chkBoxVal = Convert.ToBoolean(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (chkBoxVal == column.column.ColIDTempDependencies.DependentYes)
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].ResultSummary" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].ResultSummary" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()"
+                                                                                      cols="50">@Model.ClientOrderData[itemData.index].ResultSummary</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].ResultSummary" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].ResultSummary" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()" cols="50"></textarea>
+                                                                        }
+                                                                    }
+                                                                    else if (column.column.ColIDDropDownDependency != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDDropDownDependency.DropDown.TemplateField.Name;
+                                                                        var dropDownVal = Convert.ToInt32(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (dropDownVal == column.column.ColIDDropDownDependency.DepOnOption)
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].ResultSummary" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].ResultSummary" cols="50">@Model.ClientOrderData[itemData.index].ResultSummary</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].ResultSummary" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].ResultSummary" cols="50"></textarea>
+                                                                        }
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <textarea name="clientOrder.ClientOrderData[@itemData.index].ResultSummary" class="form-control itemDatadsbl" cols="50">@Model.ClientOrderData[itemData.index].ResultSummary</textarea>
+                                                                    }
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "Recommendations")
+                                                                {
+                                                                    @*<textarea name="clientOrder.ClientOrderData[@itemData.index].Recommendation" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].Recommendation" cols="50">@Model.ClientOrderData[itemData.index].Recommendation</textarea>*@
+
+                                                                    @*<input name="clientOrder.ClientOrderData[@itemData.index].Recommendation" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].Recommendation">*@
+
+                                                                    if (column.column.ColIDTempDependencies != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDTempDependencies.ChkBox.TemplateField.Name;
+                                                                        var chkBoxVal = Convert.ToBoolean(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (chkBoxVal == column.column.ColIDTempDependencies.DependentYes)
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].Recommendation" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].Recommendation" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()"
+                                                                                      cols="50">@Model.ClientOrderData[itemData.index].Recommendation</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].Recommendation" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].Recommendation" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()" cols="50"></textarea>
+                                                                        }
+                                                                    }
+                                                                    else if (column.column.ColIDDropDownDependency != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDDropDownDependency.DropDown.TemplateField.Name;
+                                                                        var dropDownVal = Convert.ToInt32(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (dropDownVal == column.column.ColIDDropDownDependency.DepOnOption)
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].Recommendation" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].Recommendation" cols="50">@Model.ClientOrderData[itemData.index].Recommendation</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].Recommendation" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].Recommendation" cols="50"></textarea>
+                                                                        }
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <textarea name="clientOrder.ClientOrderData[@itemData.index].Recommendation" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].Recommendation" cols="50">@Model.ClientOrderData[itemData.index].Recommendation</textarea>
+                                                                    }
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "Recommendation2")
+                                                                {
+                                                                    @*<textarea name="clientOrder.ClientOrderData[@itemData.index].Recommendation2" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].Recommendation2" cols="50">@Model.ClientOrderData[itemData.index].Recommendation2</textarea>*@
+
+                                                                    @*<input name="clientOrder.ClientOrderData[@itemData.index].Recommendation" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].Recommendation">*@
+
+                                                                    if (column.column.ColIDTempDependencies != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDTempDependencies.ChkBox.TemplateField.Name;
+                                                                        var chkBoxVal = Convert.ToBoolean(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (chkBoxVal == column.column.ColIDTempDependencies.DependentYes)
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].Recommendation2" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].Recommendation2" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()"
+                                                                                      cols="50">@Model.ClientOrderData[itemData.index].Recommendation2</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].Recommendation2" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].Recommendation2" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()" cols="50"></textarea>
+                                                                        }
+                                                                    }
+                                                                    else if (column.column.ColIDDropDownDependency != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDDropDownDependency.DropDown.TemplateField.Name;
+                                                                        var dropDownVal = Convert.ToInt32(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (dropDownVal == column.column.ColIDDropDownDependency.DepOnOption)
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].Recommendation2" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].Recommendation2" cols="50">@Model.ClientOrderData[itemData.index].Recommendation2</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].Recommendation2" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].Recommendation2" cols="50"></textarea>
+                                                                        }
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <textarea name="clientOrder.ClientOrderData[@itemData.index].Recommendation2" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].Recommendation2" cols="50">@Model.ClientOrderData[itemData.index].Recommendation2</textarea>
+                                                                    }
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "Recommendation3")
+                                                                {
+                                                                    @*<textarea name="clientOrder.ClientOrderData[@itemData.index].Recommendation3" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].Recommendation3" cols="50">@Model.ClientOrderData[itemData.index].Recommendation3</textarea>*@
+
+                                                                    @*<input name="clientOrder.ClientOrderData[@itemData.index].Recommendation" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].Recommendation">*@
+
+                                                                    if (column.column.ColIDTempDependencies != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDTempDependencies.ChkBox.TemplateField.Name;
+                                                                        var chkBoxVal = Convert.ToBoolean(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (chkBoxVal == column.column.ColIDTempDependencies.DependentYes)
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].Recommendation3" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].Recommendation3" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()"
+                                                                                      cols="50">@Model.ClientOrderData[itemData.index].Recommendation3</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].Recommendation3" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].Recommendation3" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()" cols="50"></textarea>
+                                                                        }
+                                                                    }
+                                                                    else if (column.column.ColIDDropDownDependency != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDDropDownDependency.DropDown.TemplateField.Name;
+                                                                        var dropDownVal = Convert.ToInt32(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (dropDownVal == column.column.ColIDDropDownDependency.DepOnOption)
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].Recommendation3" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].Recommendation3" cols="50">@Model.ClientOrderData[itemData.index].Recommendation3</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].Recommendation3" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].Recommendation3" cols="50"></textarea>
+                                                                        }
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <textarea name="clientOrder.ClientOrderData[@itemData.index].Recommendation3" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].Recommendation3" cols="50">@Model.ClientOrderData[itemData.index].Recommendation3</textarea>
+                                                                    }
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "FollowUp")
+                                                                {
+                                                                    @*<textarea name="clientOrder.ClientOrderData[@itemData.index].FollowUp" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].FollowUp" cols="50">@Model.ClientOrderData[itemData.index].FollowUp</textarea>*@
+
+                                                                    @*<input name="clientOrder.ClientOrderData[@itemData.index].Recommendation" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].Recommendation">*@
+
+                                                                    if (column.column.ColIDTempDependencies != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDTempDependencies.ChkBox.TemplateField.Name;
+                                                                        var chkBoxVal = Convert.ToBoolean(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (chkBoxVal == column.column.ColIDTempDependencies.DependentYes)
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].FollowUp" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].FollowUp" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()"
+                                                                                      cols="50">@Model.ClientOrderData[itemData.index].FollowUp</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].FollowUp" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].FollowUp" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()" cols="50"></textarea>
+                                                                        }
+                                                                    }
+                                                                    else if (column.column.ColIDDropDownDependency != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDDropDownDependency.DropDown.TemplateField.Name;
+                                                                        var dropDownVal = Convert.ToInt32(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (dropDownVal == column.column.ColIDDropDownDependency.DepOnOption)
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].FollowUp" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].FollowUp" cols="50">@Model.ClientOrderData[itemData.index].FollowUp</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].FollowUp" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].FollowUp" cols="50"></textarea>
+                                                                        }
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <textarea name="clientOrder.ClientOrderData[@itemData.index].FollowUp" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].FollowUp" cols="50">@Model.ClientOrderData[itemData.index].FollowUp</textarea>
+                                                                    }
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "EffectedMiddle")
+                                                                {
+                                                                    @*<textarea name="clientOrder.ClientOrderData[@itemData.index].EffectedMiddle" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].EffectedMiddle" cols="50">@Model.ClientOrderData[itemData.index].EffectedMiddle</textarea>*@
+
+                                                                    @*<input name="clientOrder.ClientOrderData[@itemData.index].Recommendation" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].Recommendation">*@
+
+                                                                    if (column.column.ColIDTempDependencies != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDTempDependencies.ChkBox.TemplateField.Name;
+                                                                        var chkBoxVal = Convert.ToBoolean(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (chkBoxVal == column.column.ColIDTempDependencies.DependentYes)
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].EffectedMiddle" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].EffectedMiddle" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()"
+                                                                                      cols="50">@Model.ClientOrderData[itemData.index].EffectedMiddle</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea name="clientOrder.ClientOrderData[@itemData.index].EffectedMiddle" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].EffectedMiddle" data-chk="@xput" data-on="@column.column.ColIDTempDependencies.DependentYes.ToString()" cols="50"></textarea>
+                                                                        }
+                                                                    }
+                                                                    else if (column.column.ColIDDropDownDependency != null)
+                                                                    {
+                                                                        var xput = column.column.ColIDDropDownDependency.DropDown.TemplateField.Name;
+                                                                        var dropDownVal = Convert.ToInt32(Model.ClientOrderData[itemData.index].GetType().GetProperty(xput).GetValue(itemData.data, null));
+
+                                                                        if (dropDownVal == column.column.ColIDDropDownDependency.DepOnOption)
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].EffectedMiddle" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].EffectedMiddle" cols="50">@Model.ClientOrderData[itemData.index].EffectedMiddle</textarea>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <textarea data-drp="@column.column.ColIDDropDownDependency?.DropDownId" data-drpOn="@column.column.ColIDDropDownDependency?.DepOnOption"
+                                                                                      name="clientOrder.ClientOrderData[@itemData.index].EffectedMiddle" class="form-control itemDatadsbl"
+                                                                                      data-info="@Model.ClientOrderData[itemData.index].EffectedMiddle" cols="50"></textarea>
+                                                                        }
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <textarea name="clientOrder.ClientOrderData[@itemData.index].EffectedMiddle" class="form-control itemDatadsbl" value="@Model.ClientOrderData[itemData.index].EffectedMiddle" cols="50">@Model.ClientOrderData[itemData.index].EffectedMiddle</textarea>
+                                                                    }
+
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "LevelChange")
+                                                                {
+                                                                    @Html.DropDownList("TemplateData.LevelChange", new SelectList(ViewBag.LevelUp, "Value", "Text", @Model.ClientOrderData[itemData.index].LevelChange), "Select LevelChange Type", new { @class = "form-control dropdown itemDatadsbl rsltDrp", data_extid = column.column.ID })
+
+                                                                    @*@Html.DropDownList("TemplateData.LevelChange", new SelectList(ViewBag.LevelUp, "Value", "Text", @Model.ClientOrderData[itemData.index].LevelChange), "Select LevelChange Type", new { @class = "form-control dropdown itemDatadsbl" })*@
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "HaveMutationEffected2")
+                                                                {
+            
+                                                                    <label class="form-check">
+                                                                        <input type="checkbox" name="TemplateData.HaveMutationEffected2" class="itemDatadsbl chkBx" data-chk="@column.column.TemplateField.Name"
+                                                                               value="@Model.ClientOrderData[itemData.index].HaveMutationEffected2.ToString()" @(@Model.ClientOrderData[itemData.index].HaveMutationEffected2 == true ? "checked" : "")>
+                                                                        <span class="label-text">Have Mutation Effected2</span>
+                                                                    </label>
+                                                                }
+                                                                else if (column.column.TemplateField.Name == "HaveMutationEffected3")
+                                                                {
+                                                                    <label class="form-check">
+                                                                        <input type="checkbox" name="TemplateData.HaveMutationEffected3" class="itemDatadsbl chkBx" data-chk="@column.column.TemplateField.Name"
+                                                                               value="@Model.ClientOrderData[itemData.index].HaveMutationEffected3.ToString()" @(@Model.ClientOrderData[itemData.index].HaveMutationEffected3 == true ? "checked" : "")>
+                                                                        <span class="label-text">Have Mutation Effected3</span>
+                                                                    </label>
+                                                                }
+
+                                                            </td>
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

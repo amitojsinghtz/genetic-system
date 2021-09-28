@@ -1,0 +1,44 @@
+﻿@model Data.Models.ActionPermission
+@using (Html.BeginForm("AddPermission", "ActionControl", FormMethod.Post))
+{
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Add Action Permission</h4>
+        <div asp-validation-summary="All" class="text-danger"></div>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Action</label>
+                    @Html.DropDownListFor(x => x.ActionID, new SelectList(ViewBag.Action, "ID", "Name"), "Select action", new { @class = "form-control" })
+                    @Html.ValidationMessage("Name", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label>User</label>
+                    @Html.DropDownListFor(x => x.RoleID, new SelectList(ViewBag.Role, "ID", "Name"), "Select user", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.RoleID,null, new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Page</label>
+                    @Html.DropDownListFor(x => x.ViewControlID, new SelectList(ViewBag.Page, "ID", "Name"), "Select page", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.ViewControlID, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <label>
+                            <input type="checkbox" name="IsEnabled" id="IsEnabled"> <span class="label-text">IsActive</span>
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(x => x.IsEnabled, null, new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-outline-inverse">Close</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+}

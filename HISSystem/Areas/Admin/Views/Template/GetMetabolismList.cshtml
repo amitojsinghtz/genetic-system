@@ -1,0 +1,108 @@
+﻿@model Data.Helpers.PagedData<GeneticSystem.Areas.Admin.Models.MetabolismAddViewModel>
+
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="row left-row-pad">
+                <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+                    <h4><b>All Gene Template </b></h4>
+                </div>
+                <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+                    <div id="lookupList" class="scroll_text">
+
+                        <h4><a href="/admin/template/metabolismtemplate" class="list-group-item active">Metabolism Template</a></h4>
+
+                        <h4><a href="/admin/template/index" class="list-group-item ">Epilepsy Template</a></h4>
+
+                        <h4><a href="/admin/template/prostatetemplate" class="list-group-item">Prostate Cancer Template</a></h4>
+
+                        <h4><a href="/admin/template/methyationtemplate" class="list-group-item ">Methyation & Autism Template</a></h4>
+
+                        <h4><a href="/admin/template/fatconsumptiontemplate" class="list-group-item ">Fat Consumption Template</a></h4>
+
+                        <h4><a href="/admin/template/fitnesstemplate" class="list-group-item ">Fitness Template</a></h4>
+
+                        <h4><a href="/admin/template/diettemplate" class="list-group-item ">Diet Template</a></h4>
+
+                        <h4><a href="/admin/template/vitamintemplate" class="list-group-item ">Vitamins Template</a></h4>
+
+                        <h4><a href="/admin/template/mineraltemplate" class="list-group-item ">Mineral Template</a></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <table id="userTbl" class="table table-hover table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th class="numeric">Consumption Type</th>
+                        <th class="numeric">Effected Gene</th>
+                        <th class="numeric">Effected</th>
+                        <th class="numeric">Recomendation</th>
+                        <th class="numeric" colspan="2">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Data)
+                    {
+                        <tr>
+                            <td>
+
+                                @if (item.ConsumptionType != null)
+                                {
+                                    @item.ConsumptionType.Name
+                                }
+
+                            <td>
+                                @if (item.EffectedGeneMetabolism != null)
+                                {
+                                    @foreach (var item1 in item.EffectedGeneMetabolism)
+                                    {
+                                        if (item1.Gene != null)
+                                        {
+                                            @item1.Gene.Name<br />
+                                        }
+
+
+                                    }
+
+                                }
+                            </td>
+                            <td>
+                                @if (item.Effected == 1)
+                                {
+                                    <text>High</text>
+                                }
+                                else if (item.Effected == 2)
+                                {
+                                    <text>Medium</text>
+                                }
+                                else if (item.Effected == 3)
+                                {
+                                    <text>Low</text>
+                                }
+                            </td>
+                            <td>
+                                @item.Recomendation
+                            </td>
+
+                            <td>
+                                <a href="/admin/template/editmetabolismtemplate?id=@item.ID" class="fa fa-pencil mrgn-l-xs" data-toggle="tooltip" , data-placement="top" title="Edit"></a>
+                                <a href="javascript:void(0);" class="fa fa-trash mrgn-l-xs" onclick="Delete(@item.ID)" data-toggle="tooltip" , data-placement="top" title="Trash"></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="6">
+                            @for (int i = 1; i <= Model.NumberOfPages; i++)
+                            {
+                                <a class="page-number" href="javascript:void()">@i</a>
+                            }
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+            </div>
+</div>

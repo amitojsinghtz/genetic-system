@@ -1,0 +1,85 @@
+﻿@model IEnumerable<Data.Models.LogTable>
+<style>
+    .modal-footer {
+        padding: 0px;
+    }
+    #footer-title{
+        margin-bottom: 10px;
+    }
+</style>
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLongTitle">History</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <table class="table table-hover table-bordered table-striped">
+        <thead>
+            <tr>
+                <th class="numeric">ID</th>
+                <th class="numeric">User</th>
+                <th class="numeric">IPAddress</th>
+                <th class="numeric">Table</th>
+                <th class="numeric">Operation</th>
+                <th class="numeric">Added date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr onclick="OpenDetails(@item.ID)">
+                    <td>@item.ID</td>
+                    <td>@item.UserID</td>
+                    <td>@item.IPAddress</td>
+                    <td>@item.TableName</td>
+                    <td>@item.Operation</td>
+                    <td>@item.AddedDate.ToString("MM/dd/yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<h5 class="modal-title" id="footer-title">History Details</h5>
+<div class="modal-footer">
+    <div id="log-details">
+        <table class="table table-hover table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th class="numeric">ID</th>
+                    <th class="numeric">Column name</th>
+                    <th class="numeric">Old value</th>
+                    <th class="numeric">New value</th>
+                    <th class="numeric">Added date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function OpenDetails(id) {
+        debugger
+        $.ajax({
+            url: '/admin/SystemLog/GetLogDetails?tableID=' + id,
+            type: 'GET',
+            success: function (result) {
+                debugger
+                $("#log-details").html(result);
+                //$('#exampleModalCenter1').modal().toggle();
+            },
+            error: function (xhr, status) {
+                debugger
+            }
+        });
+    }
+</script>

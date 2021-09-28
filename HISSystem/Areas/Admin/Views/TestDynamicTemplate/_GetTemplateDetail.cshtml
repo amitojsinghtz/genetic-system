@@ -1,0 +1,107 @@
+﻿@model GeneticSystem.Areas.Admin.Models.AddTestDynamicTemplate
+
+<div class="prtm-content">
+    <div class="row">
+        <div class="col-md-10 col-sm-10 col-xs-24 mrgn-b-sm">
+            <button type="button" class="btn btn-xs btn-outline-warning add-btn addTemplateData" data-info="@ViewBag.TemplateID">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                &nbsp;Add Template Data
+            </button>
+            &nbsp;
+            @*<h3 id="lName"></h3>*@
+            <button type="button" class="btn btn-xs edit-post btn-outline-primary updateTemplate" onclick="TempID(@ViewBag.TemplateID)">
+                <i class="fa fa-edit" aria-hidden="true"></i>
+                &nbsp;Edit Template Columns
+            </button>
+        </div>
+        &nbsp;
+        <div class="col-md-12">
+            <table id="userTbl" class="table table-hover table-bordered table-striped">
+                <thead>
+                    <tr class="">
+                        @foreach (var item in Model.TestTemplate.TestTemplateColumns)
+                        {
+                            <th> @item.DisplayName </th>
+                        }
+
+                        <th class="numeric">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var itemData in Model.TestTemplateDataList.Select((value, i) => new { i, value }))
+                    {
+                        <tr data-info="@Model.TestTemplate.ID">
+
+                            @if (Model.TestTemplateDataList.Count > 0)
+                            {
+                                @foreach (var item in Model.TestTemplate.TestTemplateColumns.Select((value, i) => new { i, value }))
+                                {
+                                    <td class="" data-info="@itemData.value.ID">
+
+                                        @if (item.value.TestTemplateField.Name == "EffectedGene")
+                                        {
+                                            @Html.ListBox("TestTemplateData.Genes", new MultiSelectList(ViewBag.EffectedGene, "ID", "Name", Model.TestTemplateDataList[itemData.i].Genes), htmlAttributes: new { @class = "tryMultiselect form-control", @disabled = "disabled", multiple = "multiple" })
+
+                                            @*@Html.ListBoxFor(m => m.TemplateDataList[itemData.i].Genes, new MultiSelectList(ViewBag.EffectedGene, "ID", "Name"), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })*@
+                                        }
+                                        else if (item.value.TestTemplateField.Name == "ConsumptionType")
+                                        {
+                                            @Html.DropDownList("TestTemplateData.ConsumptionTypeID", new SelectList(ViewBag.ConsumptionType, "ID", "Name", @Model.TestTemplateDataList[itemData.i].ConsumptionTypeID), "Select Consumption Type", new { @class = "form-control dropdown itemDatadsbl", @disabled = true })
+                                        }
+                                        else if (item.value.TestTemplateField.Name == "Element")
+                                        {
+                                            @Html.DropDownList("TestTemplateData.ElementID", new SelectList(ViewBag.Element, "ID", "Name", @Model.TestTemplateDataList[itemData.i].ElementID), "Select Element Type", new { @class = "form-control dropdown itemDatadsbl", @disabled = true })
+                                        }
+                                        else if (item.value.TestTemplateField.Name == "Result")
+                                        {
+                                            @Html.DropDownList("TestTemplateData.Result", new SelectList(ViewBag.Result, "Value", "Text", @Model.TestTemplateDataList[itemData.i].Result), "Select Result Type", new { @class = "form-control dropdown itemDatadsbl", @disabled = true })
+
+                                        }
+                                        else if (item.value.TestTemplateField.Name == "HaveMutationEffected")
+                                        {
+                                            <input type="checkbox" name="TestTemplateData.HaveMutationEffected" class="itemDatadsbl" value="@Model.TestTemplateDataList[itemData.i].HaveMutationEffected" disabled><span class="label-text">Have Mutation Effected</span>
+                                        }
+                                        else if (item.value.TestTemplateField.Name == "EffectedGood")
+                                        {
+                                            <input name="TestTemplateData.EffectedGood" class="form-control itemDatadsbl" value="@Model.TestTemplateDataList[itemData.i].EffectedGood" disabled>
+                                        }
+                                        else if (item.value.TestTemplateField.Name == "EffectedBad")
+                                        {
+                                            <input name="TestTemplateData.EffectedBad" class="form-control itemDatadsbl" value="@Model.TestTemplateDataList[itemData.i].EffectedBad" disabled>
+                                        }
+                                        else if (item.value.TestTemplateField.Name == "GeneticMutation")
+                                        {
+                                            <input name="TestTemplateData.GeneticMutation" class="form-control itemDatadsbl" value="@Model.TestTemplateDataList[itemData.i].GeneticMutation" disabled>
+                                        }
+                                        else if (item.value.TestTemplateField.Name == "PersonalRiskFactor")
+                                        {
+                                            <input name="TestTemplateData.PersonalRiskFactor" class="form-control itemDatadsbl" value="@Model.TestTemplateDataList[itemData.i].PersonalRiskFactor" disabled>
+                                        }
+                                        else if (item.value.TestTemplateField.Name == "Hereditary")
+                                        {
+                                            <input name="TestTemplateData.Hereditary" class="form-control itemDatadsbl" value="@Model.TestTemplateDataList[itemData.i].Hereditary" disabled>
+                                        }
+                                        else if (item.value.TestTemplateField.Name == "ResultSummary")
+                                        {
+                                            <input name="TestTemplateData.ResultSummary" class="form-control itemDatadsbl" value="@Model.TestTemplateDataList[itemData.i].ResultSummary" disabled>
+                                        }
+                                        else if (item.value.TestTemplateField.Name == "Recommendations")
+                                        {
+                                            <input name="TestTemplateData.Recommendation" class="form-control itemDatadsbl" value="@Model.TestTemplateDataList[itemData.i].Recommendation" disabled>
+                                        }
+                                    </td>
+                                }
+                            }
+                            <td>
+                                <a href="javascript:void(0);" class="fa fa fa-pencil mrgn-l-xs fa-1x" onclick="editTemplateData(event)" data-toggle="tooltip" , data-placement="top" title="Trach"></a>
+                                <a href="javascript:void(0);" class="fa fa-trash mrgn-l-xs fa-1x" onclick="deleteTemplateData(event)" data-toggle="tooltip" , data-placement="top" title="Trach"></a>
+                                <a href="javascript:void(0);" class="fa fa-floppy-o mrgn-l-xs fa-1x" onclick="updateTemplateData(event)" data-toggle="tooltip" , data-placement="top" title="Trach" hidden></a>
+                                <a href="javascript:void(0);" class="fa fa-times mrgn-l-xs fa-1x" onclick="cancelTemplateData(event)" data-toggle="tooltip" , data-placement="top" title="Trach" hidden></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,158 @@
+﻿@model Data.Helpers.PagedData<Data.Models.Appointment>
+   
+        <div class="">
+            <button type="button" class="close" id="close-div" onclick="closediv1();">×</button>
+            <div class="row ">
+                <div class="col-lg-3"><label>Advance Search</label>  <input type="text"   id="searchinappointment1" class="form-control " onkeyup="" /></div>
+                <div class="col-lg-2">
+                    <label>Start Date</label>
+                    <input type="text" id="searchstartdate" class="datepicker form-control " />
+                </div>
+                <div class="col-lg-2">
+                    <label>End Date</label>
+                    <input type="text" id="searchenddate" class=" datepicker form-control" />
+                </div>
+                <div class="col-lg-5 mrgn-b-xs">
+                    <button class="btn btn-primary btn-xs" type="button" onclick="appointmentsearch(1);">Search</button>
+                    @*<div class="btn-group">*@
+                    <button class="btn btn-xs btn-info" onclick="fnExcelReport()" type="button"><i class="fa fa-share-square-o" aria-hidden="true"></i> Export @*<i class="fa fa-sort-desc" aria-hidden="true"></i>*@ </button>
+                    @*<ul role="menu" class="dropdown-menu">
+                        <li onclick="fnExcelReport()"> <a href="javascript:;"> Xls Format </a> </li>
+                        <li id="pdfExport"> <a href="javascript:;"> PDF Format </a> </li>
+
+                    </ul>*@
+                    @*<input type="hidden" name="appointmentstatusid" value="@ViewBag.StatusId" id="appstatusid" />*@
+                    @Html.Hidden("appstatusid", (int)ViewBag.StatusId)
+                    <button class="btn btn-danger btn-xs" type="button" onclick="printDiv()"><i class="fa fa-print" aria-hidden="true"></i>Print</button>
+                </div>
+            </div>
+
+            <br />
+
+            <div class="table-style">
+                <div class="prtm-block pos-relative">
+                    <div class="prtm-block-content">
+                        <div class="table-responsive">
+                            <div class="unseen">
+                                <table class="table table-hover table-bordered table-striped" id="appointmentTbl">
+                                    <thead>
+                                        <tr>
+                                            <th>AppointmentID</th>
+                                            <th class="numeric">DoctorName</th>
+                                            <th class="numeric">PatientName</th>
+                                            <th class="numeric">PatientReg</th>
+                                            <th class="numeric">Date</th>
+                                            <th class="numeric">Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Data != null)
+                                        {
+                                            foreach (var item in Model.Data)
+                                            {
+                                                <tr>
+                                                    <td>@item.ID</td>
+                                                    <td>
+                                                        @item.Doctor.EnFirstName &nbsp;@item.Doctor.EnSecondName&nbsp;@item.Doctor.EnThirdName
+                                                    </td>
+                                                    <td>
+                                                        @item.User.EnFirstName &nbsp;@item.User.EnSecondName&nbsp;@item.User.EnThirdName
+                                                    </td>
+                                                    <td>
+                                                        @item.User.RegisterationNo
+                                                    </td>
+                                                    <td>
+                                                        @item.StartDate.Value.ToShortDateString()
+                                                    </td>
+                                                    <td>
+                                                        @item.StartDate.Value.ToShortTimeString()
+                                                        @*</div>*@
+
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="17">
+                                                @for (int i = 1; i <= Model.NumberOfPages; i++)
+                                                {
+                                                    <a class="page-number" href="javascript:void(0);" onclick="patientsearch(@i);">@i</a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-4">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+<script>
+    $('#searchstartdate').datepicker({
+                    format: "yyyy-mm-dd",
+                    autoclose: true,
+                    }).on('changeDate', function (ev) {
+                    $(this).datepicker('hide');
+
+                    }).keydown(function (event) {
+                    if (event.which == 9)
+                    $(this).datepicker("hide");
+
+                    });
+     $('#searchenddate').datepicker({
+                    format: "yyyy-mm-dd",
+                    autoclose: true,
+                    }).on('changeDate', function (ev) {
+                    $(this).datepicker('hide');
+
+                    }).keydown(function (event) {
+                    if (event.which == 9)
+                    $(this).datepicker("hide");
+
+                    });
+
+    //$("body").on("click", "#pdfExport", function () {
+    //    debugger
+    //    html2canvas($('#appointmentTbl')[0], {
+         
+    //        onrendered: function (canvas) {
+    //               debugger
+    //                var data = canvas.toDataURL();
+    //                var docDefinition = {
+    //                    content: [{
+    //                        image: data,
+    //                        width: 500
+    //                    }]
+    //                };
+    //                pdfMake.createPdf(docDefinition).download("Table.pdf");
+    //            }
+    //        });
+    //    });
+   
+    function printDiv() {
+        var divToPrint = document.getElementById('appointmentTbl');
+        newWin = window.open("");
+        newWin.document.write(divToPrint.outerHTML);
+        newWin.print();
+        newWin.close();
+   }
+
+</script>
+
+

@@ -1,0 +1,1354 @@
+﻿@model Data.Models.User
+@using Data.Models
+@{
+    ViewData["Title"] = "New Client";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<style>
+    .border-left {
+        border-left: 1px solid black;
+    }
+
+    .mg-t {
+        margin-top: 10PX;
+    }
+
+    .modal-backdrop {
+        display: none !important;
+    }
+
+    .modal-open .modal {
+        width: 300px;
+        margin: 0 auto;
+        background-color: transparent;
+    }
+
+    .mg-b {
+        margin-bottom: 10PX;
+    }
+
+    .bed-box {
+        border-radius: 7px;
+        padding: 5px 10px;
+        height: auto;
+        text-align: center;
+        float: left;
+        margin-right: 3px;
+        margin-bottom: 3px;
+    }
+
+        .bed-box img {
+            width: 25px;
+        }
+
+    p.bed-title {
+        font-size: 10px;
+        font-weight: 600;
+        color: #fff;
+        margin: 0;
+        margin-top: 5px;
+    }
+</style>
+
+@*@using (Html.BeginForm("Add", "Patient", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {*@
+@*<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />*@
+
+@Html.HiddenFor(x => x.PatientPersonalInformation.ID)
+<div class="prtm-content">
+    <div class="prtm-page-bar">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item text-capitalize"><h2>@ViewData["Title"]</h2></li>
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="#">Ui elements</a></li>
+            <li class="breadcrumb-item"><a href="#" class="active"> New Client</a></li>
+        </ul>
+    </div>
+    <div class="row mrgn-b-sm">
+        <div class="col-md-12 col-lg-12">
+            <input type="button" name="submit" value="Save" class="btn btn-xs btn-primary sbmtBtn" id="signupform" />
+            <input type="button" name="submit" value="Update" class="btn btn-xs btn-warning sbmtBtn" disabled />
+            <input type="button" name="submit" value="History" class="btn btn-xs btn-info" disabled />
+            @*<input type="button" name="submit" value="Direct Scan" class="btn btn-xs btn-primary" disabled />
+
+
+                <a href="javascript:void(0);" class="btn btn-xs btn-inverse action-button" id="action" data-toggle="modal" data-target="#exampleModalCenter" data-value="@Model.ID">Out-Patient</a>
+                <a href="javascript:void(0);" class="btn btn-xs btn-warning action-button" id="admission" data-toggle="modal" data-target="#exampleModalCenter" data-value="@Model.ID" disabled>Admission</a>*@
+            <input id="sendEmailBtn" type="button" name="submit" value="Send Via Email" onclick="SendEmail();" class="btn btn-xs btn-danger" data-value="" disabled />
+            <input id="sendSMSBtn" type="button" name="submit" value="Send Via SMS" onclick="SendSMS();" class="btn btn-xs btn-warning" data-value="" disabled />
+        </div>
+    </div>
+    <form enctype="multipart/form-data">
+        <div class="form-style">
+            <div class="row mg-b">
+                <div class="col-md-2">
+                    <div class="form-group pos-relative">
+                        <label>Search</label>
+                        <input type="text" class="form-control" name="searchPatient" id="searchPatient" />
+                        <div class="popup-result" id="searchwithid" style="display:none;width:600px;"></div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Registeration No</label>
+                        @Html.TextBoxFor(m => m.RegisterationNo, null, new { @Class = "form-control", @readonly = true })
+                        @Html.ValidationMessageFor(m => m.RegisterationNo, null, new { @style = "color:red" })
+                    </div>
+
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Last Status</label>
+                        @Html.DropDownListFor(m => m.StatusID, new SelectList(ViewBag.Status, "ID", "Name"), "Select", new { @Class = "form-control dropdown" })
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+
+                </div>
+            </div>
+            <div class="row mrgn-b-sm">
+                <div class="col-md-10">
+                    <div class="row mg-b">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Title</label>
+                                @Html.DropDownListFor(m => m.TitleID, new SelectList(ViewBag.SirName, "ID", "Name"), "Select title", new { @Class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="required">FirstName</label>
+                                @Html.TextBoxFor(m => m.EnFirstName, null, new { @Class = "form-control keyup", id = "EnFirstName", autocomplete = "true" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Second Name</label>
+                                @Html.TextBoxFor(m => m.EnSecondName, null, new { @Class = "form-control keyup", id = "EnSecondName", autocomplete = "true" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Third Name</label>
+                                @Html.TextBoxFor(m => m.EnThirdName, null, new { @Class = "form-control keyup", id = "EnThirdName", autocomplete = "true" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Family Name</label>
+                                @Html.TextBoxFor(m => m.EnFamilyName, null, new { @Class = "form-control keyup", autocomplete = "true" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Full Name Eng</label>
+                                @Html.TextBox("EnFullName", null, new { @class = "form-control", id = "EnFullName", autocomplete = "true", disabled = "true" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group pad-tb-md">
+                                <div class="form-check">
+                                    <label>
+                                        <input type="checkbox" name="check"> <span class="label-text">New Born</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>ArFirstName</label>
+                                @Html.TextBoxFor(m => m.ArFirstName, null, new { @Class = "form-control keyup1", id = "ArFirstName", autocomplete = "true" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>ArSecondName</label>
+                                @Html.TextBoxFor(m => m.ArSecondName, null, new { @Class = "form-control keyup1", id = "ArSecondName", autocomplete = "true" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>ArThirdName</label>
+                                @Html.TextBoxFor(m => m.ArThirdName, null, new { @Class = "form-control keyup1", id = "ArThirdName", autocomplete = "true" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>ArFamilyName</label>
+                                @Html.TextBoxFor(m => m.ArFamilyName, null, new { @Class = "form-control keyup1", autocomplete = "true" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>ArFullName</label>
+                                @Html.TextBox("ArFullName", null, new { @class = "form-control", id = "ArFullName", disabled = "true" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <input type="file" name="file" multiple onchange="show(this,1)" style="display:none;" id="fileimage" />
+                    <div id="display-img" class="img-div">
+                        @if (Model.ImagePath != null)
+                        {
+                            <img src="@Model.ImagePath" alt="Image" id="user_img" />
+                        }
+                        else
+                        {
+                            <img src="~/assets/img/avatar.png" alt="Image" id="user_img" />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row mg-b">
+        <div class="col-md-12 col-lg-12">
+            <div class="prtm-block pos-relative">
+                <div class="line-slide-tab">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-26" aria-expanded="false"><i class="fa fa-address-card" aria-hidden="true"> Persional Info</i></a> </li>
+                        @*<li> <a data-toggle="tab" href="#tab-27" aria-expanded="false"><i class="fa fa-history" aria-hidden="true"></i> Nearest Relative</a> </li>*@
+                        <li id="NearestRelative"> <a class="tabsSwitchable" data-info="nearestRelative" data-toggle="tab" href="#tab-27" aria-expanded="false">Nearest Relative</a> </li>
+                        <li> <a data-toggle="tab" href="#tab-28" aria-expanded="false"><i class="fa fa-calendar" aria-hidden="true"></i> Insurance /Payer</a> </li>
+                        <li> <a data-toggle="tab" href="#tab-29" aria-expanded="false"><i class="fa fa-paperclip" aria-hidden="true"></i> Attachment</a></li>
+                        <li id="medicalHistoryTab"> <a data-toggle="tab" class="tabsSwitchable" data-info="medicalHistory" href="#tab-30" aria-expanded="false"><i class="fa fa-calendar" aria-hidden="true"></i> Medical History</a> </li>
+                    </ul>
+                    <div class="tab-content pad-all-sm">
+                        <div id="tab-26" class=" row tab-pane fade in active">
+                            <div class="col-md-12 col-lg-12">
+                                <div class="row mrgn-b-sm">
+                                    <div class="col-md-3 col-lg-3">
+                                        <div class="form-group">
+                                            <label>Nationality</label>
+                                            @Html.DropDownListFor(m => m.PatientPersonalInformation.CountryID, new SelectList(ViewBag.Country, "ID", "Name"), "nationality", new { @class = "form-control dropdown" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Identification Type</label>
+                                            @Html.DropDownListFor(m => m.PatientPersonalInformation.IdentificationID, new SelectList(ViewBag.IdentificationType, "ID", "Name"), "Select", new { @class = "form-control dropdown" })
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Identification Type ID</label>
+                                            @Html.TextBoxFor(m => m.PatientPersonalInformation.IdentificationTypeID, null, new { @Class = "form-control", @autocomplete = "true", onchange = "CheckUnique('typeid');" })
+                                            <span id="typeid" style="color:red;" hidden="hidden" data-info="success">This IdentificationTypeID already exists!</span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Religion</label>
+                                            @Html.DropDownListFor(m => m.PatientPersonalInformation.ReligionID, new SelectList(ViewBag.Religion, "ID", "Name"), "Select", new { @class = "form-control dropdown" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Social status</label>
+                                            @Html.DropDownListFor(m => m.PatientPersonalInformation.SocialStatusID, new SelectList(ViewBag.SocialStatus, "ID", "Name"), "Select social status", new { @Class = "form-control" })
+                                        </div>
+                                        <div id="datepickerDiv" class="form-group">
+                                            <label>Date of Birth</label>
+                                            @Html.TextBoxFor(m => m.PatientPersonalInformation.DateOfBirth, null, new { @Class = "form-control datepicker", @autocomplete = "true" })
+                                        </div>
+                                        @*<div class="form-group">
+                                                <label>Place of Birth</label>
+                                                @Html.DropDownListFor(m => m.PatientPersonalInformation.PlaceOfBirthID, new SelectList(ViewBag.PlaceOfBirth, "ID", "Name"), "Select Place Of Birth", new { @class = "form-control dropdown" })
+                                            </div>*@
+                                        <div class="form-group">
+                                            <label>Country Of Birth</label>
+                                            @Html.DropDownListFor(m => m.PatientPersonalInformation.PlaceOfBirthID, new SelectList(ViewBag.Country, "ID", "Name"), "SELECT COUNTRY OF BIRTH", new { @class = "form-control dropdown cntryDropDown" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label>City</label>
+                                            @Html.DropDownListFor(m => m.PatientPersonalInformation.CityID, new SelectList(Enumerable.Empty<SelectListItem>(), "ID", "Name"), "Select Country FIRST", new { @class = "form-control dropdown chosen-select" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Full Address</label>
+                                            @Html.TextBoxFor(m => m.Address, null, new { @Class = "form-control", autocomplete = "true" })
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-3 col-lg-3">
+                                        <div class="form-group">
+                                            <label>Blood Group</label>
+                                            @Html.DropDownListFor(m => m.PatientPersonalInformation.BloodGroupID, new SelectList(ViewBag.BloodGroup, "ID", "Name"), "Select Blood Group", new { @class = "form-control dropdown" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Gender">Gender</label>
+                                            @Html.DropDownListFor(m => m.PatientPersonalInformation.GenderID, new SelectList(ViewBag.Gender, "ID", "Name"), "Select Gender", new { @class = "form-control dropdown" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Height</label>
+                                            @Html.TextBoxFor(m => m.PatientPersonalInformation.Height, null, new { @Class = "form-control number", autocomplete = "true" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Weight</label>
+                                            @Html.TextBoxFor(m => m.PatientPersonalInformation.Weight, null, new { @Class = "form-control number", autocomplete = "true" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Tel 1</label>
+                                            @Html.TextBoxFor(m => m.Telephone, null, new { @Class = "form-control number", autocomplete = "true" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Tel 2</label>
+                                            @Html.TextBoxFor(m => m.Telephone2, null, new { @Class = "form-control number", autocomplete = "true" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Mobile</label>
+                                            @Html.TextBoxFor(m => m.Mobile, null, new { @Class = "form-control number", autocomplete = "true" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Mobile 2</label>
+                                            @Html.TextBoxFor(m => m.Mobile2, null, new { @Class = "form-control number", autocomplete = "true" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Email</label>
+                                            @Html.TextBoxFor(m => m.Email, null, new { @Class = "form-control", autocomplete = "true" })
+                                        </div>
+                                        @*<div class="form-group">
+                                                <label>fax</label>
+                                                @html.textboxfor(m => m.fax, null, new { @class = "form-control", autocomplete = "true" })
+                                            </div>*@
+
+                                    </div>
+                                    <div class="col-md-3 col-lg-3">
+                                        <div class="form-group pad-tb-md">
+                                            <div class="form-check">
+                                                <label>
+                                                    @*@Html.CheckBoxFor(m => m.PersonalInformation.HaveInsurance)*@
+                                                    <input type="checkbox" name="PatientPersonalInformation.HaveInsurance" id="PatientPersonalInformation_HaveInsurance"><span class="label-text">Have Insurance</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="Insurance Company">Insurance Company </label>
+                                            @Html.DropDownListFor(m => m.PatientPersonalInformation.InsuranceCompanyID, new SelectList(ViewBag.InsuranceCompany, "ID", "Name"), "Select Insurance Company", new { @class = "form-control dropdown" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Employee Type">Employee Type</label>
+                                            @Html.DropDownListFor(m => m.PatientPersonalInformation.EmployeeTypeID, new SelectList(ViewBag.EmployeeType, "ID", "Name"), "Select Employee Type", new { @class = "form-control dropdown" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Occupation Level">Owner-Employee-Manager</label>
+                                            <Select name="PatientPersonalInformation.OccupationLevelID" class="form-control dropdown" id="PatientPersonalInformation_OccupationLevelID">
+                                                <option value=""> Select Owner-Employee-Manager</option>
+                                                <option value="1">Owner</option>
+                                                <option value="2">Employee</option>
+                                                <option value="3">Manager</option>
+                                            </Select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Company Name</label>
+                                            @Html.TextBoxFor(m => m.PatientPersonalInformation.CompanyName, null, new { @Class = "form-control ", autocomplete = "true" })
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-3 col-lg-3">
+                                        <div class="login-block">
+                                            <div class="form-group">
+                                                <label>UserName</label>
+                                                @Html.TextBoxFor(m => m.UserName, null, new { @Class = "form-control", @readonly = true })
+                                            </div>
+                                            <div class="form-group mrgn-b-sm">
+                                                <label>Password</label>
+                                                @Html.PasswordFor(m => m.Password, new { @Class = "form-control", @readonly = true })
+                                            </div>
+                                            <div class="form-group mrgn-b-sm">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <button class="btn btn-xs btn-warning mrgn-b-sm">Send To Mobile</button>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <button class="btn btn-xs btn-info">Send To Email</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Role-Security group</label>
+                                                @Html.DropDownListFor(m => m.SecurityGroupID, new SelectList(ViewBag.SecurityGroup, "ID", "Name"), new { @class = "form-control dropdown" })
+                                            </div>
+                                            <div id="expiryDatepickerDiv" class="form-group">
+                                                <label>Pass ExpiryDate</label>
+                                                @Html.TextBoxFor(m => m.ExpiryDate, "{0:MM/dd/yyyy}", new { @Class = "form-control datepicker", autocomplete = "off" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div id="tab-27" class="tab-pane fade in">
+                            <div class="table-responsive">
+
+                            </div>
+                        </div>
+                        <div id="tab-28" class="tab-pane fade in">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+
+                                        <table class="table table-hover table-bordered table-striped">
+                                            <thead>
+                                                <tr class="">
+                                                    <th>Insurance Company  </th>
+                                                    <th>Plan Name</th>
+                                                    <th>Effective Date</th>
+                                                    <th>Policy No</th>
+                                                    <th>Payers</th>
+                                                    <th>Comment</th>
+                                                    <th>Active</th>
+                                                    <th><a href="#"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td>
+                                                        <select class="form-control dropdown" id="" name="">
+                                                            <option value="">option 1</option>
+                                                            <option value="1">option 2</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control dropdown" id="" name="">
+                                                            <option value="">option 1</option>
+                                                            <option value="1">option 2</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control dropdown" id="" name="">
+                                                            <option value="">option 1</option>
+                                                            <option value="1">option 2</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control" id="" name="" type="text" value="">
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control dropdown" id="" name="">
+                                                            <option value="">option 1</option>
+                                                            <option value="1">option 2</option>
+                                                        </select>
+                                                    </td>
+                                                    <td><input class="form-control" id="" name="" type="text" value=""></td>
+                                                    <td>
+                                                        <input type="checkbox" checked>
+                                                    </td>
+                                                    <td>
+                                                        <a href="#"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                                                        <a class="btn btn-xs btn-warning mrgn-l-sm" href="#">Get Data</a>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mrgn-b-sm">
+                                <div class="col-md-12">
+                                    Other Details
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Sub Company</label>
+                                        <select class="form-control dropdown" id="" name="">
+                                            <option value="">Company 1</option>
+                                            <option value="1">Company 2</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Network</label>
+                                        <select class="form-control dropdown" id="" name="">
+                                            <option value="">Network 1</option>
+                                            <option value="1">Network 2</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>
+                                            Out-Patiet Credit Limit
+                                        </label>
+                                        <input class="form-control" id="" name="" type="text" value="">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Out-Patient Co-pay%</label>
+                                        <input class="form-control" id="" name="" type="text" value="">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Remark</label>
+                                        <input class="form-control" id="" name="" type="text" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Credit Limit</label>
+                                        <input class="form-control" id="" name="" type="text" value="">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Co-pay MaxLimit</label>
+                                        <input class="form-control" id="" name="" type="text" value="">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>
+                                            Pharmacy Credit Limit
+                                        </label>
+                                        <input class="form-control" id="" name="" type="text" value="">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Pharmacy Co-pay MaxLimit</label>
+                                        <input class="form-control" id="" name="" type="text" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Top-up Card</label>
+                                        <input class="form-control" id="" name="" type="text" value="">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Coverage</label>
+                                        <select class="form-control dropdown" id="" name="">
+                                            <option value="">Both</option>
+                                            <option value="1">Status 2</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="form-group pad-tb-md">
+                                        <label class="d-block">Admission Approval Required</label>
+                                        <input type="checkbox">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>In-Patient Pharmacy Co-pay%</label>
+                                        <input class="form-control" id="" name="" type="text" value="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-29" class="tab-pane fade in">
+                        </div>
+                        <div id="tab-30" class="tab-pane fade in">
+                            <div class="table-responsive">
+
+
+                                <table class="table table-hover table-bordered table-striped">
+                                    <thead>
+                                        <tr class="">
+                                            <th>Patient Type</th>
+                                            <th>Last Visit</th>
+                                            <th>Admission Type</th>
+                                            <th>Pay Type </th>
+                                            <th> Summry Button</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td>sfsd</td>
+                                            <td>sdfasd</td>
+                                            <td>sdfsda</td>
+                                            <td>dsfdsafsd</td>
+                                            <td>dsfdsafsd</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Note</label>
+                @Html.TextAreaFor(m => m.Note, new { @Class = "form-control" })
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label>Created Date</label>
+                @Html.TextBoxFor(m => m.AddedDate, "{0:MM/dd/yyyy}", new { @Class = "form-control", @readonly = "readonly" })
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label>Created By</label>
+                <input type="text" value="@ViewBag.UserName" class="form-control" disabled />
+                @Html.HiddenFor(m => m.AddedBy)
+                @*<input type="text" value="@ViewBag.AddedBy" class="form-control" hidden />*@
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group pad-tb-md">
+                <div class="form-check">
+                    <label>
+                        <input type="checkbox" name="@Model.IsActive" id="IsActive" checked><span class="label-text">Is Active</span>
+                        @*@Html.CheckBoxFor(m => m.PersonalInformation.IsActive)*@
+                    </label>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+<!---End Model--->
+<!--filter bed Modal -->
+<div class="modal fade" id="exampleModalCenter1" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="allocate-bed-model">
+
+        </div>
+    </div>
+</div>
+<!---filter bed End Model--->
+<!----Model for search-->
+<div class="modal fade" id="exampleModalCenter2" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="search-model">
+
+        </div>
+    </div>
+</div>
+<div class="add-modal">
+    <div id="modalDiv" class="modal fade" aria-hidden="true">
+
+    </div>
+</div>
+
+@section Scripts{
+
+    <script src="https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/chosen.jquery.js" integrity="sha256-TDtzz+WOGufaQuQzqpEnnxdJQW5xrU+pzjznwBtaWs4=" crossorigin="anonymous"></script>
+    @*<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>*@
+    <script>
+
+
+        $(document).ready(function () {
+            $(".chosen-select").chosen();
+        });
+
+
+
+        $(document).on('change', '.cntryDropDown', function () {
+            var countryId = $(this).val();
+            $.ajax({
+                url: '/admin/patient/getcities?countryId=' + countryId,
+                contentType: 'application/json; charse=utf-8',
+                type: 'get',
+                success: function (result) {
+                    $("#PatientPersonalInformation_CityID").children().remove().end()
+                    console.log("response", result);
+                    $.each(result, function (key, value) {
+                        $('#PatientPersonalInformation_CityID')
+                            .append($("<option></option>")
+                                .attr("value", value.Value)
+                                .text(value.Text));
+                    });
+                    $(".chosen-select").val('').trigger("chosen:updated");
+                    //$(".chosen-select").chosen();
+                },
+                error: function (xhr, status) {
+                    alert(status)
+                }
+            });
+        });
+
+        //$(document).on('change', '.cntryDropDown', function () {
+        //    var countryId = $(this).val();
+        //    $.ajax({
+        //        url: '/admin/patient/getcities?countryId=' + countryId,
+        //        contentType: 'application/json; charse=utf-8',
+        //        type: 'get',
+        //        success: function (result) {
+        //            $("#PatientPersonalInformation_CityID").children().remove().end()
+        //            $.each(result, function (key, value) {
+        //                $('#PatientPersonalInformation_CityID')
+        //                    .append($("<option></option>")
+        //                        .attr("value", value.Value)
+        //                        .text(value.Text));
+        //            });
+        //            $(".chosen-select").val('').trigger("chosen:updated");
+        //            //$(".chosen-select").chosen();
+        //        },
+        //        error: function (xhr, status) {
+        //            alert(status)
+        //        }
+        //    });
+        //});
+
+        $(document).ajaxStart(function () {
+            $(".sbmtBtn").attr("disabled", true);
+        });
+
+        $(document).ajaxComplete(function () {
+            $(".sbmtBtn").attr("disabled", false);
+        });
+
+
+        function SendEmail() {
+            var Id = $('#sendEmailBtn').attr('data-value');
+            if (Id == 0 || null || undefined)
+                return false;
+            $.ajax({
+                url: '/admin/patient/ExportViaEmail/' + Id,
+                contentType: 'application/json; charse=utf-8',
+                type: 'get',
+                success: function (result) {
+                    debugger
+                    $('#modalDiv').html(result);
+                    $('#modalDiv').modal('show');
+                },
+                error: function (xhr, status) {
+                    alert(status)
+                }
+            });
+        }
+
+        function SendSMS() {
+            var id = $("#sendSMSBtn").attr("data-value");
+            if (id == 0 || null || undefined)
+                return false;
+
+            $.ajax({
+                url: '/admin/patient/ExportViaSMS/' + Id,
+                contentType: 'application/json; charse=utf-8',
+                type: 'get',
+                success: function (result) {
+                    debugger
+                    $('#modalDiv').html(result);
+                    $('#modalDiv').modal('show');
+                },
+                error: function (xhr, status) {
+                    alert(status)
+                }
+            });
+        }
+
+        function CheckUnique(spantype) {
+            var User = {};
+            var checkID;
+            var searchstring = $("#PatientPersonalInformation_IdentificationTypeID").val();
+            if ($('#action').attr('data-value') == 0 || $('#action').attr('data-value') == "" || $('#action').attr('data-value') == null) {
+                checkID = 0;
+            } else {
+                checkID = $('#action').attr('data-value');
+            }
+            $.ajax({
+                url: '/admin/patient/CustRemoteValidation',
+                type: "get",
+                data: {
+                    ID: checkID,
+                    SearchString: searchstring,
+                    Type: spantype
+                },
+                success: function (result) {
+                    if (result == false) {
+                        debugger
+                        $('#typeid').attr('data-info', 'error');
+                        $("#typeid").show();
+                    }
+                    else {
+                        $('#typeid').data('Info', 'success');
+                        $("#typeid").hide();
+                    }
+                }
+            });
+        }
+
+
+        function dynamicAdmissionFields() {
+            var TypeID = $("#TypeID").val();
+            if (TypeID != null) {
+                if (TypeID == 66 || TypeID == 63) {
+                    $("#RefferedByDrop").show();
+                    $("#ReservedByBox").hide();
+                    $("#AppointmentBox").hide();
+                } else if (TypeID == 69) {
+                    $("#AppointmentBox").show();
+                    var AppointmentID = $("#AppointmentID").val();
+                    if (AppointmentID != 0 && AppointmentID != null) {
+                        $.ajax({
+                            url: '/admin/patient/GetAppointmentReservedBy',
+                            type: 'POST',
+                            data: { AppointmentID: AppointmentID },
+                            success: function (result) {
+                                debugger
+                                $("#ReservedBy").val(result);
+                            },
+                            error: function (xhr, status) {
+                                toastr.error('Something went wrong');
+                            }
+                        });
+                    } else {
+                        $("#ReservedBy").val("");
+                    }
+                    $("#ReservedByBox").show();
+                    $("#RefferedByDrop").hide();
+                } else {
+                    $("#ReservedByBox").hide();
+                    $("#RefferedByDrop").hide();
+                    $("#AppointmentBox").hide();
+                }
+            }
+        }
+
+        $('#PatientPersonalInformation_DateOfBirth').click(function () {
+            $('#expiryDatepickerDiv .datepicker').datepicker('hide');
+            $(this).datepicker('show');
+        });
+
+        $('#ExpiryDate').click(function () {
+            $('#datepickerDiv .datepicker').datepicker('hide');
+            $(this).datepicker('show');
+        });
+
+        $('.datepicker').datepicker({
+            format: "yyyy-mm-dd",
+            autoclose: true,
+        }).on('changeDate', function (ev) {
+            $(this).datepicker('hide');
+
+        }).keydown(function (event) {
+            if (event.which == 9)
+                $(this).datepicker("hide");
+
+        }).mousedown(function () {
+            $(this).datepicker('hide');
+        });
+
+
+        $(document).on("change", "#PatientAdmission_OutPatientTypeID", function () {
+            var OutPatientType = $(this).val();
+            if (OutPatientType != 107) {
+                $('#appointReserveWrapper').show();
+            } else {
+                $('#appointReserveWrapper').hide();
+            }
+        });
+
+        $(document).on("change", "#TypeID", function () {
+            dynamicAdmissionFields();
+
+        });
+
+        $(document).on("change", "#AppointmentID", function () {
+            dynamicAdmissionFields();
+        });
+
+        $(document).on("change", "#PatientAdmission_AppointmentID", function () {
+            var AppointmentID = $(this).val();
+            if (AppointmentID != 0 || AppointmentID != null) {
+
+                $.ajax({
+                    type: "GET",
+                    url: '/admin/Patient/GetAppointmentID',
+                    data: { AppointmentID: AppointmentID },
+                    success: function (data) {
+                        console.log(data);
+                        $("#PatientAdmission_DepartmentID").val(data.departmentID);
+                        $("#PatientAdmission_SpecialityID").val(data.specialityID);
+                        $("#PatientAdmission_PurposeID").val(data.purposeID);
+                        $("#Appointment_CreatedBy").val(data.createdBy);
+                        $("#PatientAdmission_DoctorID").val(data.doctor.id);
+                        $("#PatientAdmission_RoomID").val(data.roomID);
+                        $("#PatientAdmission_Note").val(data.note);
+                    },
+                    error: function () {
+                        alert("Not able to get appointment details!.");
+                    }
+                });
+            }
+        });
+
+
+        $(".keyup").keyup(function () {
+            debugger
+            var fullname = $("#EnFirstName").val() + " " + $("#EnSecondName").val() + " " + $("#EnThirdName").val() + " " + $("#EnFamilyName").val();
+            $('#EnFullName').val(fullname);
+        });
+
+        $(".keyup1").keyup(function () {
+            debugger
+            var Arfullname = $("#ArFirstName").val() + " " + $("#ArSecondName").val() + " " + $("#ArThirdName").val() + " " + $("#ArFamilyName").val();
+            $('#ArFullName').val(Arfullname);
+        });
+
+    </script>
+
+    <script type="text/javascript">
+        $("#display-img").click(function () {
+            $("#fileimage").click();
+        });
+
+        $("#img-div").click(function () {
+            $("#filesign").click();
+        });
+
+        $('.tabsSwitchable').on('click', function () {
+            var info = $(this).data('info');
+            var id = $('#ID').val();
+            switch (info) {
+                case 'nearestRelative': $('#tab-27').load('/admin/patient/nearestrelative?id=' + id);
+                    break;
+                case 'medicalHistory': $('#tab-30').load('/admin/patient/medicalhistory?id=' + id, function () {
+                    $('.tryMultiselect').chosen();
+                    $(".sbmtBtn").attr("disabled", false);
+                    $('#MedicalHistory_0__StartDate').datepicker({
+                        format: "yyyy-mm-dd",
+                        autoclose: true,
+                    }).on('changeDate', function (ev) {
+                        $(this).datepicker('hide');
+
+                    }).keydown(function (event) {
+                        if (event.which == 9)
+                            $(this).datepicker("hide");
+
+                    }).mousedown(function () {
+                        $(this).datepicker('hide');
+                    });
+                });
+                    break;
+            }
+        });
+
+        var x = 1; //counter for appending formRows (global variable)
+        var maxFields = 5; //Maximum number of formRows allowed (global variable)
+
+        function AddField() {
+            debugger
+            var $tableBody = $('#relative-table').find("tfoot");
+            $trLast = $tableBody.find("tr:last");
+            $trNew = $trLast.clone();
+            $trNew.find(':text').val('');
+            $trLast.after($trNew);
+        }
+
+        //function AddFieldForMedical() {
+        //    var $tableBody = $('#medical-table').find("tfoot");
+        //    $trLast = $tableBody.find("tr:last");
+        //    $trNew = $trLast.clone();
+        //    $trNew.find(':text').val('');
+        //    $trLast.after($trNew);
+        //    $('.tryMultiselect').chosen();
+        //}
+
+        $('#signupform').click(function (evt) {
+
+            if ($('#typeid').attr('data-info') == 'error') {
+                alert('error');
+                return false;
+            }
+            var Enname = $('#EnFirstName').val();
+            var EnSecondName = $('#EnSecondName').val();
+            var EnThirdName = $('#EnThirdName').val();
+            var EnFamilyName = $('#EnFamilyName').val();
+            var Arname = $('#ArFirstName').val();
+            var ArSecondName = $('#ArSecondName').val();
+            var ArThirdName = $('#ArThirdName').val();
+            var ArFamilyName = $('#ArFamilyName').val();
+            var TitleID = $("#TitleID").val();
+            var PatientPersonalInformation_IdentificationID = $("#PatientPersonalInformation_IdentificationID").val();
+            var PatientPersonalInformation_IdentificationTypeID = $("#PatientPersonalInformation_IdentificationTypeID").val();
+            var PatientPersonalInformation_GenderID = $("#PatientPersonalInformation_GenderID").val();
+            var Mobile = $("#Mobile").val();
+            var PatientPersonalInformation_BloodGroupID = $("#PatientPersonalInformation_BloodGroupID").val();
+            if ((Enname == "" && EnSecondName == "" && EnThirdName == "" && EnFamilyName == "") || (Arname == "" && ArSecondName == "" && ArThirdName == "" && ArFamilyName == "")) {
+                $('#EnFirstName').focus();
+                $('#ArFirstName').focus();
+                toastr.error('Please enter Arabic or English name.');
+                evt.preventDefault();
+                return false;
+            }
+            //if (TitleID == "") {
+
+            //    $("#TitleID").focus();
+            //    toastr.error('Please Select Title');
+            //    evt.preventDefault();
+            //    return false;
+            //}
+            //if (PatientPersonalInformation_IdentificationID == "") {
+
+            //    $("#PatientPersonalInformation_IdentificationID").focus();
+            //    toastr.error('Please Select IdentificationType');
+            //    evt.preventDefault();
+            //    return false;
+            //}
+            //if (PatientPersonalInformation_IdentificationTypeID == "") {
+
+            //    $("#PatientPersonalInformation_IdentificationTypeID").focus();
+            //    toastr.error('Please enter IdentificationTypeID');
+            //    evt.preventDefault();
+            //    return false;
+            //}
+
+            //if (PatientPersonalInformation_GenderID == "") {
+            //    $('#PatientPersonalInformation_GenderID').focus();
+            //    toastr.error('Please select gender.');
+            //    evt.preventDefault();
+            //    return false;
+            //}
+            //if (Mobile == "") {
+
+            //    $("#Mobile").focus();
+            //    toastr.error('Please enter Mobile number.');
+            //    evt.preventDefault();
+            //    return false;
+            //}
+            //if (PatientPersonalInformation_BloodGroupID == "") {
+
+            //    $("#PatientPersonalInformation_BloodGroupID").focus();
+            //    toastr.error('Please enter BloodGroup.');
+            //    evt.preventDefault();
+            //    return false;
+            //}
+
+
+            //var formdata = new FormData();
+            //var formdata = new FormData($('#MedHisForm').get(0));
+            var formdata = new FormData($('#MedHisForm').get(0));
+            formdata.append('file', $('#fileimage')[0].files[0]);
+            formdata.append('User.EnFirstName', $('#EnFirstName').val());
+            formdata.append('User.EnSecondName', $('#EnSecondName').val());
+            formdata.append('User.EnThirdName', $('#EnThirdName').val());
+            formdata.append('User.EnFamilyName', $('#EnFamilyName').val());
+            formdata.append('User.ArFirstName', $('#ArFirstName').val());
+            formdata.append('User.ArSecondName', $('#ArSecondName').val());
+            formdata.append('User.ArThirdName', $('#ArThirdName').val());
+            formdata.append('User.ArFamilyName', $('#ArFamilyName').val());
+            formdata.append('User.TitleID', $('#TitleID').val());
+            formdata.append('User.StatusID', $('#StatusID').val());
+            formdata.append('User.PatientPersonalInformation.CountryID', $('#PatientPersonalInformation_CountryID').val());
+            formdata.append('User.PatientPersonalInformation.IdentificationTypeID', $('#PatientPersonalInformation_IdentificationTypeID').val());
+            if (+$('#PatientPersonalInformation_ID').val() > 0) {
+                formdata.append('User.PatientPersonalInformation.ID', $('#PatientPersonalInformation_ID').val());
+            }
+            if (+$('#PatientPersonalInformation_IdentificationID').val() > 0) {
+                formdata.append('User.PatientPersonalInformation.IdentificationID', $('#PatientPersonalInformation_IdentificationID').val());
+            }
+            formdata.append('User.PatientPersonalInformation.ReligionID', $('#PatientPersonalInformation_ReligionID').val());
+            formdata.append('User.PatientPersonalInformation.SocialStatusID', $('#PatientPersonalInformation_SocialStatusID').val());
+            formdata.append('User.PatientPersonalInformation.GenderID', $('#PatientPersonalInformation_GenderID').val());
+            formdata.append('User.PatientPersonalInformation.BloodGroupID', $('#PatientPersonalInformation_BloodGroupID').val());
+            formdata.append('User.PatientPersonalInformation.DateOfBirth', $('#PatientPersonalInformation_DateOfBirth').val());
+            formdata.append('User.PatientPersonalInformation.PlaceOfBirthID', $('#PatientPersonalInformation_PlaceOfBirthID').val());
+            formdata.append('User.PatientPersonalInformation.CityID', $('#PatientPersonalInformation_CityID').val());
+            formdata.append('User.PatientPersonalInformation.Height', $('#PatientPersonalInformation_Height').val());
+            formdata.append('User.PatientPersonalInformation.Weight', $('#PatientPersonalInformation_Weight').val());
+            formdata.append('User.PatientPersonalInformation.InsuranceCompanyID', $('#PatientPersonalInformation_InsuranceCompanyID').val());
+            formdata.append('User.PatientPersonalInformation.EmployeeTypeID', $('#PatientPersonalInformation_EmployeeTypeID').val());
+            formdata.append('User.PatientPersonalInformation.OccupationLevelID', $('#PatientPersonalInformation_OccupationLevelID').val());
+            formdata.append('User.PatientPersonalInformation.CompanyName', $('#PatientPersonalInformation_CompanyName').val());
+            formdata.append('User.Address', $('#Address').val());
+            if (document.getElementById('PatientPersonalInformation_HaveInsurance').checked) {
+                formdata.append('User.PatientPersonalInformation.HaveInsurance', "true");
+            }
+
+            if (document.getElementById('IsActive').checked) {
+                formdata.append('User.IsActive', "true");
+            }
+
+            formdata.append('User.Telephone', $('#Telephone').val());
+            formdata.append('User.Telephone2', $('#Telephone2').val());
+            formdata.append('User.Mobile', $('#Mobile').val());
+            formdata.append('User.Mobile2', $('#Mobile2').val());
+            formdata.append('User.Email', $('#Email').val());
+
+
+            if (+$('#ID').val() > 0) {
+                formdata.append('User.ID', $('#ID').val());
+            }
+
+            formdata.append('User.Note', $('#Note').val());
+            formdata.append('User.CreatedBy', $('#CreatedBy').val());
+            formdata.append('User.UserName', $('#UserName').val());
+            formdata.append('User.Password', $('#Password').val());
+            formdata.append('User.SecurityGroupID', $('#SecurityGroupID').val());
+            formdata.append('User.ExpiryDate', $('#ExpiryDate').val());
+            formdata.append('User.Note', $('#Note').val());
+
+
+            $('#relative-table tfoot tr').each(function (a, b) {
+                debugger
+                var fields = $(this).find(":input");
+                formdata.append("PatientRelative[" + a + "].SameAddress", fields.eq(0).val());
+                formdata.append("PatientRelative[" + a + "].RelativeName", fields.eq(2).val());
+                formdata.append("PatientRelative[" + a + "].Address", fields.eq(3).val());
+                formdata.append("PatientRelative[" + a + "].RelationID", fields.eq(4).val());
+                formdata.append("PatientRelative[" + a + "].Telephone", fields.eq(5).val());
+                formdata.append("PatientRelative[" + a + "].Comment", fields.eq(6).val());
+                formdata.append("PatientRelative[" + a + "].StatusID", fields.eq(7).val());
+            });
+
+            for (var pair of formdata.entries()) {
+                console.log(pair[0] + ', ' + pair[1]);
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "/admin/patient/add",
+                data: formdata,
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    console.log(response);
+                    debugger
+                    $("#admission").attr("disabled", false);
+                    $("#action").attr("disabled", false);
+                    $("#sendEmailBtn").attr("disabled", false);
+                    $("#sendSMSBtn").attr("data-value", + response.ID);
+                    $("#sendEmailBtn").attr("data-value", + response.ID);
+                    $("#sendSMSBtn").attr("disabled", false);
+                    $('#RegisterationNo').val(response.RegisterationNo);
+                    $('#UserName').val(response.UserName);
+                    $('#ID').val(response.ID);
+                    $('#PatientPersonalInformation_ID').val(response.PatientPersonalInformation.ID)
+                    $("#action").attr("data-value", + response.ID);
+                    $("#admission").attr("data-value", + response.ID);
+                    toastr.info('Record saved');
+                },
+                error: function (xhr, status) {
+                    toastr.error('Something went wrong');
+                    debugger
+                }
+            });
+        });
+
+        function GetType(event) {
+            var id = event.id;
+            url = '/admin/patient/'
+
+            if (id == 'AdmissionTypeID') {
+                url = url + 'FillTypeDropDown?id=' + event.value;
+            }
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (data) {
+                    if (data.length > 0) {
+                        if (data[0].typeID) {
+                            $("#TypeID").prop("disabled", false);
+                            var ddldist = $('#TypeID');
+                            var markup = "<option value='0'>Select " + data[0].type.toLowerCase() + " type</option>";
+                            $.each(data, function (val, text) {
+                                markup += "<option value=" + text.id + ">" + text.name + "</option>";
+                            });
+                            $("#TypeID").html(markup).show();
+                        }
+                    }
+                    $("#ReservedByBox").hide();
+                    $("#RefferedByDrop").hide();
+                    $("#AppointmentBox").hide();
+                },
+                error: function (xhr, status) {
+                    toastr.error('Something went wrong');
+                }
+            });
+        };
+
+
+        function GetBuilding(event) {
+            var id = event.id;
+            var selectRoom = "<option value='0'>Select Room</option>";
+            var selectBed = "<option value='0'>Select Bed</option>";
+            url = '/admin/patient/'
+
+            if (id == 'BuildingID') {
+                url = url + 'FillFloorDropDown?BuildingID=' + event.value;
+            }
+            if (id == 'FloorID') {
+                url = url + 'FillRoomDropDown?FloorID=' + event.value;
+            }
+            if (id == 'RoomID') {
+                url = url + 'FillBedDropDown?RoomID=' + event.value;
+            }
+            if (id == 'AdmissionTypeID') {
+                debugger
+                url = url + 'FillTypeDropDown?id=' + event.value;
+            }
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (data) {
+                    if (data.length > 0) {
+                        if (data[0].buildingID) {
+                            var markup = "<option value='0'>Select Floor</option>";
+                            var selectRoom = "<option value='0'>Select Room</option>";
+                            var selectBed = "<option value='0'>Select Bed</option>";
+                            if (data.length > 0) {
+                                $.each(data, function (val, text) {
+                                    markup += "<option value=" + text.id + ">" + text.name + "</option>";
+                                });
+                            }
+                            $("#FloorID").html(markup).show();
+                            $("#RoomID").html(selectRoom).show();
+                            $("#BedID").html(selectBed).show();
+                        }
+                        if (data[0].floorID) {
+                            var markup = "<option value='0'>Select Room</option>";
+                            $.each(data, function (val, text) {
+                                markup += "<option value=" + text.id + ">" + text.name + "</option>";
+                            });
+                            $("#RoomID").html(markup).show();
+                            $("#BedID").html(selectBed).show();
+                        }
+                        if (data[0].roomID) {
+                            var markup = "<option value='0'>Select Bed</option>";
+                            $.each(data, function (val, text) {
+                                markup += "<option value=" + text.id + ">" + text.name + "</option>";
+                            });
+                            $("#BedID").html(markup).show();
+                        }
+                    }
+                },
+                error: function (xhr, status) {
+                    toastr.error('Something went wrong');
+                }
+            });
+        };
+
+        function RemoveField(event) {
+            $(event).parents("tr").remove();
+        }
+
+        function show(input, id) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    if (id == 1) {
+                        $('#user_img').attr('src', e.target.result);
+                    }
+                    else {
+                        $('#user_sign').attr('src', e.target.result);
+                    }
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function GetDepartment(isActive) {
+            $.ajax({
+                url: "/admin/user/Department",
+                type: "GET",
+                data: { isActive: isActive },
+                success: function (response) {
+                    $('#department-list').html(response)
+                },
+                error: function (response) {
+                    toastr.error('Something went wrong');
+                }
+            });
+        }
+
+
+        $('.action-button').click(function () {
+            debugger
+            var id = this.id;
+            var val = this.dataset.value;
+            if (val == 0 || val == null) {
+                return false;
+            }
+            if (val) {
+                url = '/admin/patient/' + id + "?id=" + val;
+            }
+            else {
+                url = '/admin/patient/' + id
+            }
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (result) {
+                    $(".modal-content").html(result);
+                    if (id == "admission") {
+                        dynamicAdmissionFields();
+                    }
+                },
+                error: function (xhr, status) {
+                }
+            });
+        });
+
+
+        $('#search').click(function () {
+            $.ajax({
+                url: '/admin/patient/addSearch',
+                type: 'GET',
+                success: function (result) {
+                    $("#search-model").html(result);
+                },
+                error: function (xhr, status) {
+                }
+            });
+        });
+
+        function DisabledAddress(event) {
+            var state = $(event).closest('tr').find('[type=checkbox]').is(':checked')
+            if (state == true) {
+                $(event).closest('tr').find('#Patient_Address').attr('disabled', true);
+            } else {
+                $(event).closest('tr').find('#Patient_Address').attr('disabled', false);
+            }
+        }
+
+
+        function paging(i) {
+            var page = parseInt(i);
+            var search = $("#searchadd").val();
+            var searchdropdown = $("#search-dropdrop").val();
+            $.ajax({
+                url: '/admin/patient/addSearch',
+                data: {
+                    "page": page,
+                    "searchstring": search,
+                    "searchtype": searchdropdown
+                },
+                success: function (result) {
+                    debugger
+                    $("#search-model").html(result);
+                    $("#searchadd").val(search);
+                    $("#search-dropdrop").val(searchdropdown);
+                }
+            });
+        }
+
+        $("#searchPatient").on("keyup", function () {
+            var id = $(this).val();
+            $.ajax({
+                url: '/admin/patient/SearchById',
+                type: 'get',
+                data: {
+                    ID: id
+                },
+                success: function (result) {
+                    $("#searchwithid").show();
+                    $("#searchwithid").empty();
+                    $("#searchwithid").append(result);
+                    var rowCount = $('#myTable >tbody >tr').length;
+                    if (rowCount == 0) {
+                        $("#searchwithid").hide();
+                    }
+                    $('body').find('#ID').focus();
+                }
+            });
+            $('#ID').focus();
+        });
+        function showdetail() {
+            $("#detail-div").toggle();
+        }
+    </script>
+}

@@ -1,0 +1,204 @@
+﻿@model Data.Models.PatientAdmission
+@using (Html.BeginForm("Admission", "Patient", FormMethod.Post, new { name = "myForm" }))
+{
+    if (Model != null)
+    {
+        <input name="ID" value="@Model.ID" hidden />
+    }
+
+
+    @Html.HiddenFor(m => m.UserID)
+    <div class="modal-header">
+        <div class="pull-left">
+            <h5 class="modal-title" id="exampleModalLongTitle">Admission</h5>
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row mrgn-b-md">
+            <div class="col-md-4 col-lg-4">
+                <button type="submit" name="submit" class="btn btn-xs btn-primary">Save</button>
+                <a class="btn btn-xs btn-warning" href="#"> Update </a>
+                <a class="btn btn-xs btn-info" href="#"> History </a>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <a href="javascript::;" id="AllocatedBed" class="btn btn-xs btn-warning allocate-bed" data-toggle="modal" data-target="#exampleModalCenter1"><i class="fa fa-bed" aria-hidden="true"></i> Allocate Bed </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>Admission: In-patient</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Full name</label>
+                            @Html.TextBox("FullName", (String)ViewBag.Patient, new { @Class = "form-control" })
+                            @Html.HiddenFor(m => m.UserID, new { id = "hiddenUserID" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Elective/Emergency</label>
+                            @Html.DropDownListFor(m => m.AdmissionTypeID, new SelectList(ViewBag.Admission, "ID", "Name"), "Select elective/emergency", new { @Class = "form-control", onChange = "GetType(this)" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Department</label>
+                            @Html.DropDownListFor(m => m.DepartmentID, new SelectList(ViewBag.Department, "ID", "Name"), "Select department", new { @Class = "form-control" })
+                        </div>
+                    </div>
+                    <div id="electiveTypeWrapper">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Type</label>
+                                @Html.DropDownListFor(m => m.TypeID, new SelectList(ViewBag.Elective, "ID", "Name"), "Select type", new { @Class = "form-control", disabled = "disabled" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Building</label>
+                            @Html.DropDownListFor(m => m.BuildingID, new SelectList(ViewBag.Building, "ID", "Name"), "Select building", new { @Class = "form-control", onChange = "GetBuilding(this)" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Floor</label>
+                            @Html.DropDownListFor(m => m.FloorID, new SelectList(ViewBag.Floor, "ID", "Name"), "Select floor", new { @Class = "form-control", onChange = "GetBuilding(this)" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div id="AppointmentBox" class="col-md-6" hidden>
+                        <div class="form-group">
+                            <label>AppointmentID</label>
+                            @Html.DropDownListFor(m => m.AppointmentID, new SelectList(ViewBag.Appointment, "ID", "Doctor.EnFirstName"), "Select appointment", new { @Class = "form-control" })
+                        </div>
+                    </div>
+
+
+                    <div id="ReservedByBox" class="col-md-6" hidden>
+                        <div class="form-group">
+                            <label>Reserved By</label>
+                            @Html.TextBoxFor(m => m.ReservedBy, new { @Class = "form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Room</label>
+                            @Html.DropDownListFor(m => m.RoomID, new SelectList(ViewBag.Room, "ID", "Name"), "Select room", new { @Class = "form-control", onChange = "GetBuilding(this)" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Bed</label>
+                            @Html.DropDownListFor(m => m.BedID, new SelectList(ViewBag.Bed, "ID", "BedNumber"), "Select bed", new { @Class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div id="RefferedByDrop" class="col-md-6" hidden>
+                        <div class="form-group">
+                            <label>Reffered By</label>
+                            @Html.TextBoxFor(m => m.RefferedBy, new { @Class = "form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                   
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Note</label>
+                            @Html.TextAreaFor(m => m.Note, new { @Class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+                <input name="BuildingID" id="hiddenBuilding" hidden />
+                <input name="FloorID" id="hiddenFloor" hidden />
+                <input name="RoomID" id="hiddenRoom" hidden />
+                <input name="BedID" id="hiddenBed" hidden />
+                <input name="DepartmentID" id="hiddenDepartment" hidden />
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Created By</label>
+                    @Html.HiddenFor(m => m.AddedBy)
+                    @Html.TextBox("AdmissionCreatedBy", (string)ViewBag.CreatedBy, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Created Date</label>
+                    @Html.TextBoxFor(m => m.AddedDate, "{0:MM/dd/yyyy}", new { @Class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $('.allocate-bed').click(function () {
+        var id = this.id;
+        var val = 0;
+        url = '/admin/patient/' + id + "?id=" + val;
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (result) {
+                $("#allocate-bed-model").html(result);
+            },
+            error: function (xhr, status) {
+            }
+        });
+    });
+
+    function Filter(event) {
+        debugger
+        var id = event.id;
+        var val;
+        url = '/admin/patient/AllocatedBed?id=' + $('#bed-DepartmentID').val() + '&StatusID=' + $('#StatusID').val() + '&Isolated=' + $('#Isolated').prop('checked');
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (result) {
+                $("#allocate-bed-model").html(result);
+                //var obj = $('#Isolated').prop('checked');
+                //$('#Isolated').prop('checked', obj);
+            },
+            error: function (xhr, status) {
+                debugger
+            }
+        });
+    };
+</script>
+<script>
+    $(function () {
+        $("#FullName").autocomplete({
+            source: '/admin/patient/AutoCompleteNameWithID',
+            minLength: 0,
+            select: function (event, ui) {
+                $("#hiddenUserID").val(ui.item.id);
+            },
+        }).focus(function () {
+            $("#FullName").autocomplete("search");
+        });
+    });
+    $("#FullName").autocomplete("option", "appendTo", ".eventInsForm");
+</script>

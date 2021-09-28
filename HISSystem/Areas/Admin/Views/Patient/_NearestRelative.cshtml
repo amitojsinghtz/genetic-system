@@ -1,0 +1,73 @@
+﻿@model Data.Models.User
+<div id="NearbyFormWrapper">
+    <table class="table table-hover table-bordered table-striped" id="relative-table">
+        <thead>
+            <tr class="">
+                <th>Same Address</th>
+                <th>Relative Name</th>
+                <th class="numeric">Address</th>
+                <th>Relation</th>
+                <th>Tel</th>
+                <th class="numeric">Comment</th>
+                <th>Status</th>
+                <th class="numeric"><a href="javascript:void(0)" onclick="AddField()"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+            @if (Model.PatientRelative != null && Model.PatientRelative.Count > 0)
+            {
+                foreach (var item in Model.PatientRelative)
+                {
+                    <tr id="formRow1">
+                        <td>
+                            <div class="form-check">
+                                <label>
+                                    <input type="checkbox" checked="@item.SameAddress" name="Patient_SameAddress" id="Patient_SameAddress" onchange="DisabledAddress(this)"> <span class="label-text"></span>
+                                </label>
+                            </div>
+                        </td>
+                        <td>@Html.TextBox("Patient_RelativeName", item.RelativeName, new { @class = "form-control", autocomplete = "true" })</td>
+                        <td> @Html.TextBox("Patient_Address", item.Address, new { @class = "form-control", autocomplete = "true" })</td>
+                        <td>
+                            @Html.DropDownList("Patient_RelationID", new SelectList(ViewBag.Relations, "ID", "Name", item.RelationID), "Relation", new { @class = "form-control dropdown" })
+                        </td>
+                        <td>@Html.TextBox("Patient_Telephone", item.Telephone, new { @class = "form-control", autocomplete = "true" })</td>
+                        <td>@Html.TextBox("Patient_Comment", item.Comment, new { @class = "form-control", autocomplete = "true" })</td>
+                        <td>
+                            @Html.DropDownList("Patient_StatusID", new SelectList(ViewBag.Status, "ID", "Name", item.StatusID), "Status", new { @class = "form-control dropdown" })
+                        </td>
+                        <td>
+                            <a href="javascript:void(0)"><i class="fa fa-trash" aria-hidden="true" onclick="RemoveField(this)"></i></a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr id="formRow1">
+                    <td>
+                        <div class="form-check">
+                            <label>
+                                <input type="checkbox" name="Patient_SameAddress" id="Patient_SameAddress" onchange="DisabledAddress(this)"> <span class="label-text"></span>
+                            </label>
+                        </div>
+                    </td>
+                    <td>@Html.TextBox("Patient_RelativeName", null, new { @class = "form-control", autocomplete = "true" })</td>
+                    <td> @Html.TextBox("Patient_Address", null, new { @class = "form-control", autocomplete = "true" })</td>
+                    <td>
+                        @Html.DropDownList("Patient_RelationID", new SelectList(ViewBag.Relations, "ID", "Name"), "Relation", new { @class = "form-control dropdown" })
+                    </td>
+                    <td>@Html.TextBox("Patient_Telephone", null, new { @class = "form-control", autocomplete = "true" })</td>
+                    <td>@Html.TextBox("Patient_Comment", null, new { @class = "form-control", autocomplete = "true" })</td>
+                    <td>
+                        @Html.DropDownList("Patient_StatusID", new SelectList(ViewBag.Status, "ID", "Name"), "Status", new { @class = "form-control dropdown" })
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)"><i class="fa fa-trash" aria-hidden="true" onclick="RemoveField(this)"></i></a>
+                    </td>
+                </tr>
+            }
+        </tfoot>
+    </table>
+</div>

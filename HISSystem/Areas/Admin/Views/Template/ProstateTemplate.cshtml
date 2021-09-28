@@ -1,0 +1,214 @@
+﻿@model Data.Helpers.PagedData<Data.Models.ProstateTemplate>
+@{
+    ViewData["Title"] = "Prostate Template";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+    <div class="prtm-content">
+
+        <div class="prtm-page-bar">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item text-capitalize"><h2>@ViewData["Title"]</h2></li>
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="#">Ui elements</a></li>
+                <li class="breadcrumb-item"><a href="#" class="active">Prostate Template List</a></li>
+            </ul>
+        </div>
+        <div class="table-style">
+            <div class="row mrgn-b-sm">
+                <div class="col-md-5 col-lg-5">
+                    <button onclick="addprostatetemplate()" class="btn btn-xs btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> Add</button>
+                </div>
+
+                <div class="col-md-7 text-right search-block">
+                    <div class="input-group pull-right" id="adv-search">
+                        <input type="text" name="search" id="search1" class="form-control" placeholder="Search..." onkeyup="getprostatetemplate(1);" />
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="prtm-block pos-relative">
+                <div class="prtm-block-content">
+                    <div class="table-responsive">
+                        <div id="userList" class="unseen">
+                            @{
+                                Html.RenderPartial("GetProstateTemplate");
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+
+        <div class="add-modal">
+            <div id="modalDiv" class="modal fade" role="dialog">
+
+            </div>
+        </div>
+
+        <!---End Model--->
+    </div>
+    <script type="text/javascript">
+        function addprostatetemplate() {
+            debugger
+            $.ajax({
+                url: '/admin/template/AddProstateTemplate',
+                contentType: 'application/json; charse=utf-8',
+                type: 'get',
+                success: function (result) {
+                    debugger
+                    $('#modalDiv').html(result);
+                    $('#modalDiv').modal('show');
+                },
+                error: function (xhr, status) {
+                    alert(status)
+                }
+            });
+        }
+        function SaveProstate() {
+
+            var data = new FormData();
+
+            data.append("GeneID", $("#GeneID").val());
+            data.append("GeneticMutation", $("#GeneticMutation").val());
+            data.append("PersonalRiskFactor", $("#PersonalRiskFactor").val());
+            data.append("Hereditary", $("#Hereditary").val());
+            data.append("Recommendations", $("#Recommendations").val());
+            if (document.getElementById('HaveMutation').checked) {
+                data.append('HaveMutation', "true");
+            }
+
+            $.ajax({
+                url: '/admin/template/AddProstateTemplate',
+                data: data,
+                type: 'Post',
+                processData: false, contentType: false,
+                success: function (result) {
+                    if (result) {
+                        alert('Data Saved !')
+                        $('#modalDiv').modal('hide');
+                        window.location.reload();
+                    }
+                },
+                error: function (xhr, status) {
+                    alert(status)
+                }
+            });
+
+
+
+        }
+
+
+
+        function editProstate(id) {
+
+            debugger
+            $.ajax({
+                url: '/admin/template/EditProstateTemplate?Id=' + id,
+                contentType: 'application/json; charse=utf-8',
+                type: 'get',
+                success: function (result) {
+                    debugger
+                    $('#modalDiv').html(result);
+                    $('#modalDiv').modal('show');
+                },
+                error: function (xhr, status) {
+                    alert(status)
+                }
+            });
+        }
+
+        function EditProstate() {
+
+            var data = new FormData();
+
+            data.append("ID", $("#ID").val());
+            data.append("GeneID", $("#GeneID").val());
+            data.append("GeneticMutation", $("#GeneticMutation").val());
+            data.append("PersonalRiskFactor", $("#PersonalRiskFactor").val());
+            data.append("Hereditary", $("#Hereditary").val());
+            data.append("Recommendations", $("#Recommendations").val());
+            if (document.getElementById('HaveMutation').checked) {
+                data.append('HaveMutation', "true");
+            }
+
+            $.ajax({
+                url: '/admin/template/EditProstateTemplate',
+                data: data,
+                type: 'Post',
+                processData: false, contentType: false,
+                success: function (result) {
+                    if (result) {
+                        alert('Data Saved !')
+                        $('#modalDiv').modal('hide');
+                        window.location.reload();
+                    }
+                },
+                error: function (xhr, status) {
+                    alert(status)
+                }
+            });
+
+
+
+        }
+
+        function Delete(id) {
+            var deleteId = $('#DeletedID').val(id);
+            swal({
+                title: "Are you sure?",
+                text: "Are you sure you want to delete this record!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-warning",
+                confirmButtonText: "Yes, delete it!",
+                closeOnConfirm: false
+            },
+                function () {
+                    debugger
+                    deleteId = id;
+                    $.ajax({
+                        url: '/admin/template/DeleteProstateTemplate?id=' + id,
+                        type: 'GET',
+                        success: function (data) {
+                            debugger
+                            swal("Deleted!", "Your imaginary file has been deleted.", "success");
+                            location.reload();
+                        },
+                        error: function () {
+                            debugger
+                            swal("Cancelled", "Something went wrong :)", "error");
+                        }
+                    });
+                });
+        }
+
+        function getprostatetemplate(i) {
+            debugger
+            var Page = i;
+            var searchstring = $("#search1").val();
+            $.ajax({
+                        url: '/admin/template/GetProstateTemplate?page=' +Page+'&searchstring='+searchstring,
+                        type: 'GET',
+                    success: function (result) {
+                        debugger
+                         $(".unseen").html(result)
+                          },
+                        error: function (xhr, status) {
+                            toastr.error('Something went wrong');
+                        }
+                       });
+
+
+
+        }
+    </script>
+
+         
+
+   
+
+
+

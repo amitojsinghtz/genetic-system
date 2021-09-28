@@ -1,0 +1,52 @@
+﻿@model Data.Helpers.PagedData<Data.Models.SMSTrigger>
+@using Data.Helpers;
+<div class="table-responsive">
+    <table class="table table-striped table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Trigger for</th>
+                <th>Template name</th>
+                <th style="width:100px">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Data)
+            {
+                <tr>
+                    @if (Convert.ToInt32(SMSTriggerType.Registeration) == Convert.ToInt32(item.TriggerName))
+                    {
+                        <td>
+                            @SMSTriggerType.Registeration.ToString()
+                        </td>
+                    }
+                    @if (Convert.ToInt32(SMSTriggerType.Client) == Convert.ToInt32(item.TriggerName))
+                    {
+                        <td>
+                            @EmailTriggerType.Client.ToString()
+                        </td>
+                    }
+
+                    <td>@item.SMS.Name</td>
+
+                    <td>
+
+                        <a href="#"><i class="fa fa-pencil fa-md base-dark" onclick="editTrigger('@item.ID')" aria-hidden="true"></i></a>
+
+                        <a href="#" class="mrgn-l-sm"><i class="fa fa-trash fa-md base-dark" onclick="DeleteEmailTrigger('@item.ID')" aria-hidden="true"></i></a>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3">
+                    @for (int i = 1; i <= Model.NumberOfPages; i++)
+                    {
+                        <a class="page-number" onclick="getSMStriggersearch(@i)" href="javascript:void();">@i</a>
+                    }
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

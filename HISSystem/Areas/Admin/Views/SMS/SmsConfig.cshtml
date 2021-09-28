@@ -1,0 +1,170 @@
+﻿
+
+@model Data.Models.SMSConfig
+
+@{
+    ViewData["Title"] = "SMS Config";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<style>
+    .border-left {
+        border-left: 1px solid black;
+    }
+
+    .mg-t {
+        margin-top: 10PX;
+    }
+
+    .modal-backdrop {
+        display: none !important;
+    }
+
+    .modal-open .modal {
+        width: 300px;
+        margin: 0 auto;
+        background-color: transparent;
+    }
+
+    .mg-b {
+        margin-bottom: 10PX;
+    }
+
+    .bed-box {
+        border-radius: 7px;
+        padding: 5px 10px;
+        height: auto;
+        text-align: center;
+        float: left;
+        margin-right: 3px;
+        margin-bottom: 3px;
+    }
+
+        .bed-box img {
+            width: 25px;
+        }
+
+    p.bed-title {
+        font-size: 10px;
+        font-weight: 600;
+        color: #fff;
+        margin: 0;
+        margin-top: 5px;
+    }
+</style>
+@*@using (Html.BeginForm("Add", "Patient", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {*@
+@using (Html.BeginForm("AddApiKey", "SMS", FormMethod.Post))
+{
+    <div class="prtm-content">
+        <div class="prtm-page-bar">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item text-capitalize"><h2>@ViewData["Title"]</h2></li>
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="#">Ui elements</a></li>
+                <li class="breadcrumb-item"><a href="#" class="active"> SMS Config</a></li>
+            </ul>
+        </div>
+        <div class="row mrgn-b-sm">
+            <div class="col-md-12 col-lg-12">
+                @if (Model.ID <= 0)
+                {<input type="submit" name="submit" value="Save" class="btn btn-xs btn-primary" id="signupform" />}
+                else
+                {
+                    <input type="submit" name="submit" value="Update" class="btn btn-xs btn-warning" />
+
+
+                }
+
+            </div>
+        </div>
+
+        <div class="row mg-b">
+            <div class="col-md-12 col-lg-12">
+                <div class="prtm-block pos-relative">
+                    <div class="line-slide-tab">
+
+                        <div class="tab-content pad-all-sm">
+                            <div id="tab-26" class=" row tab-pane fade in active">
+                                <div class="col-md-12 col-lg-12">
+                                    <div class="row mrgn-b-sm">
+                                        <div class="col-md-10 col-lg-10">
+                                            
+                                            <div class="form-group">
+                                                <label>Api Key</label>
+                                                @Html.TextBoxFor(x => x.ApiKey, new { @class = "form-control" ,onchange="GetBalance();" })
+                                            </div>
+                                           
+
+
+                                            <div class="form-group">
+                                                <label>Jawwal Balance</label>
+                                               <input type="text" class="form-control" id="jawwal" name="jawwal" readonly />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="Gender">Wataniya Balance </label>
+                                                <input type="text" class="form-control" id="watania" name="watania" readonly />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="Gender">International Balance</label>
+
+                                                <input type="text" class="form-control" id="international" name="international" readonly />
+                                            </div>
+                                        </div>                          
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+<!-- Modal -->
+<!---End Model--->
+<!--filter bed Modal -->
+
+
+@section Scripts{
+<script>
+    $(document).ready(function () {
+        var api = $("#ApiKey").val();
+        debugger
+        if(api != "") {
+            GetBalance();
+                }
+    });
+
+    function GetBalance() {
+        var api =$("#ApiKey").val();
+         $.ajax({
+        type: 'Get',
+        url: "/admin/sms/GetApiBalance?ApiKey="+api,
+        success: function (response) {
+            console.log(response);
+            $("#jawwal").val(response[0]);
+            $("#watania").val(response[1]);
+            $("#international").val(response[2]);
+        }
+    });
+
+
+    }
+   
+    
+
+</script>
+
+}
+
+
+
+
+

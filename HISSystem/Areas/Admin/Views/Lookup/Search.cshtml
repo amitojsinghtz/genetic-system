@@ -1,0 +1,29 @@
+﻿@model List<Data.Models.Lookup>
+@*@foreach (var item in Model.Select((value, i) => new { i, value }))
+    {<div class="panel">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-info="@item.value.Type" data-parent="#bs-collapse" href="#one_@item.i">
+                    @item.value.Type
+                </a>
+            </h4>
+        </div>
+        <div id="one_@item.i" class="panel-collapse collapse">
+            <div class="row">
+                <div class="col-md-5"> <a href="#" data-info="@item.value.Type" class="btn btn-xs btn-primary addLookup"><i class="fa fa-plus" aria-hidden="true"></i>Add</a></div>
+                <div class="col-md-7 text-right search-block">
+                    <div class="input-group pull-right" id="adv-search">
+                        <input type="text" data-info="@item.value.Type" name="detailSearch" id="detailsearch" class="form-control detailsearch" placeholder="Search..." />
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body-list" id="@item.value.Name">
+            </div>
+        </div>
+    </div>
+    }*@
+
+@foreach (var item in ViewBag.Lookups)
+{
+    <h4><a href="#" class="list-group-item " onclick="GetLookupForm(this,'@item')">@item</a></h4>
+}

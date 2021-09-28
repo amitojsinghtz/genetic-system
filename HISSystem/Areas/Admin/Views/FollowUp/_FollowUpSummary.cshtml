@@ -1,0 +1,109 @@
+﻿@model GeneticSystem.Areas.Admin.Models.FollowUp.FollowUpVM
+
+<div class="row fieldDiv">
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <input id="hddnStatusField" value="@Model.ClientOrderViewModel.ClientOrder.StatusID" hidden />
+                    <label>Summary</label>
+                    <textarea id="fllwpInput" class="form-control" rows="5"></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="button" name="submit" class="btn btn-xs btn-primary" id="addSmryBtn" value="Confirm">
+                </div>
+            </div>
+            @if (Model.FollowUpByDoc != null)
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="comments-container">
+                            <ul id="comments-list" class="comments-list">
+                                <li>
+                                    <div class="comment-main-level">
+                                        <div class="comment-avatar"><img src="@Model?.FollowUpByDoc?.Doctor?.ImagePath" alt=""></div>
+                                        <div class="comment-box">
+                                            <div class="comment-head">
+                                                <h6 class="comment-name by-author"><a href="http://creaticode.com/blog">@Model?.FollowUpByDoc?.Doctor?.EnFirstName</a></h6>
+                                                <span>@Model?.FollowUpByDoc?.CreatedOn</span>
+                                                <i class="fa fa-reply"></i>
+                                                <i class="fa fa-heart"></i>
+                                            </div>
+                                            <div class="comment-content">
+                                                @Model?.FollowUpByDoc?.Summmary
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ul class="comments-list reply-list">
+                                        @foreach (var item in Model.FollowUpByDocConvList)
+                                        {
+                                            <li>
+                                                <div class="comment-avatar"><img src="@item.Sender.ImagePath" alt=""></div>
+                                                <div class="comment-box">
+                                                    <div class="comment-head">
+                                                        <h6 class="comment-name"><a href="http://creaticode.com/blog">Lorena Rojero</a></h6>
+                                                        <span>@item.CreatedOn</span>
+                                                        <i class="fa fa-reply"></i>
+                                                        <i class="fa fa-heart"></i>
+                                                    </div>
+                                                    <div class="comment-content">
+                                                        @item.Message
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="row mrgn-tb-md">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <a href="#" class="btn btn-xs btn-primary btn-block"><i class="fa fa-pencil" aria-hidden="true"></i> Add New Test</a>
+                </div>
+                <div class="form-group">
+                    <a href="#" class="btn btn-xs btn-info btn-block"><i class="fa fa-star"></i> Add Result Test</a>
+                </div>
+
+                <div class="form-group">
+                    <a href="#" class="btn btn-xs btn-warning btn-block"><i class="fa fa-paperclip"></i> Add Attachment</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <div id="rsltList" class="unseen">
+                        <table id="rsltTbl" class="table table-hover table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="numeric">Test Name</th>
+                                    <th class="numeric">Done </th>
+                                    <th class="numeric">Result</th>
+                                </tr>
+                                @if (Model.FollowUpByDocResultList != null)
+                                {
+                                    @foreach (var item in Model.FollowUpByDocResultList)
+                                    {
+                                        <tr>
+                                            <td class="numeric">@item.TestArray</td>
+                                            <td class="numeric">@item.Status</td>
+                                            <td class="numeric">@item.Result</td>
+
+                                        </tr>
+                                    }
+                                }
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

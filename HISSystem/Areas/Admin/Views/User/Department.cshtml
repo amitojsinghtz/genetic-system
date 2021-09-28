@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Data.DTO.DepartmentModel>
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <h5>@item.Department.Type:&nbsp;@item.Department.Name</h5>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>User Name</th>
+                    <th>Full Name</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var employee in item.Users)
+                {
+                    <tr>
+                        <td>@employee.UserName</td>
+                        <td>
+                                @employee.EnFirstName
+                                @employee.EnSecondName
+                                @employee.EnThirdName
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>UserName</th>
+                <th>FullName</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2"> No record found!</td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+

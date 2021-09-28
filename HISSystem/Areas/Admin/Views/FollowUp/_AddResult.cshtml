@@ -1,0 +1,58 @@
+﻿@model GeneticSystem.Areas.Admin.Models.FollowUp.FollowUpVM
+
+<div class="prtm-content">
+    <div class="form-style fieldDiv">
+        <div class="row">
+            <div class="col-md-12 col-lg-12">
+                <div class="prtm-block pos-relative">
+                    <div class="row">
+                        <div class="col-md-8 col-lg-8">
+                            <label for="addRsltdrpdwn">
+                                Select Pending Test
+                            </label>
+                            @Html.DropDownList("addRsltdrpdwn", new SelectList(Model.orderTest, "Value", "Text"), "--Select Test--", new { @class = "form-control addRsltdrpdwn" })
+                        </div>
+                        <div class="col-md-4 col-lg-4">
+                            <button type="button" data-dismiss="modal" class="btn btn-danger btn-xs">
+                                Back
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="selectedTestArea">
+        </div>
+    </div>
+</div>
+
+@*<table id="rsltTbl" class="table">
+        <thead>
+            <tr>
+                <th class="numeric">Test Name</th>
+                <th class="numeric">Done </th>
+                <th class="numeric">Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="numeric">
+
+                </td>
+                <td class="numeric">
+                    <div class="form-check">
+                        <label>
+                            <input name="clientOrder.ClientOrderData[].HaveMutationEffected" type="checkbox" class="itemDatadsbl" value="true" checked>
+                            <span class="label-text">Done?</span>
+                        </label>
+                    </div>
+                </td>
+                <td class="numeric"><input type="text" class="form-control" /></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td><button class="btn btn-primary btn-xs">Save</button></td>
+            </tr>
+        </tfoot>
+    </table>*@

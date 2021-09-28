@@ -1,0 +1,254 @@
+﻿@model Data.DTO.MenuAcessModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<div class="prtm-content">
+    <div class="prtm-page-bar">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item text-capitalize"><h2>Access Permission</h2></li>
+            <li class="breadcrumb-item"><a href="#">Settings</a></li>
+            <li class="breadcrumb-item"><a href="#">Admin</a></li>
+            <li class="breadcrumb-item"><a href="#" class="active">View control list</a></li>
+        </ul>
+    </div>
+
+    <div class="table-style">
+        @*<div class="row mrgn-b-sm">
+        <div class="col-md-12 col-lg-12">
+            <div class="quick-search-block">
+                <div class="row">
+                    <div class="col-md-10 col-lg-10">
+                        <div id="searchDiv" class="row">
+                            <div class="col-md-3 col-lg-3 ">
+                                <a class="btn btn-xs btn-primary action-button" href="#responsive" data-toggle="modal" id="Add"><i class="fa fa-plus" aria-hidden="true"></i> Add </a>
+                            </div>
+                            <div class="col-md-3">
+                                @* @Html.DropDownList("RoleID", new SelectList(ViewBag.Role, "ID", "Name"), "Select user", new { @Class = "form-control dropdown" })
+    </div>
+                                <div class="col-md-6 text-right search-block">
+                                    <div class="input-group pull-right" id="adv-search">
+                                        <input type="text" name="search" id="search" class="form-control" placeholder="Search..." />
+                                        <div class="input-group-btn">
+                                            <div class="btn-group" role="group">
+                                                <div class="dropdown dropdown-lg">
+                                                    <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
+                                                    <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                                        <form class="form-horizontal" role="form">
+                                                            <div class="form-group">
+                                                                <label for="filter">Filter by</label>
+                                                                <select class="form-control">
+                                                                    <option value="0" selected>All Snippets</option>
+                                                                    <option value="1">Featured</option>
+                                                                    <option value="2">Most popular</option>
+                                                                    <option value="3">Top rated</option>
+                                                                    <option value="4">Most commented</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="contain">Author</label>
+                                                                <input class="form-control" type="text" />
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="contain">Contains the words</label>
+                                                                <input class="form-control" type="text" />
+                                                            </div>
+                                                            <button type="submit" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="btn btn-xs btn-primary" onclick="searchData()"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+        <div class="prtm-block pos-relative">
+            <div class="prtm-block-content">
+                <div class="table-responsive">
+                    <div id="bedList" class="unseen">
+                        <table class="table table-bordered table-hover dashboard-task-infos table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="numeric">Menu</th>
+                                    @foreach (var item1 in Model.AllRoles)
+                                    {
+                                <th>
+                                    @item1.Name
+                                    <input type="hidden" value="@item1.ID" id="RoleID" />
+                                </th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody class="tbody">
+                                @foreach (var item in Model.AllMenu)
+                                {
+                                <tr>
+                                    <td>
+                                        @item.Name
+                                        <input type="hidden" id="MenuID" value="@item.ID" />
+
+                                    </td>
+                                    @foreach (var item1 in Model.AllRoles)
+                                    {
+
+                                        <td>
+                                            <div class="form-check">
+                                                <label>
+                                                    <input type="checkbox" class="checkbox" name="IsCheck" value="@item.ID" id="Role_@(item1.ID)_Menu_@(item.ID)" onclick="AutoCheck(this)"><span class="label-text"></span>
+                                                </label>
+                                            </div>
+                                        </td>
+                                    }
+
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-------Model------>
+
+<div id="responsive" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+            //Fixing jQuery Click Events for the iPad
+            var ua = navigator.userAgent,
+                event = (ua.match(/iPad/i)) ? "touchstart" : "click";
+            if ($('.table').length > 0) {
+                $('.table .header').on(event, function () {
+                    $(this).toggleClass("active", "").nextUntil('.header').css('display', function (i, v) {
+                        return this.style.display === 'table-row' ? 'none' : 'table-row';
+                    });
+                });
+            }
+        })
+
+        $('.action-button').click(function () {
+            debugger
+            var id = this.id;
+            var val = this.dataset.value;
+            if (val) {
+                url = '/admin/viewcontrol/' + id + "?id=" + val;
+            }
+            else {
+                url = '/admin/viewcontrol/' + id
+            }
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (result) {
+                    debugger
+                    $(".modal-content").html(result);
+                },
+                error: function (xhr, status) {
+                    debugger
+                }
+            });
+        });
+        	$(document).ready(function () {
+			checkedMenu();
+            })
+
+
+        var MenuAccessRecords = [];
+        function checkedMenu() {
+            debugger
+			$.ajax({
+			url: '@Url.Action("viewaccesscontroldata", "viewcontrol" ,new { area = "Admin"})',
+                type: 'GET',
+              //  async: false,
+                contentType: "application/json; charset=utf-8",
+				success: function (result) {
+                    debugger
+                    console.log(result);
+				MenuAccessRecords = result;
+				$.each(result, function (i, v) {
+					$("#Role_" + v.RoleID + "_Menu_" + v.ViewControlID).attr("checked", "checked");
+				})
+			},
+			error: function (xhr, status) {
+			alert(status)
+				}
+            })
+
+        }
+
+
+        function AutoCheck(data) {
+		debugger;
+            var AccessPermission = {};
+            var values = data.id.split('_');
+		    var viewControlID = values[3];
+		    var RoleID = values[1];
+            var status = data.checked;
+          
+
+		AccessPermission.ViewControlID = viewControlID;
+		AccessPermission.RoleID = RoleID;
+
+		if (status) {
+			$.ajax({
+			url: '@Url.Action("SaveViewControlAccess", "ViewControl" ,new { area = "admin"    })',
+				data: { 'MenuAccessData': AccessPermission },
+					type: 'Post',
+					success: function (result) {
+						debugger;
+						checkedMenu();
+					},
+					error: function (xhr, status) {
+						alert(status)
+					}
+			})
+		}
+        else {
+            //alert(1);
+			$.ajax({
+			url: '@Url.Action("RemoveViewControlAccess", "ViewControl" ,new { area = "admin"    })',
+				data: { 'MenuAccessData': AccessPermission },
+					type: 'Post',
+					success: function (result) {
+						checkedMenu();
+					},
+					error: function (xhr, status) {
+						alert(status)
+					}
+			})		}
+	}
+
+
+        function EnableView(id, event) {
+            debugger
+            $.ajax({
+                url: '/admin/viewcontrol/UpdateAccessPermission?id=' + id + '&status=' + event.checked,
+                type: 'POST',
+                success: function (result) {
+                    toastr.info('Permission updated.');
+                },
+                error: function (xhr, status) {
+                    toastr.error('Something went wrong');
+                }
+            });
+        }
+    </script>
+}

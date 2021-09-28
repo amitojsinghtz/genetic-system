@@ -1,0 +1,3 @@
+﻿@using HISSystem
+@using HISSystem.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

@@ -1,0 +1,320 @@
+﻿@model Data.Helpers.PagedData<Data.Models.User>
+@{
+    ViewData["Title"] = "Employee List";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<div class="prtm-content">
+    @Html.Hidden("DeletedID")
+    <div class="prtm-page-bar">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item text-capitalize"><h2>@ViewData["Title"]</h2></li>
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="#">Ui elements</a></li>
+            <li class="breadcrumb-item"><a href="#" class="active">Employee List</a></li>
+        </ul>
+    </div>
+    <div class="table-style">
+        <div class="row mrgn-b-sm">
+            <div class="col-md-5 col-lg-5">
+                <a href="/admin/user/add" class="btn btn-xs btn-primary sbmtBtn"><i class="fa fa-plus" aria-hidden="true"></i> Add</a>
+                <div class="btn-group">
+                    <button data-toggle="dropdown" class="btn btn-xs btn-info dropdown-toggle" type="button"><i class="fa fa-share-square-o" aria-hidden="true"></i> Export <i class="fa fa-sort-desc" aria-hidden="true"></i> </button>
+                    <ul role="menu" class="dropdown-menu">
+                        <li onclick="fnExcelReport()"> <a href="javascript:;"> Xls Format </a> </li>
+                        <li id="pdfExport"> <a href="javascript:;"> PDF Format </a> </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-7 text-right search-block">
+                <div class="input-group pull-right" id="adv-search">
+                    <input type="text" name="search" id="search" class="form-control" placeholder="Search..."  onkeyup="searchData();"/>
+                   
+                </div>
+            </div>
+
+        </div>
+        <div class="prtm-block pos-relative">
+            <div class="prtm-block-content">
+                <div class="table-responsive">
+                    <div id="userList" class="unseen">
+                        @{
+                            Html.RenderPartial("_Index");
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+
+            <div class="modal-content">
+
+            </div>
+        </div>
+    </div>
+
+    <!---End Model--->
+
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ajaxStart(function () {
+            $(".sbmtBtn").attr("disabled", true);
+        });
+
+        $(document).ajaxComplete(function () {
+            $(".sbmtBtn").attr("disabled", false);
+        });
+
+        $(document).ready(function () {
+            $("body").on("click", '.page-number', function () {
+                var page = parseInt($(this).html());
+                debugger
+                $.ajax({
+                    url: '/admin/user/_index',
+                    data: { "page": page },
+                    success: function (data) {
+                        debugger
+                        $("#userList").html(data);
+                        debugger
+                    }
+                });
+            });
+        });
+
+        function RefreshPage() {
+            var page = parseInt($('.page-number').html());
+            debugger
+            $.ajax({
+                url: '/admin/user/_index',
+                data: { "page": page },
+                success: function (data) {
+                    debugger
+                    $("#userList").html(data);
+                    debugger
+                }
+            });
+        }
+
+        function searchData() {
+            var search = $('#search').val();
+            debugger;
+            $.ajax({
+                url: '/admin/user/search?&search=' + search,
+                type: 'GET',
+                //data: search, by,
+                success: function (result) {
+                    debugger
+                    $("#userList").html(result)
+                },
+                error: function (xhr, status) {
+                    alert(status)
+                }
+            })
+        }
+
+        function ChangePassword(id) {
+            $.ajax({
+                url: '/admin/user/ChangePassword?&id=' + id,
+                type: 'GET',
+                success: function (result) {
+                    $(".modal-content").html(result)
+                },
+                error: function (xhr, status) {
+                }
+            })
+        }
+
+        function validate() {
+            debugger
+            if ($("#CurrentPassword").val() == "") {
+                alert("Please provide your current password!");
+                $("#CurrentPassword").focus();
+                return false;
+            }
+            if ($("#NewPassword").val() == "") {
+                alert("Please provide your new password!");
+                $("#NewPassword").focus();
+                return false;
+            }
+            if ($("#ConfirmPassword").val() == "") {
+                alert("Please provide your confirm password!");
+                $("#ConfirmPassword").focus();
+                return false;
+            }
+            if ($("#ConfirmPassword").val() != $("#NewPassword").val()) {
+                alert("Password not match!");
+                $("#ConfirmPassword").focus();
+                return false;
+            }
+            else {
+                //    var model = {
+                //        CurrentPassword: document.myForm.CurrentPassword.value,
+                //        ConfirmPassword: document.myForm.ConfirmPassword.value,
+                //        NewPassword:document.myForm.NewPassword.value,
+                //    }
+                //    $.ajax({
+                //    url: '/admin/user/ResetPassword',
+                //    type: 'POST',
+                //    data: model,
+                //    success: function (result) {
+                //        debugger
+                //        alert(result.Message);
+                //    },
+                //    error: function (xhr, status) {
+                //        alert(status.Message)
+                //    }
+                //})
+            }
+        }
+        function savechangepassword(e) {
+            var User = {};
+          //  e.preventDefault();
+            validate();
+            User.NewPassword= $("#NewPassword").val();
+            User.ConfirmPassword=$("#ConfirmPassword").val();
+            User.CurrentPassword = $("#CurrentPassword").val();
+            User.ID = $("#ID").val();
+            $.ajax({
+                url: '/admin/user/ResetPassword',
+                type: "Post",
+                data: { model: User },
+                success: function (result) {
+                    debugger
+                    if (result == true) {
+                       // alert(1);
+
+                        location.reload();
+                    }
+                    else {
+                        $(".modal-content").show();
+                        $("#pass").html("Please Enter Correct Password!");
+
+                    }
+
+
+                },
+                error: function () {
+                    //alert(3);
+
+                }
+
+
+
+            });
+
+        }
+
+        function Detele(id) {
+            $('#DeletedID').val(id);
+            swal({
+                title: "Are you sure?",
+                text: "Are you sure you want to delete this record!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-warning",
+                confirmButtonText: "Yes, delete it!",
+                closeOnConfirm: false
+            },
+                function () {
+                    debugger
+                    var id = $("#DeletedID").val();
+                    $.ajax({
+                        url: '/admin/user/delete?id=' + id,
+                        type: 'GET',
+                        success: function (data) {
+                            debugger
+                            swal("Deleted!", "Your imaginary file has been deleted.", "success");
+                            RefreshPage();
+                        },
+                        error: function () {
+                            debugger
+                            swal("Cancelled", "Something went wrong :)", "error");
+                        }
+                    });
+                });
+        }
+
+        function GetLogTable(id) {
+            debugger
+            $.ajax({
+                url: '/admin/user/History?id=' + id+'&tableName=user',
+                type: 'GET',
+                success: function (data) {
+                    $(".modal-content").html(data);
+                    $("#exampleModalCenter").modal().toggle();
+                },
+                error: function () {
+                    toastr.error('Something went wrong');
+                }
+            });
+        }
+
+        function GetAttachment(id) {
+             $.ajax({
+                url: '/admin/user/Attachment?id='+id+'&tableName=user',
+                type: 'GET',
+                success: function (data) {
+                    $(".modal-content").html(data);
+                    $("#exampleModalCenter").modal().toggle();
+                },
+                error: function () {
+                    toastr.error('Something went wrong');
+                }
+            });
+        }
+        $("body").on("click", "#pdfExport", function () {
+            html2canvas($('#userTbl')[0], {
+                onrendered: function (canvas) {
+                    var data = canvas.toDataURL();
+                    var docDefinition = {
+                        content: [{
+                            image: data,
+                            width: 500
+                        }]
+                    };
+                    pdfMake.createPdf(docDefinition).download("Table.pdf");
+                }
+            });
+        });
+
+        function fnExcelReport() {
+            var tab_text = "<table border='2px'><tr bgcolor='#87AFC6'>";
+            var textRange; var j = 0;
+            var tab = document.getElementById('userTbl'); // id of table
+
+            for (j = 0; j < tab.rows.length; j++) {
+                tab_text = tab_text + tab.rows[j].innerHTML + "</tr>";
+            }
+
+            tab_text = tab_text + "</table>";
+            tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+            tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
+            tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf("MSIE ");
+
+            if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+            {
+                txtArea1.document.open("txt/html", "replace");
+                txtArea1.document.write(tab_text);
+                txtArea1.document.close();
+                txtArea1.focus();
+                sa = txtArea1.document.execCommand("SaveAs", true, "Patients.xls");
+            }
+            else                 //other browser not tested on IE 11
+                sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+
+            return (sa);
+        }
+    </script>
+}
+
+

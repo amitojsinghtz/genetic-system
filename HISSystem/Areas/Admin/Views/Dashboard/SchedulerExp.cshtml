@@ -1,0 +1,175 @@
+﻿@{
+    ViewData["Title"] = "SchedulerExp";
+    Layout = "~/Views/Shared/_DevExtremeLayout.cshtml";
+}
+@using DevExtreme.AspNet.Mvc;
+
+
+<style>
+    body{
+        padding-top: 0;
+    }
+</style>
+
+@model GeneticSystem.Areas.Admin.Models.SchedulerVM
+
+@(Html.DevExtreme().Scheduler()
+    .ID("scheduler")
+    .DataSource(Model.AppointmentExps)
+    .DataSource(m => m.Mvc()
+            .Controller("SchedulerData")
+            .Key("AppointmentId")
+            .LoadAction("Get")
+            .UpdateAction("Put")
+            .InsertAction("Post")
+            .DeleteAction("Delete")
+        )
+    .Views(new[] {
+        SchedulerViewType.Day,
+        SchedulerViewType.Week,
+        SchedulerViewType.Month
+    })
+    .CurrentView(SchedulerViewType.Day)
+    .CurrentDate(DateTime.UtcNow)
+    .StartDayHour(3)
+    .Height(600)
+    .TextExpr("Text")
+    .DescriptionExpr("Description")
+    .StartDateExpr("StartDate")
+    .EndDateExpr("EndDate")
+    .AllDayExpr("AllDay")
+    .RecurrenceRuleExpr("RecurrenceRule")
+    .RecurrenceExceptionExpr("RecurrenceException")
+    .Resources(res =>
+    {
+        res.Add()
+            .FieldExpr("ClientID")
+            .DisplayExpr("Name")
+            .ValueExpr("ID")
+            .AllowMultiple(false)
+            .DataSource(Model.Users);
+
+        res.Add()
+            .FieldExpr("TestID")
+            .AllowMultiple(false)
+            .UseColorAsDefault(true)
+            .DataSource(Model.TestTemps)
+            .DisplayExpr("Name")
+            .ValueExpr("ID");
+
+        res.Add()
+            .FieldExpr("GeneID")
+            .AllowMultiple(false)
+            .UseColorAsDefault(true)
+            .DataSource(Model.Genes)
+            .DisplayExpr("Name")
+            .ValueExpr("ID");
+    })
+)
+
+
+<script>
+
+    //function getSchedulerInstance() {
+    //    alert("I got called")
+    //    return $("#scheduler").dxScheduler("instance");
+    //}
+
+    //$("#scheduler").dxScheduler({
+    //    onDisposing: function (e) {
+    //        alert("It works!")
+    //    }
+    //});  
+
+    //$(function () {
+
+
+    //    $(".dx-popup-cancel").on('click', function () {
+    //        alert("Hi I got clicked");
+    //    });
+
+    //});
+
+    @*var moviesData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Users));
+
+    function getSchedulerInstance() {
+        return $("#scheduler").dxScheduler("instance");
+    }
+
+    function getMovieById(id) {
+        return DevExpress.data.query(moviesData)
+            .filter("ID", id)
+            .toArray()[0];
+    }
+
+    function appointmentForm_created(data) {
+        alert('fired');
+        var form = data.form,
+            movie = getMovieById(data.appointmentData.MovieId) || {},
+            startDate = data.appointmentData.StartDate;
+
+        form.option("items", [{
+            label: {
+                text: "Movie"
+            },
+            editorType: "dxSelectBox",
+            dataField: "MovieId",
+            editorOptions: {
+                dataSource: moviesData,
+                displayExpr: "Text",
+                valueExpr: "ID",
+                onValueChanged: function(args) {
+                    movie = getMovieById(args.value);
+
+                    form.getEditor("Director")
+                        .option("value", movie.Director);
+
+                    form.getEditor("EndDate")
+                        .option("value", new Date(startDate.getTime() +
+                            60 * 1000 * movie.Duration));
+                }
+            },
+        }, {
+            label: {
+                text: "Director"
+            },
+            name: "Director",
+            editorType: "dxTextBox",
+            editorOptions: {
+                value: movie.Director,
+                readOnly: true
+            }
+        }, {
+            dataField: "StartDate",
+            editorType: "dxDateBox",
+            editorOptions: {
+                width: "100%",
+                type: "datetime",
+                onValueChanged: function(args) {
+                    startDate = args.value;
+                    form.getEditor("EndDate")
+                        .option("value", new Date(startDate.getTime() +
+                            60 * 1000 * movie.Duration));
+                }
+            }
+        }, {
+            name: "EndDate",
+            dataField: "EndDate",
+            editorType: "dxDateBox",
+            editorOptions: {
+                width: "100%",
+                type: "datetime",
+                readOnly: true
+            }
+        }, {
+            dataField: "Price",
+            editorType: "dxRadioGroup",
+            editorOptions: {
+                dataSource: [5, 10, 15, 20],
+                itemTemplate: function(itemData) {
+                    return "$" + itemData;
+                }
+            }
+        }]);
+    }*@
+</script>

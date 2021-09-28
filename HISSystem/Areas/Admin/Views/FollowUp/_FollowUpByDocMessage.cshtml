@@ -1,0 +1,50 @@
+﻿@model GeneticSystem.Areas.Admin.Models.FollowUp.FollowUpVM
+
+<@if (Model.FollowUpByDocConvList != null)
+                            {
+                                <div id="flwUpConvDiv" class="row">
+                                    <div class="col-md-12">
+                                        <div class="comments-container">
+                                            @foreach (var conv in Model.FollowUpByDocConvList.Where(x => x.ParentID == null))
+                                            {
+                                                <ul id="comments-list" class="comments-list">
+                                                    <li>
+                                                        <div class="comment-main-level">
+                                                            <div class="comment-avatar"><img src="@conv?.Sender?.ImagePath" alt=""></div>
+                                                            <div class="comment-box">
+                                                                <div class="comment-head">
+                                                                    @*<h6 class="comment-name by-author"><a href="http://creaticode.com/blog">@conv?.Sender?.ImagePath</a></h6>*@
+                                                                    <span>@conv?.CreatedOn</span>
+                                                                    <i class="fa fa-reply replyBtn"></i>
+                                                                    <i class="fa fa-heart"></i>
+                                                                </div>
+                                                                <div class="comment-content">
+                                                                    @conv?.Message
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <ul class="comments-list reply-list">
+                                                            @foreach (var item in Model.FollowUpByDocConvList.Where(x => x.ParentID == conv.ID))
+                                                            {
+                                                                <li>
+                                                                    <div class="comment-avatar"><img src="@item?.Sender?.ImagePath" alt=""></div>
+                                                                    <div class="comment-box">
+                                                                        <div class="comment-head">
+                                                                            <h6 class="comment-name"><a href="http://creaticode.com/blog">Lorena Rojero</a></h6>
+                                                                            <span>@item.CreatedOn</span>
+                                                                            <i class="fa fa-reply replyBtn"></i>
+                                                                            @*<i class="fa fa-heart"></i>*@
+                                                                        </div>
+                                                                        <div class="comment-content">
+                                                                            @item.Message
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                </ul>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }

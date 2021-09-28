@@ -1,0 +1,77 @@
+﻿@model GeneticSystem.Areas.Admin.Models.OrderMethyationViewModel
+
+
+<div class="tab-content pad-all-sm">
+    <div id="tab-27" class="tab-pane fade in active">
+        <div class="row">
+            <div class="panel-group panel-2" id="bs-collapse">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-info="Department" href="#one">
+                                Methyation Template
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="one" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <div>
+                                            <table class="table table-hover table-bordered table-striped">
+                                                <thead>
+                                                    <tr class="">
+                                                        <th class="numeric">Gene</th>
+                                                        <th class="numeric">Have Mutation</th>
+                                                        <th class="numeric">Result</th>
+                                                        <th class="numeric">Result Summary</th>
+                                                        <th class="numeric">Recommendations</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.methyationlist.Select((value, i) => new { i, value }))
+                                                    {
+                                                    <tr>
+                                                        <td>
+                                                            @if (item.value.Gene != null)
+                                                            {
+                                                                @Html.DropDownList("PatientOrderMethyationList[" + @item.i + "].GeneID", new SelectList(ViewBag.EffectedGenes, "ID", "Name", item.value.GeneID), htmlAttributes: new { @class = "form-control dropdown", id = "PatientOrderMethyationList[" + @item.i + "].GeneID", name = "PatientOrderMethyationList[" + @item.i + "].Gene" })
+                                                            }
+
+                                                        </td>
+                                                        <td>
+                                                                <div class="form-check"><label><input type="checkbox" id="PatientOrderMethyationList[@item.i].HaveMutation" name="PatientOrderMethyationList[@item.i].HaveMutation" onclick="GetID(@item.value.ID)" @Html.Raw(item.value.HaveMutation ? "checked" : "") value="true"><span class="label-text"></span></label></div>
+                                                           
+                                                        </td>
+                                                        <td>
+                                                            @if (item.value.Result != null)
+                                                            {
+                                                                @Html.DropDownList("PatientOrderMethyationList[" + @item.i + "].Result", new SelectList(ViewBag.Result, "Value", "Text", item.value.Result), htmlAttributes: new { @class = "form-control dropdown"})
+
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="PatientOrderMethyationList[@item.i].ResultSummary" name="PatientOrderMethyationList[@item.i].ResultSummary" value="@item.value.ResultSummary" class="form-control">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="PatientOrderMethyationList[@item.i].Recommendations" name="PatientOrderMethyationList[@item.i].Recommendations" value="@item.value.Recommendations" class="form-control">
+                                                        </td>
+                                                    </tr>
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end of panel -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,175 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+
+@model Data.Models.CompanyProfile
+
+@{
+    ViewData["Title"] = "Company Profile";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+<style>
+    .border-left {
+        border-left: 1px solid black;
+    }
+
+    .mg-t {
+        margin-top: 10PX;
+    }
+
+    .modal-backdrop {
+        display: none !important;
+    }
+
+    .modal-open .modal {
+        width: 300px;
+        margin: 0 auto;
+        background-color: transparent;
+    }
+
+    .mg-b {
+        margin-bottom: 10PX;
+    }
+
+    .bed-box {
+        border-radius: 7px;
+        padding: 5px 10px;
+        height: auto;
+        text-align: center;
+        float: left;
+        margin-right: 3px;
+        margin-bottom: 3px;
+    }
+
+        .bed-box img {
+            width: 25px;
+        }
+
+    p.bed-title {
+        font-size: 10px;
+        font-weight: 600;
+        color: #fff;
+        margin: 0;
+        margin-top: 5px;
+    }
+</style>
+@*@using (Html.BeginForm("Add", "Patient", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {*@
+@using (Html.BeginForm("Add", "CompanyProfile", FormMethod.Post))
+{
+<div class="prtm-content">
+    <div class="prtm-page-bar">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item text-capitalize"><h2>@ViewData["Title"]</h2></li>
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="#">Ui elements</a></li>
+            <li class="breadcrumb-item"><a href="#" class="active"> Company Profile</a></li>
+        </ul>
+    </div>
+    <div class="row mrgn-b-sm">
+        <div class="col-md-12 col-lg-12">
+            @if (Model.ID <= 0)
+            {<input type="submit" name="submit" value="Save" class="btn btn-xs btn-primary" id="signupform" />}
+            else
+            {
+                <input type="submit" name="submit" value="Update" class="btn btn-xs btn-warning" />
+
+
+            }
+
+        </div>
+    </div>
+
+    <div class="row mg-b">
+        <div class="col-md-12 col-lg-12">
+            <div class="prtm-block pos-relative">
+                <div class="line-slide-tab">
+
+                    <div class="tab-content pad-all-sm">
+                        <div id="tab-26" class=" row tab-pane fade in active">
+                            <div class="col-md-12 col-lg-12">
+                                <div class="row mrgn-b-sm">
+                                    <div class="col-md-5 col-lg-5">
+                                        <div class="form-group">
+                                            <label>Company ID</label>
+                                            @Html.TextBoxFor(x => x.ID, new { @class = "form-control",@readonly="readonly" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Company Ar</label>
+                                            @Html.TextBoxFor(x => x.CompanyArName, new { @class = "form-control" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Tel 1</label>
+                                            @Html.TextBoxFor(x => x.Telephone1, new { @class = "form-control number" })
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label>Fax 1</label>
+                                            @Html.TextBoxFor(x => x.Fax1, new { @class = "form-control number" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Gender">Address Ar</label>
+                                            @Html.TextBoxFor(x => x.AddressAr, new { @class = "form-control" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Gender">Email</label>
+                                            @Html.TextBoxFor(x => x.Email, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-5 col-lg-5">
+                                        <div class="form-group">
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Company En</label>
+                                            @Html.TextBoxFor(x => x.CompanyEnName, new { @class = "form-control" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Tel 2</label>
+                                            @Html.TextBoxFor(x => x.Telephone2, new { @class = "form-control number" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Fax 2</label>
+                                            @Html.TextBoxFor(x => x.Fax2, new { @class = "form-control number" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Gender">Address En</label>
+                                            @Html.TextBoxFor(x => x.AddressEn, new { @class = "form-control " })
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Gender">Website</label>
+                                            @Html.TextBoxFor(x => x.Website, new { @class = "form-control " })
+                                        </div>
+                                    </div>
+
+                                   
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+}
+
+
+<!-- Modal -->
+<!---End Model--->
+<!--filter bed Modal -->
+
+
+@section Scripts{
+    }
+

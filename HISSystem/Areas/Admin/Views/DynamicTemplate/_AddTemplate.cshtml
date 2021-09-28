@@ -1,0 +1,77 @@
+﻿@model GeneticSystem.Areas.Admin.Models.AddDynamicTemplate
+
+<form action="/admin/lookup/addmaster" method="post" id="addMasterLookUp">
+    <div class="prtm-content">
+        <div class="row mrgn-b-sm">
+            <div class="col-md-4 col-lg-4">
+                <input type="button" name="tmpltbtn" id="addTemplateBtn" onclick="addTemplate();" value="Save" class="btn btn-xs btn-primary sbmtBtn" disabled/>
+                <input type="button" id="closeModal" name="submit" value="Back" class="btn btn-xs btn-warning" />
+            </div>
+            <div class="col-md-8 col-lg-8 text-right">
+                <span class="info-box">
+                    <i class="fa fa-info-circle text-warning" aria-hidden="true"></i> To ADD Template Type >> Go To <a href="/admin/lookup/index">Lookup</a>
+                </span>
+            </div>
+            <div class="col-md-4 col-lg-4">
+            </div>
+        </div>
+        <div class="form-style">
+            <div class="row">
+                <div class="col-md-12 col-lg-12">
+                    <div class="prtm-block pos-relative">
+                        <div class="row">
+                            <div class="col-md-12 col-lg-12 mrgn-b-sm">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <label for="Type">Template Type</label>
+                                            @Html.DropDownListFor(m => m.Template.TemplateTypeID, new SelectList(ViewBag.TemplateType, "ID", "Name"), "Select", new { @Class = "form-control dropdown" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <label for="Type">SubTemp?</label>
+                                        <div class="form-check">
+                                            <label><input type="checkbox" id="TemplateData.HaveSubTemplate" onchange="enableSubTemp();" name="TemplateData.HaveSubTemplate" value="true"><span class="label-text">@*Has SubTemp?*@</span></label>
+                                        </div>
+                                    </div>
+                                    <div id="subTempDiv" class="col-md-5" hidden>
+                                        <div class="form-group">
+                                            <label for="TypeID">SubTemplate Type</label>
+                                            @Html.DropDownListFor(m => m.Template.SubTemplateTypeID, new SelectList(ViewBag.SubTemplateType, "ID", "Name"), "Select", new { @Class = "form-control dropdown" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-12">
+                                <div id="NearbyFormWrapper">
+                                    <table class="table table-hover table-bordered table-striped" id="relative-table">
+                                        <thead>
+                                            <tr class="">
+                                                <th>Column Name</th>
+                                                <th>Display Name</th>
+                                                <th class="numeric text-right"><a href="javascript:void(0)" onclick="AddField()"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                        <tfoot>
+                                            <tr id="formRow1">
+                                                <td>
+                                                    @Html.DropDownList("TemplateColumns[0].ColumnName", new SelectList(ViewBag.TemplateField, "ID", "Name"), "--Select Column--", new { @class = "form-control dropdown" })
+                                                </td>
+                                                <td> @Html.TextBox("TemplateColumns[0].DisplayName", null, new { @class = "form-control", autocomplete = "true" })</td>
+                                                <td class="text-right">
+                                                    <a href="javascript:void(0)"><i class="fa fa-trash" aria-hidden="true" onclick="RemoveField(this)"></i></a>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+

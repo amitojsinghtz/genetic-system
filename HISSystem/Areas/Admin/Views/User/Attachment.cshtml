@@ -1,0 +1,166 @@
+﻿@model IEnumerable<Data.Models.Attachment>
+
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLongTitle">Attachment</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="row" style="align-items:inherit">
+        <div class="col-md-9" style="float:left">
+            <button type="button" class="btn btn-primary" id="Upload" data-toggle="tooltip" title="Upload" data-placement="top">
+                <i class="fa fa-upload" aria-hidden="true"></i>
+            </button>&nbsp;
+            <button type="button" class="btn btn-info" onclick="refreahAttach()" data-toggle="tooltip" title="Refresh" data-placement="top">
+                <i class="fa fa-refresh" aria-hidden="true"></i>
+            </button>&nbsp;
+            <button type="button" data-dismiss="modal" class="btn btn-warning" data-toggle="tooltip" title="Cancel" data-placement="top">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </button>&nbsp;
+        </div>
+    </div>
+    <div class="row">
+        <div class="pos-relative">
+            <div class="col-sm-12 col-md-12 col-12">
+                <form action="/admin/Attachment/create" method="post">
+                    <input type="file" id="imgupload" onchange="CollectAttach()" style="display:none" />
+                    <div class="table-responsive">
+                        <input type="hidden" name="RecordType" id="RecordType" value="@ViewBag.TableName" />
+                        <input type="hidden" name="RecordID" id="RecordID" value="@ViewBag.UserID" />
+                        <table class="table table-striped table-hover table-bordered" id="myTableAttch">
+                            <thead>
+                                <tr>
+                                    <th>File</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="FirstBody">
+                                @if (Model != null)
+                                {
+                                    foreach (var file in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @file.AttachmentName
+                                            </td>
+                                            <td>
+                                                <a href="@file.AttachmentPath" download="@file.AttachmentPath" data-toggle="tooltip" title="Download" class="mrgn-l-sm"><i class="fa fa-download fa-md base-dark" aria-hidden="true"></i></a>
+                                                <a href="#" class="mrgn-l-sm"><i class="fa fa-trash fa-md base-dark" onclick="del(this,'@file.ID')" data-toggle="tooltip" title="Delete" aria-hidden="true"></i></a>
+
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+</div>
+
+
+<script>
+	$('#Upload').click(function () { $('#imgupload').trigger('click'); });
+	var AllAttach = [];
+
+	function CollectAttach() {
+		debugger
+		var fileUpload = $("#imgupload").get(0).files[0];
+		var Data = new FormData();
+		Data.append("File", fileUpload);
+		Data.append("Id", $("#RecordID").val());
+        Data.append("tableName", $("#RecordType").val());
+		$.ajax({
+			url: '/Attachment/Upload',
+			type: 'POST',
+			contentType: false,
+			processData: false,
+			data: Data,
+			success: function (result) {
+				debugger;
+				//AllAttach = result;
+				refreahAttach();
+			},
+            error: function (xhr, status) {
+                debugger
+                 toastr.error('Something went wrong');
+			}
+		});
+
+	}
+
+	function refreahAttach() {
+		debugger
+		var Data = new FormData();
+	    Data.append("Id", $("#RecordID").val());
+        Data.append("tableName", $("#RecordType").val());
+		$.ajax({
+			url: '/admin/user/Attachment?id='+$("#RecordID").val()+'&tableName='+$("#RecordType").val(),
+			type: 'GET',
+			//data: Data,
+			success: function (result) {
+                debugger;
+                 $(".modal-content").html(result);
+                 //$("#exampleModalCenter").modal().toggle();
+			},
+            error: function (xhr, status) {
+                debugger
+				 toastr.error('Something went wrong');
+			}
+		});
+	}
+
+	function LoadAttachs() {
+		$("#FirstBody").empty()
+		var source = document.getElementById("Attach-List").innerHTML;
+		var obj = { AllAttach: AllAttach };
+		var template = Handlebars.compile(source);
+		$('#FirstBody').append(template(obj));
+	}
+
+	function del(row, id) {
+		debugger;
+		var recordID = $("#RecordID").val();
+		if (id) {
+			var res = confirm('Confirm delete !');
+			if (res) {
+				debugger
+				$.ajax({
+					url: '/attachment/delete/' + id,
+					success: function (result) {
+						debugger
+						//removeFromAttchList(recordID);
+						$(row).parents("tr").remove();
+					},
+					error: function (err, e) {
+						 toastr.error('Something went wrong');
+					}
+				})
+			}
+			else {
+				return false;
+			}
+		}
+	};
+</script>
+
+@*---------------------Handlebar templates----------------------------------*@
+
+<script id="Attach-List" type="text/x-handlebars-template">
+    {{#each AllAttach}}
+    <tr>
+        <td>
+            {{this.AttachmentName}}
+        </td>
+        <td>
+            <a href="/Data/Attachments/{{this.AttachmentName}}" download="{{this.AttachmentName}}" data-toggle="tooltip" title="Download" class="mrgn-l-sm"><i class="fa fa-download fa-md base-dark" aria-hidden="true"></i></a>
+            <a href="#" class="mrgn-l-sm"><i class="fa fa-trash fa-md base-dark" onclick="del(this,'{{this.ID}}')" data-toggle="tooltip" title="Delete" aria-hidden="true"></i></a>
+        </td>
+    </tr>
+    {{/each}}
+</script>

@@ -1,0 +1,97 @@
+﻿@model Data.Helpers.PagedData<Data.Models.User>
+
+    <table id="userTbl" class="table table-hover table-bordered table-striped">
+        <thead>
+            <tr class="">
+                <th>Select</th>
+                <th>Image</th>
+                <th class="numeric">Employee Name</th>
+                <th>id No.</th>
+                <th>Address</th>
+                <th class="numeric">Mobile</th>
+                <th>Email</th>
+                <th class="numeric">Department</th>
+                <th class="numeric">Role</th>
+                <th class="numeric">Country/State</th>
+                <th class="numeric">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.Data)
+            {
+                <tr>
+                    <td>
+                        <div class="form-check"><label><input type="checkbox" name="checkbox" value="@user.ID"><span class="label-text"></span></label></div>
+                    </td>
+                    <td>
+                        <div class="user-image-table">
+                            @if (user.ImagePath != null)
+                            {
+                                <img src="@user.ImagePath" alt="">
+                            }
+                            else
+                            {
+                                <img src="/assets/img/dummy-user.jpg" alt="">
+                            }
+                        </div>
+                    </td>
+                    <td>
+                        @user.EnFirstName &nbsp; @user.EnSecondName
+                    </td>
+                    <td>@user.ID</td>
+                    <td>
+                        @user.Address
+                    </td>
+                    <td>
+                        @user.Mobile
+                    </td>
+                    <td>
+                        @user.Email
+                    </td>
+                    <td>
+                        @if (user.PersonalInformation != null && user.PersonalInformation.Department != null)
+                        {
+                            @user.PersonalInformation.Department.Name
+                        }
+                    </td>
+                    <td>
+                        @if (user.Role != null)
+                        {
+                            @user.Role.Name
+                        }
+                    </td>
+                    <td>
+                        @if (user.PersonalInformation != null && user.PersonalInformation.Country != null)
+                        {
+                            @user.PersonalInformation.Country.Name <text>/</text>
+                        }
+                        @if (user.PersonalInformation != null && user.PersonalInformation.City != null)
+                        {
+                            @user.PersonalInformation.City.Name
+                        }
+                    </td>
+                    <td>
+                        @Html.ActionLink("", "Update", "User", new { Id = user.ID }, new { @Class = "fa fa-pencil", data_toggle = "tooltip", data_placement = "top", title = "Update" })
+
+                        <a href="javascript:void(0);" class="fa fa-trash mrgn-l-xs" onclick="Detele(@user.ID)" data-toggle="tooltip" , data-placement="top" title="Trach"></a>
+
+                        <a href="javascript:void(0);" class="fa fa-file-excel-o mrgn-l-xs" data-toggle="tooltip" onclick="GetAttachment(@user.ID)" data-placement="top" title="Attachment"></a>
+
+                        <a href="javascript:void(0);" class="fa fa-history mrgn-l-xs" onclick="GetLogTable(@user.ID)" data-placement="top" title="History"></a>
+
+                        <a href="javascript:void(0);" class="fa fa-key mrgn-l-xs" data-toggle="modal" data-target="#exampleModalCenter" onclick="ChangePassword(@user.ID)" data-placement="top" title="Change password"></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="11">
+                    @for (int i = 1; i <= Model.NumberOfPages; i++)
+                    {
+                        <a class="page-number" href="javascript:void();">@i</a>
+                    }
+                </td>
+            </tr>
+        </tfoot>
+    </table>

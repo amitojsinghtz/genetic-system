@@ -1,0 +1,93 @@
+﻿@model GeneticSystem.Areas.Admin.Models.AddDynamicTemplate
+
+<form action="/admin/lookup/addmaster" method="post" id="addMasterLookUp">
+    <div class="prtm-content">
+        <div class="row mrgn-b-sm">
+            <div class="col-md-4 col-lg-4">
+                <input type="button" name="tmpltbtn" id="addTemplateBtn" onclick="postDropDownDependency();" value="Save" class="btn btn-xs btn-primary sbmtBtn" disabled />
+                <input type="button" id="closeModal" name="submit" value="Back" class="btn btn-xs btn-warning" />
+            </div>
+            <div class="col-md-4 col-lg-4">
+            </div>
+        </div>
+        <div class="form-style">
+            <div class="row">
+                <div class="col-md-12 col-lg-12">
+                    <div class="prtm-block pos-relative">
+                        <div class="row">
+                            <div class="col-md-12 col-lg-12 mrgn-b-sm">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <label for="Type">@ViewBag.TemplateName</label>
+                                        </div>
+                                    </div>
+                                    <div id="subTempDiv" class="col-md-5" hidden>
+                                        <div class="form-group">
+                                            <label for="TypeID">@ViewBag.SubTemplateName</label>
+                                            <input id="colCount" value="@ViewBag.DependentColumn.Count" hidden />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-12">
+                                <div id="NearbyFormWrapper">
+                                    <table class="table table-hover table-bordered table-striped" id="relative-table">
+                                        <thead>
+                                            <tr class="">
+                                                <th>Column</th>
+                                                <th>Dependent Column</th>
+                                                <th>Dependency On</th>
+                                                <th class="numeric text-right"><a href="javascript:void(0)" onclick="AddFieldForDependency()"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                        <tfoot>
+                                            @if (Model.TempDropDownDependencyList != null && Model.TempDropDownDependencyList.Count() > 0)
+                                            {
+                                                @foreach (var item in Model.TempDropDownDependencyList)
+                                                {
+                                                    <tr id="formRow1">
+                                                        <td>
+                                                            <input value="@ViewBag.TempID" hidden />
+                                                            @Html.DropDownList("TemplateColumns[0].ColumnName", new SelectList(ViewBag.Column, "ID", "TemplateField.Name", item.DropDownId), "--Select Column--", new { @class = "form-control dropdown coldrpchk" })
+                                                        </td>
+                                                        <td> @Html.DropDownList("TemplateColumns[0].ColumnName", new SelectList(ViewBag.DependentColumn, "Value", "Text", item.ColID), "--Select Column--", new { @class = "form-control dropdown chkdup" })</td>
+                                                        <td>
+                                                            @if (item.DropDown.TemplateField.Name == "Result")
+                                                            {
+                                                                @Html.DropDownList("TemplateColumns[0].ColumnName", new SelectList(ViewBag.Result, "Value", "Text", item.DepOnOption), "--Select Column--", new { @class = "form-control dropdown chkdup" })
+                                                            }
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <a href="javascript:void(0)"><i class="fa fa-trash" aria-hidden="true" onclick="RemoveField(this)"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr id="formRow1">
+                                                    <td>
+                                                        <input value="@ViewBag.TempID" hidden />
+                                                        @Html.DropDownList("TemplateColumns[0].ColumnName", new SelectList(ViewBag.Column, "ID", "TemplateField.Name"), "--Select Column--", new { @class = "form-control dropdown coldrpchk" })
+                                                    </td>
+                                                    <td> @Html.DropDownList("TemplateColumns[0].ColumnName", new SelectList(ViewBag.DependentColumn, "Value", "Text"), "--Select Column--", new { @class = "form-control dropdown chkdup" })</td>
+                                                    <td> @Html.DropDownList("TemplateColumns[0].ColumnName", new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text"), "--Dependent On--", new { @class = "form-control depOptions" })</td>
+                                                    <td class="text-right">
+                                                        <a href="javascript:void(0)"><i class="fa fa-trash" aria-hidden="true" onclick="RemoveField(this)"></i></a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+

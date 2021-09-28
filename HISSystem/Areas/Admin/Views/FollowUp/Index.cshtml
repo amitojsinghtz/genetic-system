@@ -1,0 +1,667 @@
+﻿@model GeneticSystem.Areas.Admin.Models.FollowUp.FollowUpVM
+
+@{
+    ViewData["Title"] = "Update Client";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>FollowUp</title>
+    <style>
+    .mr-2 {
+    margin-right: 2px;
+}
+
+.col-lg-4 {
+    margin-bottom: 5px;
+}
+.btn-custSuccess {
+    background: #0099cc;
+    color: #ffffff;
+}
+    </style>
+</head>
+
+<body>
+    <div class="prtm-content">
+        <div class="prtm-page-bar">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="#">Registration</a></li>
+                <li class="breadcrumb-item"><a href="#" class="active">Followup</a></li>
+            </ul>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group">
+                    @if (Model.RoleChk != 5)
+                    {
+                        @Html.DropDownList("User_ID", new SelectList(Model.patientList, "Value", "Text", Model.User?.ID), "Select Patient", new { @class = "form-control ptnDrpDwn" })
+                    }
+                    else
+                    {
+                            <h4>Welcome <span class="label label-default">@Model.User.EnFirstName @Model.User.EnSecondName @Model.User.EnThirdName @Model.User.EnFamilyName </span></h4>
+                    }
+
+                </div>
+            </div>
+            @if(Model.RoleChk != 5) { 
+            <div class="col-md-2">
+                <div class="form-group">
+                    @*<label>Search</label>*@
+                    <input type="text" class="form-control" name="searchPatient" id="searchPatient" placeholder="Advance Patient Search..." />
+                    <div class="popup-result" id="searchwithid" style="width:500px;display:none;"></div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-4">
+                <a href="/admin/clientorder/index" class="btn btn-danger"><i class="fa fa-plus" aria-hidden="true"></i> New Order</a>
+                <a href="/admin/patient/index" class="btn btn-warning"><i class="fa fa-users" aria-hidden="true"></i> Client List</a>
+                <a href="/admin/patient/appointment" class="btn btn-success"><i class="fa fa-calendar" aria-hidden="true"></i> Appointment</a>
+            </div>
+            <div class="col-md-4 col-lg-4 text-right">
+                <span class="info-box">
+                    <i class="fa fa-info-circle text-warning" aria-hidden="true"></i> Once an order is marked as closed, it can't be edited!
+                </span>
+            </div>
+            }
+        </div>
+        <div class="table-style">
+            <div class="prtm-block pos-relative">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="profile-box-r">
+                            <div class="row mrgn-all-xs">
+                                <div class="col-md-12">
+                                    <div class="pro-pic">
+                                        @if (Model?.User?.ImagePath != null)
+                                        {
+                                            <img src="@Model?.User?.ImagePath" alt="">
+                                        }
+                                        else
+                                        {
+                                            <img src="/assets/img/user-1.jpg" alt="">
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Reg No</label>
+                                        @Html.TextBoxFor(m => m.User.RegisterationNo, new { @class = "form-control", @readonly = "readonly" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Patient Name</label>
+                                        @Html.TextBoxFor(m => m.User.EnFirstName, new { @class = "form-control", @readonly = "readonly" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label>ID No</label>
+                                        @Html.TextBoxFor(m => m.User.PatientPersonalInformation.IdentificationTypeID, new { @class = "form-control", @readonly = "readonly" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Patient BirthDate</label>
+                                        @Html.TextBoxFor(m => m.User.PatientPersonalInformation.DateOfBirth, new { @class = "form-control", @readonly = "readonly" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Patient City</label>
+                                        @Html.TextBoxFor(m => m.User.PatientPersonalInformation.City.Name, new { @class = "form-control", @readonly = "readonly" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Patient Address</label>
+                                        @Html.TextBoxFor(m => m.User.Address, new { @class = "form-control", @readonly = "readonly" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Patient Mobile</label>
+                                        @Html.TextBoxFor(m => m.User.Mobile, new { @class = "form-control", @readonly = "readonly" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Blood Group</label>
+                                        @Html.TextBoxFor(m => m.User.PatientPersonalInformation.BloodGroup.Name, new { @class = "form-control", @readonly = "readonly" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="prtm-block">
+                            <div class="row mrgn-b-sm">
+                                <div class="col-md-12">
+                                    <div class="prtm-block-content">
+                                        <div class="table-responsive">
+                                            <div id="userList" class="unseen">
+                                                @if (Model.ClientOrderList != null)
+                                                {
+                                                    <table id="patientTbl" class="table table-hover table-bordered table-striped">
+                                                        <thead>
+                                                            <tr class="">
+                                                                <th>Order No</th>
+                                                                <th>Order Date</th>
+                                                                <th>Test Type</th>
+                                                                <th>Follow Up Needed</th>
+                                                                <th>Test Needed</th>
+                                                                <th>Assigned Doctor</th>
+                                                                <th>Status</th>
+                                                                <th colspan="2">Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var order in Model.ClientOrderList.Data)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @order.OrderNo
+                                                                    </td>
+                                                                    <td>
+                                                                        @order.OrderDate
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (order.TestArrayStrings != null)
+                                                                        {
+                                                                            @foreach (var item in order.TestArrayStrings)
+                                                                            {
+                                                                                <label class="label label-primary mr-2 btn-rounded">@item</label>
+                                                                            }
+                                                                        }
+                                                                    </td>
+                                                                    <td>
+                                                                        True
+                                                                    </td>
+                                                                    <td>
+                                                                        True
+                                                                    </td>
+                                                                    <td>
+                                                                        @order.Doctor?.EnFirstName
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (order.Status != null)
+                                                                        {
+                                                                            @if (order.StatusID == 397)
+                                                                            {
+                                                                                <span class="label label-success btn-rounded">@order.Status.Name</span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span class="label label-danger btn-rounded">@order.Status.Name</span>
+                                                                            }
+
+                                                                        }
+
+                                                                    </td>
+                                                                    <td colspan="2">
+                                                                        @if (order.Status != null && Model.RoleChk != 5)
+                                                                        {
+                                                                            @if (order.StatusID == 398)
+                                                                            {
+                                                                                <button type="button" class="btn btn-xs btn-warning UpdtOrdrBtn" value="@order.ID"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update</button>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <button type="button" class="btn btn-xs btn-warning" disabled><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update</button>
+                                                                            }
+
+                                                                            <button type="button" class="btn btn-xs btn-secondary AttchOrdrBtn" value="@order.UserID"><i class="fa fa-paperclip" aria-hidden="true"></i> Attachment</button>
+                                                                        }
+
+
+                                                                        <button type="button" class="btn btn-xs btn-info GtTmpData" value="@order.ID"><i class="fa fa-tv" aria-hidden="true"></i>  <i class="fa fa-pencil" aria-hidden="true"></i>Order Data</button>
+
+                                                                        @if (order.Status != null && Model.RoleChk != 5)
+                                                                        {
+                                                                            @if (order.StatusID == 398)
+                                                                            {
+                                                                                <button type="button" class="btn btn-xs btn-primary ClsOrdr" value="@order.ID"><i class="fa fa-pencil" aria-hidden="true"></i>   Close Order</button>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <button type="button" class="btn btn-xs btn-success"><i class="fa fa-check" aria-hidden="true"></i> Order Closed</button>
+                                                                            }
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <td colspan="17">
+                                                                    @for (int i = 1; i <= Model.ClientOrderList.NumberOfPages; i++)
+                                                                    {
+                                                                        <a class="page-number" href="javascript:void();">@i</a>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="ordrPrcdArea">
+                            </div>
+                            <div id="appndBox" hidden>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <textarea id="" class="form-control" rows="5"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="button" name="submit" class="btn btn-xs btn-primary" id="addSmryBtn" value="Post">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="UpdtTestModal" tabindex="-1" role="dialog" aria-labelledby="UpdtTestModalTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-contentTst">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="add-modal">
+                                <div id="modalDiv" class="modal fade" aria-hidden="true">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/chosen.jquery.js" integrity="sha256-TDtzz+WOGufaQuQzqpEnnxdJQW5xrU+pzjznwBtaWs4=" crossorigin="anonymous"></script>
+<script>
+
+    $(document).ready(function () {
+        if (@Model.RoleChk == 5) {
+
+        }
+
+    });
+
+     function SendSMS(id) {
+         var id = id;
+         //var message = ()
+            $.ajax({
+                url: '/admin/patient/CustExportSMS/' + id,
+					contentType: 'application/json; charse=utf-8',
+					type: 'get',
+					success: function (result) {
+						debugger
+						$('#modalDiv').html(result);
+						$('#modalDiv').modal('show');
+							},
+					error: function (xhr, status) {
+						alert(status)
+							}
+						});
+        }
+
+    $(document).on('change', '.addRsltdrpdwn', function () {
+        var slctd = $(this).val();
+        var ordrId = $("#clntOrdrIdHdn").val();
+      
+        if (slctd == 0 || slctd == undefined || slctd == "")
+            return false;
+
+        $.ajax({
+            url: '/admin/followup/gettesttemp',
+            type: 'GET',
+            data: { orderId: ordrId, selectedVal: slctd },
+            success: function (response) {
+                $('#selectedTestArea').html(response);
+            },
+            error: function () {
+                toastr.error('Something went wrong');
+            }
+        });
+    });
+
+    $(document).on("click", ".AttchOrdrBtn", function () {
+          
+            var userId = $(this).val();
+            debugger
+            $.ajax({
+                url: '/admin/clientOrder/Attachment',
+                type: 'GET',
+                data: { userID: userId },
+                success: function (response) {
+                    $(".modal-content").html(response);
+                    $("#exampleModalCenter").modal().toggle();
+                },
+                error: function () {
+                    toastr.error('Something went wrong');
+                }
+            });
+        });
+
+    $(document).on('click', '#svTstDtBtn', function () {
+        var orderId = $("#clntOrdrIdHdn").val();
+        var formdata = new FormData($('#fllwTstFormData').get(0));
+        $.ajax({
+            type: 'POST',
+            url: "/admin/followup/addtestdata",
+            data: formdata,
+            dataType: "text",
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                  $(".modal-content").html("");
+                    $('#exampleModalCenter').modal('hide');
+                $.ajax({
+                    url: '/admin/followup/getorderdata',
+                    type: 'get',
+                    data: {
+                        orderId: orderId
+                    },
+                    success: function (result) {
+                        $("#ordrPrcdArea").html(result);
+                        if ($("#hddnStatusField").val() == 397) {
+                            $(".fieldDiv :input").attr("disabled", true);
+                            $('.fieldDiv').find('input, textarea, button, select').attr('disabled', 'disabled');
+                        }
+                        $(".tryMultiselect").chosen();
+                    }
+                });
+            },
+            error: function (xhr, status) {
+                toastr.error('Something went wrong');
+            }
+        });
+    });
+
+    //$(document).on('click', '.replyBtn', function (event) {
+        
+    //    var elm = document.getElementById('appndBox');
+    //    event.target.parentElement.append(elm);
+    //});
+    
+        $(document).on("click", ".adddTstBtn", function () {
+            var orderId = $("#clntOrdrIdHdn").val();
+            $.ajax({
+                url: '/admin/followup/addtest',
+                type: 'GET',
+                data: { orderId: orderId },
+                success: function (response) {
+                     $(".modal-contentTst").html("");
+                    $(".modal-contentTst").html(response);
+                    $(".tryMultiselect").chosen();
+                    $("#UpdtTestModal").modal().toggle();
+                },
+                error: function () {
+                    toastr.error('Something went wrong');
+                }
+            });
+        });
+    
+    $(document).on("click", ".updttTstsBtn", function () {
+        var orderId = $("#clntOrdrIdHdn").val();
+        var formdata = new FormData($('#updtTstFrm').get(0));
+        formdata.append("ClientOrderViewModel.ClientOrder.ID", $("#clntOrdrIdHdn").val());
+        $.ajax({
+            type: 'POST',
+            url: "/admin/followup/addtest",
+            data: formdata,
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response == true) {
+                    toastr.success("Pending tests updated!")
+                    $(".modal-contentTst").html("");
+                    $("#UpdtTestModal").modal('hide');
+                }
+            },
+            error: function (xhr, status) {
+                toastr.error('Something went wrong');
+            }
+        });
+    });
+
+    $(document).on("click", ".addRsltBtn", function () {
+            var orderId = $("#clntOrdrIdHdn").val();
+            debugger
+            $.ajax({
+                url: '/admin/followup/addresult',
+                type: 'GET',
+                data: { orderId: orderId },
+                success: function (response) {
+                    $(".modal-content").html(response);
+                    $("#exampleModalCenter").modal().toggle();
+                },
+                error: function () {
+                    toastr.error('Something went wrong');
+                }
+            });
+        });
+
+    $(document).on('click', '#addSmryBtn', function () {
+        var formdata = new FormData();
+        formdata.append("Message", $("#fllwpInput").val());
+        formdata.append("OrderID", $("#clntOrdrIdHdn").val());
+        formdata.append("SenderID", $("#dctrIdHdn").val());
+        $.ajax({
+            type: 'POST',
+            url: "/admin/followup/AddFollowUpSummary",
+            data: formdata,
+            dataType: "text",
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                $("#flwUpConvDiv").html(response);
+                $("#fllwpInput").val("");
+            },
+            error: function (xhr, status) {
+                toastr.error('Something went wrong');
+            }
+        });
+    });
+
+    $(document).on('click', '.ClsOrdr', function (event) {
+        debugger
+        var orderId = $(this).val();
+        $.ajax({
+            url: "/admin/followup/closeorder",
+            type: "get",
+            data: { 'orderId': orderId },
+            success: function (data) {
+                if (result == true)
+                    toastr.success("This order has been closed!")
+                location.reload();
+            },
+            error: function () {
+            }
+        });
+    });
+
+    $(document).on('click', '.selectPtntOrder', function () {
+            var user = $(this).val();
+            $("#searchwithid").hide();
+            $.ajax({
+                url: "/admin/patientorder/getpatientDetails",
+                type: "get",
+                data: { 'Id': user },
+                success: function (data) {
+                  $("#User_ID").val(data.id);
+                    if (data.registerationNo != null)
+                        $("#User_RegisterationNo").val(data.registerationNo);
+                    else
+                        $("#User_RegisterationNo").val("");
+                    if (data.enFirstName != null)
+                        $('#User_EnFirstName').val(data.enFirstName)
+                    else
+                        $('#User_EnFirstName').val("");
+                    if (data.address != null)
+                        $("#User_Address").val(data.address);
+                    else
+                        $("#User_Address").val("");
+                    if (data.mobile != null)
+                        $("#User_Mobile").val(data.mobile);
+                    else
+                        $("#User_Mobile").val("");
+                    if (data.patientPersonalInformation != null) {
+                        $("#User_PatientPersonalInformation_IdentificationTypeID").val(data.patientPersonalInformation.identificationTypeID);
+                        $("#User_PatientPersonalInformation_DateOfBirth").val(data.patientPersonalInformation.dateOfBirth);
+                        $("#User_PatientPersonalInformation_BloodGroup_Name").val(data.patientPersonalInformation.bloodGroup.name);
+                        $("#User_PatientPersonalInformation_City_Name").val(data.patientPersonalInformation.city.name);
+                    } else {
+                        $("#User_PatientPersonalInformation_IdentificationTypeID").val("");
+                        $("#User_PatientPersonalInformation_DateOfBirth").val("");
+                        $("#User_PatientPersonalInformation_BloodGroup_Name").val("");
+                        $("#User_PatientPersonalInformation_City_Name").val("");
+                    }
+                },
+                error: function () {
+
+                }
+            });
+    });
+
+     $(document).on("click", ".UpdtOrdrBtn", function () {
+            ListHtml = document.getElementById('orderArea').innerHTML;
+            var orderId = $(this).val();
+            $.ajax({
+                url: '/admin/clientOrder/updateOrder',
+                type: 'GET',
+                data: {
+                    orderId: orderId
+                },
+                success: function (result) {
+                    $('#orderArea').html(result);
+                    loadMultiSelect();
+                    $("#postUpdatebtn").show();
+                    $("#getPndOrdrBtn").hide();
+                    $("#signupform").hide();
+                    $("#addClientOrderBtn").hide();
+                    $("#cancelOrderBtn").show();
+                    document.getElementById("quickSearchBlock").hidden = true;
+                    document.getElementById("postUpdatebtn").addEventListener("click", function () {
+                        updateOrderData();
+                    });
+                },
+                error: function () {
+                    toastr.error("Something went wrong!");
+                }
+            });
+        });
+
+
+    $(document).on('click', '.GtTmpData', function () {
+        var orderId = $(this).val();
+        $.ajax({
+            url: '/admin/followup/getorderdata',
+            type: 'get',
+            data: {
+                orderId: orderId
+            },
+            success: function (result) {
+                $("#ordrPrcdArea").html(result);
+                if ($("#hddnStatusField").val() == 397) {
+                    $(".fieldDiv :input").attr("disabled", true);
+                    $('.fieldDiv').find('input, textarea, button, select').attr('disabled','disabled');
+                }
+                $(".tryMultiselect").chosen();
+            }
+        });
+    });
+
+    $(document).on("keyup", "#searchPatient", function () {
+    var id = $(this).val();
+    $.ajax({
+    url: '/admin/patient/SearchForOrder',
+    type: 'get',
+    data: {
+    ID: id
+    },
+    success: function (result) {
+    $("#searchwithid").show();
+    $("#searchwithid").empty();
+    $("#searchwithid").append(result);
+    var rowCount = $('#myTable >tbody >tr').length;
+    if (rowCount == 0) {
+    $("#searchwithid").hide();
+    }
+    $('body').find('#ID').focus();
+    }
+    });
+    $('#ID').focus();
+    })
+
+    function GetClientOrder(user) {
+          $.ajax({
+                url: "/admin/followup/getclientorders",
+                type: "get",
+                dataType: "text",
+                data: { 'userID': user },
+                success: function (data) {
+                    $('#userList').html(data);
+                },
+                error: function (jqxhr, status, error) {
+                    alert()
+                }
+            });
+    }
+
+    $(document).on('change', '.ptnDrpDwn', function () {
+        var user = $("#User_ID").val();
+        GetClientOrder(user);
+            $.ajax({
+                url: "/admin/patientorder/getpatientDetails",
+                type: "get",
+                dataType: "json",
+                data: { 'Id': user },
+                success: function (data) {
+                    console.log(data);
+                    $("#User_ID").val(user);
+                    if (data.RegisterationNo != null)
+                        $("#User_RegisterationNo").val(data.RegisterationNo);
+                    else
+                        $("#User_RegisterationNo").val("");
+                    if (data.EnFirstName != null)
+                        $('#User_EnFirstName').val(data.EnFirstName)
+                    else
+                        $('#User_EnFirstName').val("");
+                    if (data.Address != null)
+                        $("#User_Address").val(data.Address);
+                    else
+                        $("#User_Address").val("");
+                    if (data.Mobile != null)
+                        $("#User_Mobile").val(data.Mobile);
+                    else
+                        $("#User_Mobile").val("");
+                    if (data.PatientPersonalInformation != null) {
+                        $("#User_PatientPersonalInformation_IdentificationTypeID").val(data.PatientPersonalInformation.IdentificationTypeID);
+                        $("#User_PatientPersonalInformation_DateOfBirth").val(data.PatientPersonalInformation.DateOfBirth);
+                        if (data.PatientPersonalInformation.BloodGroup != null) { 
+                            $("#User_PatientPersonalInformation_BloodGroup_Name").val(data.PatientPersonalInformation.BloodGroup.Name);
+                            }
+                        if (data.PatientPersonalInformation.City != null) { 
+                            $("#User_PatientPersonalInformation_City_Name").val(data.PatientPersonalInformation.City.Name);
+                            }
+                    } else {
+                        $("#User_PatientPersonalInformation_IdentificationTypeID").val("");
+                        $("#User_PatientPersonalInformation_DateOfBirth").val("");
+                        $("#User_PatientPersonalInformation_BloodGroup_Name").val("");
+                        $("#User_PatientPersonalInformation_City_Name").val("");
+                    }
+                },
+                error: function (jqxhr, status, error) {
+                    alert()
+                }
+            });
+    });
+
+    </script>
+}

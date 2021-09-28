@@ -1,0 +1,84 @@
+﻿@model List<Data.Models.PatientOrderEpilepsy>
+
+
+<div class="tab-content pad-all-sm">
+    <div id="tab-27" class="tab-pane fade in active">
+        <div class="row">
+            <div class="panel-group panel-2" id="bs-collapse">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-info="Department" href="#one">
+                                Epilepsy Template
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="one" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <div>
+                                            <table class="table table-hover table-bordered table-striped">
+                                                <thead>
+                                                    <tr class="">
+                                                        <th class="numeric">Gene</th>
+                                                        <th class="numeric">Have Mutation</th>
+                                                        <th class="numeric">Genetic Mutation</th>
+                                                        <th class="numeric">Personal Risk Factor</th>
+                                                        <th class="numeric">Herdiatery</th>
+                                                        <th class="numeric">Recommendations</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.Select((value, i) => new { i, value }))
+                                                    {
+                                                    <tr>
+                                                        <td>
+                                                            <input name="PatientOrderEpilepsyList[@item.i].ID" value="@item.value.ID" hidden>
+                                                            <input name="PatientOrderEpilepsyList[@item.i].OrderID" value="@item.value.OrderID" hidden>
+                                                            <input name="PatientOrderEpilepsyList[@item.i].IsActive" value="True" hidden>
+                                                            <input name="PatientOrderEpilepsyList[@item.i].CreatedOn" value="@item.value.CreatedOn" hidden>
+                                                            <input name="PatientOrderEpilepsyList[@item.i].UpdatedOn" value="@ViewBag.Date" hidden>
+
+                                                            @if (item.value.Gene != null)
+                                                            {
+                                                                @Html.DropDownList("PatientOrderEpilepsyList[" + @item.i + "].GeneID", new SelectList(ViewBag.EffectedGenes, "ID", "Name", item.value.GeneID), htmlAttributes: new { @class = "form-control dropdown", id = "GeneralTemplates.EpilepsyTemplates[" + @item.i + "].GeneID", name = "GeneralTemplates.EpilepsyTemplates[" + @item.i + "].GeneID" })
+                                                            }
+
+                                                        </td>
+                                                        <td>
+                                                                <div class="form-check"><label><input type="checkbox" id="PatientOrderEpilepsyList[@item.i].HaveMutation" name="PatientOrderEpilepsyList[@item.i].HaveMutation" onclick="GetID(@item.value.ID)" @Html.Raw(item.value.HaveMutation ? "checked" : "") value="true"><span class="label-text"></span></label></div>
+
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="PatientOrderEpilepsyList[@item.i].GeneticMutation" name="PatientOrderEpilepsyList[@item.i].GeneticMutation" value="@item.value.GeneticMutation" class="form-control">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="PatientOrderEpilepsyList[@item.i].PersonalRiskFactor" name="PatientOrderEpilepsyList[@item.i].PersonalRiskFactor" value="@item.value.PersonalRiskFactor" class="form-control">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="PatientOrderEpilepsyList[@item.i].Hereditary" name="PatientOrderEpilepsyList[@item.i].Hereditary" value="@item.value.Hereditary" class="form-control">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="PatientOrderEpilepsyList[@item.i].Recommendations" name="PatientOrderEpilepsyList[@item.i].Recommendations" value="@item.value.Recommendations" class="form-control">
+                                                        </td>
+                                                    </tr>
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                </tfoot>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end of panel -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

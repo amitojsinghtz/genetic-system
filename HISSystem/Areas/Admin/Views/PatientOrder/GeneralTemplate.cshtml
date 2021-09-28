@@ -1,0 +1,321 @@
+﻿@model GeneticSystem.Areas.Admin.Models.GeneralTemplateViewModel
+
+
+<div class="tab-content pad-all-sm">
+    <div id="tab-27" class="tab-pane fade in active">
+        <div class="row">
+            <div class="panel-group panel-2" id="bs-collapse">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-info="Department" href="#one">
+                                Mineral Template
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="one" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <div>
+                                            <table class="table table-hover table-bordered table-striped">
+                                                <thead>
+                                                    <tr class="">
+                                                        <th class="numeric">Elements</th>
+                                                        <th class="numeric">Effected Gene</th>
+                                                        <th class="numeric">Effected</th>
+                                                        <th class="numeric">Recommendations</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.MineralTemplates.Select((value, i) => new { i, value }))
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @if (item.value.ElementID != null)
+                                                                {
+                                                                    @Html.DropDownList("GeneralTemplates.MineralTemplates[" + @item.i + "].ElementID", new SelectList(ViewBag.Elements, "ID", "Name", item.value.ElementID), htmlAttributes: new { @class = "form-control dropdown" })
+                                                                }
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.ListBox("GeneralTemplates.MineralTemplates[" + @item.i + "].EffectedGenes", new MultiSelectList(ViewBag.EffectedGenes, "ID", "Name", item.value.EffectedGenes), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                                                            </td>
+                                                            <td>
+
+                                                                <div class="form-check"><label><input type="checkbox" id="GeneralTemplates.MineralTemplates[@item.i].Effect" name="GeneralTemplates.MineralTemplates[@item.i].Effect" @Html.Raw(item.value.Effect ? "checked" : "") value="true"><span class="label-text"></span></label></div>
+
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="GeneralTemplates.MineralTemplates[@item.i].Recomendations" name="GeneralTemplates.MineralTemplates[@item.i].Recomendations" value="@item.value.Recomendations" class="form-control">
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end of panel -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tab-28" class="tab-pane fade in active">
+        <div class="row">
+            <div class="panel-group panel-2" id="b-collapse">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-info="Department" href="#two">
+                                Metabolism Template
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="two" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <div>
+                                            <table class="table table-hover table-bordered table-striped">
+                                                <thead>
+                                                    <tr class="">
+                                                        <th class="numeric">Consumption Type</th>
+                                                        <th class="numeric">Effected Gene</th>
+                                                        <th class="numeric">Effected</th>
+                                                        <th class="numeric">Recommendations</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.MetabolismTemplates.Select((value, i) => new { i, value }))
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @if (item.value.ConsumptionType != null)
+                                                                {
+                                                                    @Html.DropDownList("GeneralTemplates.MetabolismTemplates[" + @item.i + "].ConsumptionTypeID", new SelectList(ViewBag.ConsumptionTypes, "ID", "Name", item.value.ConsumptionTypeID), htmlAttributes: new { @class = "form-control dropdown" })
+                                                                }
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.ListBox("GeneralTemplates.MetabolismTemplates[" + @item.i + "].EffectedGenes", new MultiSelectList(ViewBag.EffectedGenes, "ID", "Name", item.value.EffectedGenes), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownList("GeneralTemplates.MetabolismTemplates[" + @item.i + "].Effected", new SelectList(ViewBag.EffectedTypes, "Value", "Text", item.value.Effected), htmlAttributes: new { @class = "form-control dropdown" })
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="GeneralTemplates.MetabolismTemplates[@item.i].Recomendation" name="GeneralTemplates.MetabolismTemplates[@item.i].Recomendation" value="@item.value.Recomendation" class="form-control">
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end of panel -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tab-29" class="tab-pane fade in active">
+        <div class="row">
+            <div class="panel-group panel-2" id="Vitamin-collapse">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-info="Department" href="#three">
+                                Vitamin Template
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="three" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <div>
+                                            <table class="table table-hover table-bordered table-striped">
+                                                <thead>
+                                                    <tr class="">
+                                                        <th class="numeric">Feeder Type</th>
+                                                        <th class="numeric">Effected Gene</th>
+                                                        <th class="numeric">Effected</th>
+                                                        <th class="numeric">Recommendations</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.VitaminTemplates.Select((value, i) => new { i, value }))
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @if (item.value.FeederType != null)
+                                                                {
+                                                                    @Html.DropDownList("GeneralTemplates.VitaminTemplates[" + @item.i + "].FeederTypeID", new SelectList(ViewBag.FeederType, "ID", "Name", item.value.FeederTypeID), htmlAttributes: new { @class = "form-control dropdown" })
+                                                                }
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.ListBox("GeneralTemplates.VitaminTemplates[" + @item.i + "].EffectedGenes", new MultiSelectList(ViewBag.EffectedGenes, "ID", "Name", item.value.EffectedGenes), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check"><label><input type="checkbox" id="GeneralTemplates.VitaminTemplates[@item.i].Effect" name="GeneralTemplates.VitaminTemplates[@item.i].Effect" @Html.Raw(item.value.Effect ? "checked" : "") value="true"><span class="label-text"></span></label></div>
+
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="GeneralTemplates.VitaminTemplates[@item.i].Recommendations" name="GeneralTemplates.VitaminTemplates[@item.i].Recommendations" value="@item.value.Recommendations" class="form-control">
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end of panel -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tab-30" class="tab-pane fade in active">
+        <div class="row">
+            <div class="panel-group panel-2" id="diet-collapse">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-info="Department" href="#four">
+                                Diet Template
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="four" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <div>
+                                            <table class="table table-hover table-bordered table-striped">
+                                                <thead>
+                                                    <tr class="">
+                                                        <th class="numeric">Consumption Type</th>
+                                                        <th class="numeric">Effected Gene</th>
+                                                        <th class="numeric">Effected Good</th>
+                                                        <th class="numeric">Effected Bad</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.DietTemplates.Select((value, i) => new { i, value }))
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @if (item.value.ConsumptionType != null)
+                                                                {
+                                                                    @Html.DropDownList("GeneralTemplates.DietTemplates[" + @item.i + "].ConsumptionTypeID", new SelectList(ViewBag.ConsumptionTypes, "ID", "Name", item.value.ConsumptionTypeID), htmlAttributes: new { @class = "form-control dropdown" })
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                @Html.ListBox("GeneralTemplates.DietTemplates[" + @item.i + "].EffectedGenes", new MultiSelectList(ViewBag.EffectedGenes, "ID", "Name", item.value.EffectedGenes), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="GeneralTemplates.DietTemplates[@item.i].EffectedGood" name="GeneralTemplates.DietTemplates[@item.i].EffectedGood" value="@item.value.EffectedGood" class="form-control">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="GeneralTemplates.DietTemplates[@item.i].EffectedBad" name="GeneralTemplates.DietTemplates[@item.i].EffectedBad" value="@item.value.EffectedBad" class="form-control">
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end of panel -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tab-30" class="tab-pane fade in active">
+        <div class="row">
+            <div class="panel-group panel-2" id="fitness-collapse">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-info="Department" href="#five">
+                                Fitness Template
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="five" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <div>
+                                            <table class="table table-hover table-bordered table-striped">
+                                                <thead>
+                                                    <tr class="">
+                                                        <th class="numeric">Consumption Type</th>
+                                                        <th class="numeric">Effected Gene</th>
+                                                        <th class="numeric">Effected Good</th>
+                                                        <th class="numeric">Effected Bad</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.FitnessTemplates.Select((value, i) => new { i, value }))
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @if (item.value.ConsumptionType != null)
+                                                                {
+                                                                    @Html.DropDownList("GeneralTemplates.FitnessTemplates[" + @item.i + "].ConsumptionTypeID", new SelectList(ViewBag.ConsumptionTypes, "ID", "Name", item.value.ConsumptionTypeID), htmlAttributes: new { @class = "form-control dropdown" })
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                @Html.ListBox("GeneralTemplates.FitnessTemplates[" + @item.i + "].EffectedGenes", new MultiSelectList(ViewBag.EffectedGenes, "ID", "Name", item.value.EffectedGenes), htmlAttributes: new { @class = "tryMultiselect form-control", multiple = "multiple" })
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="GeneralTemplates.FitnessTemplates[@item.i].EffectedGood" name="GeneralTemplates.FitnessTemplates[@item.i].EffectedGood" value="@item.value.EffectedGood" class="form-control">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="GeneralTemplates.FitnessTemplates[@item.i].EffectedBad" name="GeneralTemplates.FitnessTemplates[@item.i].EffectedBad" value="@item.value.EffectedBad" class="form-control">
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end of panel -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

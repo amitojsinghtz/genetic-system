@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewData["Title"] = "DevExpressDemo";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+
+}
+@using DevExtreme.AspNet.Mvc;
+
+
+@(Html.DevExtreme().DataGrid<Data.Models.User>()
+    .DataSource(ds => ds.Mvc()
+        .Controller("User")
+        .LoadAction("ReturnUser")
+        .InsertAction("Post")
+        .Key("ID")
+    )
+    .RemoteOperations(true)
+    .Columns(columns => {
+
+        columns.AddFor(m => m.EnFirstName);
+    })
+    .Editing(e => e
+        .AllowAdding(true)
+    )
+)

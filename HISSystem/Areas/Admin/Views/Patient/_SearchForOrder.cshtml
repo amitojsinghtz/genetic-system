@@ -1,0 +1,95 @@
+﻿@model Data.Helpers.PagedData<Data.Models.User>
+
+
+<div>
+    <button type="button" class="close" id="close-div" onclick="closediv();">×</button>
+    <input type="text" id="searchinappointment" class="form-control" onkeyup="patientsearch(1);" style="display:none" />
+    <div class="table-style">
+        <div class="prtm-block pos-relative">
+            <div class="prtm-block-content">
+                <div class="table-responsive">
+                    <div class="unseen">
+                        <table class="table table-hover table-bordered table-striped" id="myTable">
+                            <thead>
+                                <tr>
+                                    <th>Reg No</th>
+                                    <th class="numeric">English Name</th>
+                                    <th class="numeric">Arabic Name</th>
+                                    <th class="numeric">ID</th>
+                                    <th class="numeric">Birth Date</th>
+                                    <th class="numeric">Mobile No</th>
+                                    <th class="numeric">Full Address</th>
+                                    <th class="numeric">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="test">
+                                @if (Model.Data != null)
+                                {
+                                    foreach (var item in Model.Data)
+                                    {
+                                <tr>
+                                    <td>@item.RegisterationNo</td>
+                                    <td>
+                                        @item.EnFirstName &nbsp;@item.EnSecondName&nbsp;@item.EnThirdName
+                                    </td>
+                                    <td>
+                                        @item.ArFirstName &nbsp;@item.ArSecondName&nbsp;@item.ArThirdName
+                                    </td>
+                                    <td>
+                                        @if (item.PatientPersonalInformation != null && item.PatientPersonalInformation.IdentificationTypeID != null)
+                                        {
+                                            @item.PatientPersonalInformation.IdentificationTypeID
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.PatientPersonalInformation != null && item.PatientPersonalInformation.DateOfBirth != null)
+                                        {
+                                            @item.PatientPersonalInformation.DateOfBirth.Value.ToString("MM/dd/yyyy")
+                                        }
+                                    </td>
+                                    <td>
+                                        @item.Mobile
+                                    </td>
+                                    <td>
+                                        @item.Address
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-xs btn-success selectPtntOrder" type="button" value="@item.ID">Select</button>
+                                    </td>
+                                </tr>
+                                    }
+                                }
+
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="17">
+                                        @for (int i = 1; i <= Model.NumberOfPages; i++)
+                                        {
+                                            <a class="page-number" href="javascript:void(0);" onclick="searchfilter(@i);">@i</a>
+                                        }
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-4">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+

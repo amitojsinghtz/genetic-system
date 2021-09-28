@@ -1,0 +1,96 @@
+﻿@model GeneticSystem.Areas.Admin.Models.AddDynamicTemplate
+
+<form action="/admin/lookup/addmaster" method="post" id="updateMasterLookUp">
+    <div class="prtm-content">
+        <div class="row mrgn-b-sm">
+            <div class="col-md-4 col-lg-4">
+                <input type="button" id="updateTmpBtn" value="Save" onclick="updateTemplateCol();" class="btn btn-xs btn-primary sbmtBtn" />
+                <input type="button" id="closeModal" name="submit" value="Back" class="btn btn-xs btn-warning backToTemplate" />
+            </div>
+            <div class="col-md-8 col-lg-8 text-right">
+                <span class="info-box">
+                    <i class="fa fa-info-circle text-warning" aria-hidden="true"></i> To ADD Template Type >> Go To <a href="/admin/lookup/index">Lookup</a>
+                </span>
+            </div>
+            <div class="col-md-4 col-lg-4">
+            </div>
+        </div>
+        <div class="form-style">
+            <div class="row">
+                <div class="col-md-12 col-lg-12">
+                    <div class="prtm-block pos-relative">
+                        <div class="row">
+                            <div class="col-md-12 col-lg-12">
+                                <div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="Type">Template Type</label>
+                                            @Html.DropDownListFor(m => m.Template.TemplateTypeID, new SelectList(ViewBag.TemplateType, "ID", "Name"), new { @Class = "form-control dropdown" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="TypeID">SubTemplate Type</label>
+                                            @Html.DropDownListFor(m => m.Template.SubTemplateTypeID, new SelectList(ViewBag.SubTemplateType, "ID", "Name"), new { @Class = "form-control dropdown" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        &nbsp;&nbsp;
+
+                        <div id="NearbyFormWrapper">
+                            <table class="table table-hover table-bordered table-striped" id="relative-table">
+                                <thead>
+                                    <tr class="">
+                                        <th>Column Name</th>
+                                        <th>Display Name</th>
+                                        <th class="numeric"><a href="javascript:void(0)" onclick="AddField()"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="hidden" value="@ViewBag.TemplateID" id="UpdtTemplateID" name="TemplateColumns_TemplateID" />
+                                            <input type="hidden" value="@ViewBag.TemplateID" id="Template_ID" name="TemplateColumns_TemplateID" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    @if (Model.Template.TemplateColumns.Count() <= 0)
+                                    {
+                                        <tr id="formRow1">
+                                            <td>
+                                                @Html.DropDownList("TemplateColumns[0].ColumnName", new SelectList(ViewBag.TemplateField, "ID", "Name"), "--Select Column--", new { @class = "form-control dropdown" })
+                                            </td>
+                                            <td> @Html.TextBox("TemplateColumns[0].DisplayName", null, new { @class = "form-control", autocomplete = "true" })</td>
+                                            <td class="text-right">
+                                                <a href="javascript:void(0)"><i class="fa fa-trash" aria-hidden="true" onclick="RemoveField(this)"></i></a>
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var item in Model.Template.TemplateColumns.Select((value, i) => new { i, value }))
+                                        {
+                                            <tr id="formRow1">
+                                                <td>
+                                                    @Html.DropDownList("TemplateColumns[" + item.i + "].ColumnName", new SelectList(ViewBag.TemplateField, "ID", "Name", item?.value?.TemplateFieldID), "--Select Column--", new { @class = "form-control dropdown" })
+                                                </td>
+                                                <td> @Html.TextBox("TemplateColumns[" + item.i + "].DisplayName", item?.value?.DisplayName, new { @class = "form-control" })</td>
+                                                <td>
+                                                    <a href="javascript:void(0)"><i class="fa fa-trash" aria-hidden="true" onclick="RemoveField(this)"></i></a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+

@@ -1,0 +1,120 @@
+﻿@model Data.DTO.MenuAcessModel
+    <div class="prtm-block pos-relative">
+        <div class="prtm-block-content">
+            <div class="table-responsive">
+                <div id="bedList" class="unseen">
+                    <table class="table table-bordered table-hover dashboard-task-infos table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Menu</th>
+                                @foreach (var item in Model.AllActionPage)
+                                {
+                                    <th>
+                                        @item.Name
+                                        <input type="hidden" id="ID" value="@item.ID" />
+                                    </th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody class="tbody" id="myBody">
+                            @foreach (var item1 in Model.AllActionPermission)
+                            {
+                                <tr id="permissionRow">
+                                    <td>
+                                        @item1.ViewControl.Name
+                                        <input type="hidden" value="@item1.ViewControlID" id="RoleID" />
+                                    </td>
+                                    @foreach (var item in Model.AllActionPage)
+                                    {
+                                        <td>
+                                            <div class="form-check">
+                                                <label>
+                                                    <input type="checkbox" class="checkbox" name="IsCheck" value="@item.ID" id="Action_@(item.ID)_Menu_@(item1.ViewControlID)" onclick="AutoCheckAction(this);"><span class="label-text"></span>
+                                                </label>
+                                            </div>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+                <script type="text/javascript">
+
+	$(document).ready(function () {
+		checkedAction();
+	})
+
+	var ActionAccessRecords = [];
+
+                    function checkedAction() {
+                        debugger
+		var ID = SelectedRoleID;
+		$.ajax({
+			url: "/Admin/ActionControl/AllActionAccessData/" + ID,
+			type: 'Get',
+			success: function (result) {
+                debugger;
+                console.log(result);
+				ActionAccessRecords = result;
+                $.each(result, function (i, v) {
+                    //alert("#Action_" + v.actionID + "_Menu_" + v.viewControlID);
+                    $("#Action_" + v.ActionID + "_Menu_" + v.ViewControlID).attr("checked", "checked");
+				})
+			},
+			error: function (xhr, status) {
+				alert(status)
+				}
+			})
+	}
+
+
+	function AutoCheckAction(data) {
+		debugger;
+		var ActionAccessData = {};
+		 var values = data.id.split('_');
+        var viewControlID = values[3];
+        alert(viewControlID);
+        var ActionPageID = values[1];
+        alert(ActionPageID);
+        var RoleID = SelectedRoleID;
+        alert(RoleID);
+		var status = data.checked;
+        alert(status);
+
+		ActionAccessData.ActionID = ActionPageID;
+		ActionAccessData.ViewControlID = viewControlID;
+		ActionAccessData.RoleID = RoleID;
+
+		if (status) {
+			$.ajax({
+			url: '@Url.Action("SaveActionAccess", "ActionControl" ,new { area = "admin"    })',
+				data: { 'ActionAccessData': ActionAccessData },
+					type: 'Post',
+					success: function (result) {
+						debugger;
+						//checkedMenu();
+					},
+					error: function (xhr, status) {
+						alert(status)
+					}
+			})
+		}
+		else {
+			$.ajax({
+			url: '@Url.Action("RemoveActionAccess", "ActionControl" ,new { area = "admin"    })',
+				data: { 'ActionAccessData': ActionAccessData },
+					type: 'Post',
+					success: function (result) {
+						//checkedMenu();
+					},
+					error: function (xhr, status) {
+						alert(status)
+					}
+			})		}
+}
+
+                </script>

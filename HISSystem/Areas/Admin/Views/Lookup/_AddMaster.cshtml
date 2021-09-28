@@ -1,0 +1,44 @@
+﻿@model Data.Models.Lookup
+@using Data.Models
+
+<form action="/admin/lookup/addmaster" method="post" id="addMasterLookUp">
+    <div class="prtm-content">
+        <div class="row mrgn-b-sm">
+            <div class="col-md-4 col-lg-4">
+                <input type="button" name="submit" id="SaveLookup" onclick="SaveMasterLookup();" value="Save" class="btn btn-primary sbmtBtn" />
+                <input type="button" id="closeModal" name="submit" value="Back" class="btn btn-warning" />
+            </div>
+            <div class="col-md-4 col-lg-4">
+            </div>
+            <div class="col-md-4 col-lg-4">
+            </div>
+        </div>
+        <div class="form-style">
+            <div class="row">
+                <div class="col-md-12 col-lg-12">
+                    <div class="prtm-block pos-relative">
+                        <div class="row">
+                            <div class="col-md-8 col-lg-8">
+                                <div class="row mrgn-l-md">
+                                    <div class="form-group">
+                                        <label for="Type">Type</label>
+                                        @Html.TextBoxFor(m => m.Type, null, new { @Class = "form-control", autocomplete = "off", required = "required"  })
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="TypeID">TypeID</label>
+                                        @Html.TextBoxFor(m => m.TypeID, null, new { @Class = "form-control", @readonly = true })
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Name">Name</label>
+                                        @Html.TextBoxFor(m => m.Name, null, new { @Class = "form-control", autocomplete = "off", required = "required" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
